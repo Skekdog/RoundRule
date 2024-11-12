@@ -20,7 +20,7 @@ export type Gamemode = {
 
     Duration: (numParticipants: number) -> number,
     
-    Roles: {Role},
+    Roles: {[string]: Role},
 }
 
 export type Item = {
@@ -117,7 +117,7 @@ export type Participant = {
     GetEquipmentPurchases: (Participant) -> EquipmentPurchases,
     AddEquipmentPurchase: (Participant, item: Item) -> (),
 
-    _items: {Item},
+    _items: {[string]: Item?},
     AddItem: (Participant, item: Item) -> (),
     RemoveItem: (Participant, item: Item) -> (),
     ClearItems: (Participant) -> (),
@@ -138,8 +138,9 @@ export type Round = {
 
     Gamemode: Gamemode,
 
-    Participants: {Participant},
+    _participants: {[string]: Participant?},
     GetParticipant: (Round, name: string) -> Participant?,
+    GetParticipants: (Round) -> {Participant},
     AddParticipant: (Round, participant: Participant) -> (),
     RemoveParticipant: (Round, participant: Participant) -> (),
 
