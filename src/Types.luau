@@ -18,7 +18,14 @@ export type Gamemode = {
     Name: string,
     Description: string,
 
+    EnableFriendlyFire: boolean,
+
+    AvailableItems: {[string]: Item},
+    StartingItems: {Item},
+
     Duration: (numParticipants: number) -> number,
+
+    AssignRoles: (Gamemode, {Participant}) -> (),
     
     Roles: {[string]: Role},
 }
@@ -26,6 +33,7 @@ export type Gamemode = {
 export type Item = {
     Name: string,
     Description: string?,
+    Icon: string?,
 
     CreditCost: number?,
     MaxStock: number?,
