@@ -4,6 +4,8 @@ export type DamageSource = Item | "Fall" | "Drown" | "Explode" | "Burn" | "Stab"
 export type ScoreTable = {[string]: number}
 export type EquipmentPurchases = {[string]: number}
 
+export type Victor = Participant | Role
+
 type Nillable<T> = {[keyof<T>]: index<T, "">?}
 
 export type Role = {
@@ -26,6 +28,7 @@ export type Item = {
     Description: string?,
 
     CreditCost: number?,
+    MaxStock: number?,
 
     AllowFreeKill: boolean,
 }
@@ -68,7 +71,11 @@ export type Participant = {
     Player: Player,
     Role: Role?,
 
+    GetFormattedName: (Participant) -> string,
+
     Corpse: Corpse?,
+
+    _humanoid: Humanoid?,
     Character: Model?,
     SpawnCharacter: () -> Model,
     UnspawnCharacter: () -> (),
@@ -86,6 +93,7 @@ export type Participant = {
     AddScore: (Participant, reason: string, amount: number) -> (),
 
     _credits: number,
+    AddCredits: (Participant, amount: number) -> (),
     SetCredits: (Participant, amount: number) -> (),
     GetCredits: (Participant) -> number,
 
@@ -106,6 +114,7 @@ export type Participant = {
     IsAlive: (Participant) -> boolean,
     TakeDamage: (Participant, params: DamageParams) -> (),
     GetHealth: (Participant) -> number,
+    SetHealth: (Participant, health: number) -> (),
 }
 
 export type Round = {
@@ -114,7 +123,17 @@ export type Round = {
     Gamemode: Gamemode,
 
     Participants: {Participant},
+    GetParticipant: (Round, name: string) -> Participant?,
+    AddParticipant: (Round, participant: Participant) -> (),
+    RemoveParticipant: (Round, participant: Participant) -> (),
+
+    StartRound: (Round) -> (),
+    PauseRound: (Round, paused: boolean) -> (),
+    EndRound: (Round, victor: Victor) -> (),
 
     FinishTime: number,
     IsPaused: boolean,
+
+    GetRoleFromRoleName: (Round, name: string) -> Role,
+    GetParticipantsWithRole: (Round, role: Role) -> {Participant},
 }
