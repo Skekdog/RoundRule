@@ -57,7 +57,7 @@ export type CorpseView = {
     DeathTime: number,
     DNAExpiry: number?,
 
-    DamageSource: DamageSource,
+    DamageSource: DamageSource & string,
 }
 
 export type Corpse = CorpseView & {
