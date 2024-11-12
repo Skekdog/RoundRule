@@ -49,13 +49,7 @@ export type SelfDefenseParams = {
     Duration: number,
 }
 
-export type Corpse = {
-    Model: Model?,
-
-    _searchedBy: {Participant},
-    GetSearchedBy: {Participant},
-    AddSearchedBy: (Participant) -> (),
-
+export type CorpseView = {
     WasFreeKill: boolean,
     WasHeadshot: boolean,
     WasSelfDefense: boolean,
@@ -63,8 +57,30 @@ export type Corpse = {
     DeathTime: number,
     DNAExpiry: number?,
 
-    Killer: Participant?,
     DamageSource: DamageSource,
+}
+
+export type Corpse = CorpseView & {
+    Model: Model?,
+
+    _searchedBy: {Participant},
+    GetSearchedBy: {Participant},
+    AddSearchedBy: (Participant) -> (),
+
+    Killer: Participant?,
+}
+
+export type ParticipantView = {
+    Name: string,
+    FormattedName: string,
+
+    Role: string?,
+    Status: ParticipantStatus,
+}
+
+export type OwnParticipantView = ParticipantView & {
+    Credits: number,
+    EquipmentPurchases: EquipmentPurchases,
 }
 
 export type Participant = {
