@@ -5,6 +5,7 @@ export type ScoreTable = {[string]: number}
 export type EquipmentPurchases = {[string]: number}
 
 export type Victor = Participant | Role
+export type VictorType = {Kind: "Role", Role: string} | {Kind: "Solo"}
 
 type Nillable<T> = {[keyof<T>]: index<T, "">?}
 
@@ -12,13 +13,42 @@ export type Role = {
     Name: string,
     Description: string,
     Color: Color3,
+
+    VictoryText: string?,
+
+    Allegiance: VictorType,
+
+    StartingItems: {Item}?,
+    StartingCredits: number?,
+    EquipmentShop: {Item}?,
+
+    ShouldAnnounceDisconnect: boolean?,
+    CanStealCreditsFromCorpses: boolean?,
+    CanSeeMissingInAction: boolean?,
+    CanTeamChat: boolean?,
+
+    AwardCreditsOnRoleDeath: {[string]: number},
+
+    WalkSpeed: number,
+    JumpPower: number,
+    Health: number,
+
+    Allies: {string}?,
+    RevealedRoles: {string}?,
+    HighlightedRoles: {string}?,
+}
+
+export type VictoryRole = Role & {
+    VictoryMusic: {Sound},
+    VictoryText: string,
+
 }
 
 export type Gamemode = {
     Name: string,
     Description: string,
 
-    EnableFriendlyFire: boolean,
+    EnableFriendlyFire: boolean?,
 
     AvailableItems: {[string]: Item},
     StartingItems: {Item},
@@ -58,9 +88,9 @@ export type SelfDefenseParams = {
 }
 
 export type CorpseView = {
-    WasFreeKill: boolean,
-    WasHeadshot: boolean,
-    WasSelfDefense: boolean,
+    WasFreeKill: boolean?,
+    WasHeadshot: boolean?,
+    WasSelfDefense: boolean?,
 
     DeathTime: number,
     DNAExpiry: number?,
@@ -161,4 +191,6 @@ export type Round = {
 
     GetRoleFromRoleName: (Round, name: string) -> Role,
     GetParticipantsWithRole: (Round, role: Role) -> {Participant},
+
+    GetFormattedRoleName: (role: Role) -> string,
 }
