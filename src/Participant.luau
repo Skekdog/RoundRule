@@ -77,7 +77,15 @@ local function GetKarmaDamageMultiplier(participant: Types.Participant): number
 end
 
 local function IsDamageJustifiedAgainstParticipant(participant: Types.Participant, other: Types.Participant): boolean
-    return participant:HasSelfDefenseAgainstParticipant(other) or not participant:IsAlliedWithParticipant(other)
+    return participant:IsFreeKill() or participant:HasSelfDefenseAgainstParticipant(other) or not participant:IsAlliedWithParticipant(other)
+end
+
+local function IsFreeKill(participant: Types.Participant): boolean
+    return participant._isFreeKill
+end
+
+local function SetFreeKill(participant: Types.Participant, reason: string?): ()
+    participant._isFreeKill = not not reason
 end
 
 local function TryTakeDamage(participant: Types.Participant, params: Types.DamageParams): ()
@@ -239,6 +247,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         Round = round,
 
         _karma = 1000,
+        _isFreeKill = false,
 
         _status = "Spectating",
 
@@ -258,6 +267,9 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         SetRole = SetRole,
 
         GetCorpse = GetCorpse,
+
+        IsFreeKill = IsFreeKill,
+        SetFreeKill = SetFreeKill,
 
         SpawnCharacterBlocking = SpawnCharacterBlocking,
         UnspawnCharacter = UnspawnCharacter,
