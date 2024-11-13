@@ -1,4 +1,7 @@
 local Types = require(script.Parent.Types)
+
+local SELF_DEFENSE_DURATION = 15
+
 local module = {}
 
 local function tryAssignHumanoidPropertiesForRole(humanoid: Humanoid?, role: Types.Role?): ()
@@ -67,11 +70,23 @@ local function TryTakeDamage(participant: Types.Participant, params: Types.Damag
         return
     end
 
-    if params.Attacker and (not participant.Round.Gamemode.EnableFriendlyFire and participant:IsAlliedWithParticipant(params.Attacker)) then
-        return
+    local damage = params.Amount
+    local attacker = params.Attacker
+
+    if attacker then
+        if not participant.Round.Gamemode.EnableFriendlyFire and participant:IsAlliedWithParticipant(attacker) then
+            return
+        end
+
+        if not params.IgnoreSelfDefense and not attacker:HasSelfDefenseAgainstParticipant(participant) then
+            participant:AddSelfDefenseEntry({
+                Against = attacker,
+                Duration = SELF_DEFENSE_DURATION
+            })
+        end
     end
 
-    hum:TakeDamage(params.Amount)
+    hum:TakeDamage(damage)
 end
 
 local function IsAlive(participant: Types.Participant): boolean
