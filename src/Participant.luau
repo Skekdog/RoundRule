@@ -2,11 +2,20 @@ local Types = require(script.Parent.Types)
 local module = {}
 
 local function GetFormattedName(participant: Types.Participant): string
-    if not participant.Role then
+    local role = participant:GetRole()
+    if not role then
         return participant.Player.Name
     end
 
-    return `<font color='{participant.Role.Color:ToHex()}'>{participant.Player.Name}</font>`
+    return `<font color='{role.Color:ToHex()}'>{participant.Player.Name}</font>`
+end
+
+local function GetRole(participant: Types.Participant): Types.Role?
+    return participant._role
+end
+
+local function SetRole(participant: Types.Participant, role: Types.Role): ()
+    participant._role = role
 end
 
 local function GetHealth(participant: Types.Participant): number
@@ -140,6 +149,9 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         _credits = 0,
         _equipmentPurchases = {},
         _items = {},
+
+        GetRole = GetRole,
+        SetRole = SetRole,
 
         SpawnCharacterBlocking = SpawnCharacterBlocking,
         UnspawnCharacter = UnspawnCharacter,

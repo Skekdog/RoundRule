@@ -138,9 +138,12 @@ export type OwnParticipantView = ParticipantView & {
 }
 
 export type Participant = {
-    Player: Player,
-    Round: Round,
-    Role: Role?,
+    read Player: Player,
+    read Round: Round,
+
+    _role: Role?,
+    GetRole: (Participant) -> Role?,
+    SetRole: (Participant, role: Role) -> (),
 
     GetFormattedName: (Participant) -> string,
 
