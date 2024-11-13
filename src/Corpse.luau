@@ -26,8 +26,6 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
         WasSelfDefense = selfDefense,
 
         DeathTime = workspace:GetServerTimeNow(),
-        DNAExpiry = 0,
-        Model = nil :: any,
 
         DamageSource = source,
 
