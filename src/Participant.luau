@@ -1,8 +1,21 @@
+local Corpse = require(script.Parent.Corpse)
 local Types = require(script.Parent.Types)
 
 local SELF_DEFENSE_DURATION = 15
 
 local module = {}
+
+local function onDeath(participant: Types.Participant, params: Types.DamageParams): ()
+    local attacker = params.Attacker
+    if attacker and not attacker:IsDamageJustifiedAgainstParticipant(participant) then
+        attacker:SetFreeKill("Killed Teammate")
+    end
+
+    participant:_setStatus("Missing")
+    participant._corpse = Corpse.new(participant, params)
+
+    participant.Round.Gamemode:OnDeath(participant)
+end
 
 local function tryAssignHumanoidPropertiesForRole(humanoid: Humanoid?, role: Types.Role?): ()
     if not humanoid or not role then
@@ -116,7 +129,12 @@ local function TryTakeDamage(participant: Types.Participant, params: Types.Damag
         participant:SetKarma(karma)
     end
 
+    local health = participant:GetHealth()
     hum:TakeDamage(damage)
+    
+    if health <= damage then
+        onDeath(participant, params)
+    end
 end
 
 local function IsAlive(participant: Types.Participant): boolean
