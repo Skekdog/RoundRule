@@ -29,7 +29,7 @@ export type Role = {
     CanSeeMissingInAction: boolean?,
     CanTeamChat: boolean?,
 
-    AwardCreditsOnRoleDeath: {[string]: number},
+    AwardCreditsToRolesOnDeath: {[string]: number},
 
     WalkSpeed: number,
     JumpPower: number,

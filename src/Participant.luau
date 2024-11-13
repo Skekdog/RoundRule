@@ -11,6 +11,15 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
         attacker:SetFreeKill("Killed Teammate")
     end
 
+    local role = participant:GetRole()
+    if role then
+        for otherRoleName, amount in role.AwardCreditsToRolesOnDeath do
+            for _, otherParticipant in participant.Round:GetParticipantsWithRole(participant.Round:GetRoleFromRoleName(otherRoleName)) do
+                otherParticipant:AddCredits(amount)
+            end
+        end
+    end
+
     participant:_setStatus("Missing")
     participant._corpse = Corpse.new(participant, params)
 
@@ -131,7 +140,7 @@ local function TryTakeDamage(participant: Types.Participant, params: Types.Damag
 
     local health = participant:GetHealth()
     hum:TakeDamage(damage)
-    
+
     if health <= damage then
         onDeath(participant, params)
     end
