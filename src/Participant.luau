@@ -1,6 +1,18 @@
 local Types = require(script.Parent.Types)
 local module = {}
 
+local function tryAssignHumanoidPropertiesForRole(humanoid: Humanoid?, role: Types.Role?): ()
+    if not humanoid or not role then
+        return
+    end
+
+    humanoid.MaxHealth = role.Health
+    humanoid.Health = role.Health
+
+    humanoid.WalkSpeed = role.WalkSpeed
+    humanoid.JumpPower = role.JumpPower
+end
+
 local function GetFormattedName(participant: Types.Participant): string
     local role = participant:GetRole()
     if not role then
@@ -15,6 +27,7 @@ local function GetRole(participant: Types.Participant): Types.Role?
 end
 
 local function SetRole(participant: Types.Participant, role: Types.Role): ()
+    tryAssignHumanoidPropertiesForRole(participant._humanoid, role)
     participant._role = role
 end
 
@@ -122,7 +135,17 @@ end
 
 local function SpawnCharacterBlocking(participant: Types.Participant): Model
     participant.Player:LoadCharacter()
-    return participant.Player.CharacterAdded:Wait()
+    local char = participant.Player.CharacterAdded:Wait()
+
+    local hum = char:WaitForChild("Humanoid")
+    assert(hum:IsA("Humanoid"), "Humanoid is not a Humanoid!?")
+
+    participant._humanoid = hum
+    participant.Character = char
+
+    tryAssignHumanoidPropertiesForRole(hum, participant:GetRole())
+
+    return char
 end
 
 local function UnspawnCharacter(participant: Types.Participant): ()
