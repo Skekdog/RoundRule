@@ -145,6 +145,10 @@ local function AddEquipmentPurchase(participant: Types.Participant, item: Types.
 end
 
 local function SpawnCharacterBlocking(participant: Types.Participant): Model
+    assert(not participant._isCharacterLoading, "Character is already loading")
+
+    participant._isCharacterLoading = true :: any -- 'true' could not be converted into 'false' my arse
+    
     participant.Player:LoadCharacter()
     local char = participant.Player.CharacterAdded:Wait()
 
@@ -156,10 +160,14 @@ local function SpawnCharacterBlocking(participant: Types.Participant): Model
 
     tryAssignHumanoidPropertiesForRole(hum, participant:GetRole())
 
+    participant._isCharacterLoading = false
+
     return char
 end
 
 local function UnspawnCharacter(participant: Types.Participant): ()
+    assert(not participant._isCharacterLoading, "Character is loading")
+
     local char = participant:GetCharacter()
     if not char then
         return
@@ -178,6 +186,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
 
         _status = "Spectating",
 
+        _isCharacterLoading = false,
         _selfDefenseList = {},
         _killList = {},
         _scores = {},

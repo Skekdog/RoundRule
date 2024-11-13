@@ -149,6 +149,7 @@ export type Participant = {
 
     Corpse: Corpse?,
 
+    _isCharacterLoading: boolean,
     _character: Model?,
     GetCharacter: (Participant) -> Model?,
 
