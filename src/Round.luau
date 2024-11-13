@@ -81,6 +81,10 @@ local function GetFormattedRoleName(role: Types.Role): string
     return `<font color='#{role.Color:ToHex()}'>#{role.Name}</font>`
 end
 
+local function IsRoleAlliedWithRole(role1: Types.Role, role2: Types.Role): boolean
+    return table.find(role1.Allies or {} :: {string}, role2.Name) ~= nil
+end
+
 function module.new(gamemode: Types.Gamemode): Types.Round
     return {
         Gamemode = gamemode,
@@ -104,7 +108,9 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         EndRound = EndRound,
         GetRoleFromRoleName = GetRoleFromRoleName,
         GetParticipantsWithRole = GetParticipantsWithRole,
+
         GetFormattedRoleName = GetFormattedRoleName,
+        IsRoleAlliedWithRole = IsRoleAlliedWithRole,
     }
 end
 

@@ -61,9 +61,13 @@ local function SetHealth(participant: Types.Participant, health: number): ()
     hum.Health = health
 end
 
-local function TakeDamage(participant: Types.Participant, params: Types.DamageParams): ()
+local function TryTakeDamage(participant: Types.Participant, params: Types.DamageParams): ()
     local hum = participant:GetHumanoid()
     if not hum then
+        return
+    end
+
+    if params.Attacker and (not participant.Round.Gamemode.EnableFriendlyFire and participant:IsAlliedWithParticipant(params.Attacker)) then
         return
     end
 
@@ -183,6 +187,15 @@ local function UnspawnCharacter(participant: Types.Participant): ()
     char:Destroy()
 end
 
+local function IsAlliedWithParticipant(participant: Types.Participant, other: Types.Participant): boolean
+    local role1, role2 = participant:GetRole(), other:GetRole()
+    if not role1 or not role2 then
+        return false
+    end
+
+    return participant.Round.IsRoleAlliedWithRole(role1, role2)
+end
+
 function module.new(player: Player, round: Types.Round): Types.Participant
     return {
         Player = player,
@@ -210,10 +223,12 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         SpawnCharacterBlocking = SpawnCharacterBlocking,
         UnspawnCharacter = UnspawnCharacter,
 
+        IsAlliedWithParticipant = IsAlliedWithParticipant,
+
         GetFormattedName = GetFormattedName,
         GetHealth = GetHealth,
         SetHealth = SetHealth,
-        TakeDamage = TakeDamage,
+        TryTakeDamage = TryTakeDamage,
         IsAlive = IsAlive,
         GetStatus = GetStatus,
         _setStatus = _setStatus,

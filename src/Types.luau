@@ -145,6 +145,8 @@ export type Participant = {
     GetRole: (Participant) -> Role?,
     SetRole: (Participant, role: Role) -> (),
 
+    IsAlliedWithParticipant: (Participant, other: Participant) -> boolean,
+
     GetFormattedName: (Participant) -> string,
 
     _corpse: Corpse?,
@@ -191,7 +193,7 @@ export type Participant = {
     GetStatus: (Participant) -> ParticipantStatus,
 
     IsAlive: (Participant) -> boolean,
-    TakeDamage: (Participant, params: DamageParams) -> (),
+    TryTakeDamage: (Participant, params: DamageParams) -> (),
     GetHealth: (Participant) -> number,
     SetHealth: (Participant, health: number) -> (),
 }
@@ -224,6 +226,8 @@ export type Round = {
     GetParticipantsWithRole: (Round, role: Role) -> {Participant},
 
     GetFormattedRoleName: (role: Role) -> string,
+
+    IsRoleAlliedWithRole: (role1: Role, role2: Role) -> boolean,
 }
 
 return nil
