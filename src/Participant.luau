@@ -64,6 +64,22 @@ local function SetHealth(participant: Types.Participant, health: number): ()
     hum.Health = health
 end
 
+local function GetKarma(participant: Types.Participant): number
+    return participant._karma
+end
+
+local function SetKarma(participant: Types.Participant, karma: number): ()
+    participant._karma = math.clamp(karma, 1, 1000)
+end
+
+local function GetKarmaDamageMultiplier(participant: Types.Participant): number
+    return ((0.00005 * (participant:GetKarma() ^ 2)) + 50) / 100
+end
+
+local function IsDamageJustifiedAgainstParticipant(participant: Types.Participant, other: Types.Participant): boolean
+    return participant:HasSelfDefenseAgainstParticipant(other) or not participant:IsAlliedWithParticipant(other)
+end
+
 local function TryTakeDamage(participant: Types.Participant, params: Types.DamageParams): ()
     local hum = participant:GetHumanoid()
     if not hum then
@@ -84,6 +100,12 @@ local function TryTakeDamage(participant: Types.Participant, params: Types.Damag
                 Duration = SELF_DEFENSE_DURATION
             })
         end
+
+        damage *= attacker:GetKarmaDamageMultiplier()
+
+        local karma = participant:GetKarma()
+        karma = karma + (params.Amount * 1.5) * (if attacker:IsDamageJustifiedAgainstParticipant(participant) then 1 else -1)
+        participant:SetKarma(karma)
     end
 
     hum:TakeDamage(damage)
@@ -216,6 +238,8 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         Player = player,
         Round = round,
 
+        _karma = 1000,
+
         _status = "Spectating",
 
         _isCharacterLoading = false,
@@ -239,7 +263,11 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         UnspawnCharacter = UnspawnCharacter,
 
         IsAlliedWithParticipant = IsAlliedWithParticipant,
+        IsDamageJustifiedAgainstParticipant = IsDamageJustifiedAgainstParticipant,
+        GetKarmaDamageMultiplier = GetKarmaDamageMultiplier,
 
+        GetKarma = GetKarma,
+        SetKarma = SetKarma,
         GetFormattedName = GetFormattedName,
         GetHealth = GetHealth,
         SetHealth = SetHealth,

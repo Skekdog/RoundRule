@@ -141,11 +141,18 @@ export type Participant = {
     read Player: Player,
     read Round: Round,
 
+    _karma: number,
+    GetKarma: (Participant) -> number,
+    SetKarma: (Participant, karma: number) -> (),
+
+    GetKarmaDamageMultiplier: (Participant) -> number,
+
     _role: Role?,
     GetRole: (Participant) -> Role?,
     SetRole: (Participant, role: Role) -> (),
 
     IsAlliedWithParticipant: (Participant, other: Participant) -> boolean,
+    IsDamageJustifiedAgainstParticipant: (Participant, other: Participant) -> boolean,
 
     GetFormattedName: (Participant) -> string,
 
