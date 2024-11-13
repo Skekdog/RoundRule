@@ -98,6 +98,11 @@ export type SelfDefenseParams = {
     Duration: number,
 }
 
+export type SelfDefenseEntry = {
+    Against: Participant,
+    Until: number,
+}
+
 export type CorpseView = {
     WasFreeKill: boolean?,
     WasHeadshot: boolean?,
@@ -134,6 +139,7 @@ export type OwnParticipantView = ParticipantView & {
 
 export type Participant = {
     Player: Player,
+    Round: Round,
     Role: Role?,
 
     GetFormattedName: (Participant) -> string,
@@ -142,10 +148,10 @@ export type Participant = {
 
     _humanoid: Humanoid?,
     Character: Model?,
-    SpawnCharacter: () -> Model,
-    UnspawnCharacter: () -> (),
+    SpawnCharacterBlocking: (Participant) -> Model,
+    UnspawnCharacter: (Participant) -> (),
 
-    _selfDefenseList: {Participant},
+    _selfDefenseList: {SelfDefenseEntry},
     AddSelfDefenseEntry: (Participant, params: SelfDefenseParams) -> (),
     HasSelfDefenseAgainstParticipant: (Participant, against: Participant) -> boolean,
 
@@ -169,7 +175,6 @@ export type Participant = {
     _items: {[string]: Item?},
     AddItem: (Participant, item: Item) -> (),
     RemoveItem: (Participant, item: Item) -> (),
-    ClearItems: (Participant) -> (),
     GetItems: (Participant) -> {Item},
 
     _status: ParticipantStatus,

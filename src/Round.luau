@@ -78,7 +78,7 @@ local function GetParticipantsWithRole(round: Types.Round, role: Types.Role): {T
 end
 
 local function GetFormattedRoleName(role: Types.Role): string
-    return `<font color='#{role.Color}'>#{role.Name}</font>`
+    return `<font color='#{role.Color:ToHex()}'>#{role.Name}</font>`
 end
 
 function module.new(gamemode: Types.Gamemode): Types.Round
