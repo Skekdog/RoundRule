@@ -147,7 +147,8 @@ export type Participant = {
 
     GetFormattedName: (Participant) -> string,
 
-    Corpse: Corpse?,
+    _corpse: Corpse?,
+    GetCorpse: (Participant) -> Corpse?,
 
     _isCharacterLoading: boolean,
     _character: Model?,

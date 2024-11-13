@@ -26,6 +26,10 @@ local function GetCharacter(participant: Types.Participant): Model?
     return participant._character
 end
 
+local function GetCorpse(participant: Types.Participant): Types.Corpse?
+    return participant._corpse
+end
+
 local function GetHumanoid(participant: Types.Participant): Humanoid?
     return participant._humanoid
 end
@@ -200,6 +204,8 @@ function module.new(player: Player, round: Types.Round): Types.Participant
 
         GetRole = GetRole,
         SetRole = SetRole,
+
+        GetCorpse = GetCorpse,
 
         SpawnCharacterBlocking = SpawnCharacterBlocking,
         UnspawnCharacter = UnspawnCharacter,
