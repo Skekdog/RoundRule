@@ -40,27 +40,30 @@ local function SetRole(participant: Types.Participant, role: Types.Role): ()
 end
 
 local function GetHealth(participant: Types.Participant): number
-    if not participant._humanoid then
+    local hum = participant:GetHumanoid()
+    if not hum then
         return 0
     end
 
-    return participant._humanoid.Health
+    return hum.Health
 end
 
 local function SetHealth(participant: Types.Participant, health: number): ()
-    if not participant._humanoid then
+    local hum = participant:GetHumanoid()
+    if not hum then
         return
     end
 
-    participant._humanoid.Health = health
+    hum.Health = health
 end
 
 local function TakeDamage(participant: Types.Participant, params: Types.DamageParams): ()
-    if not participant._humanoid then
+    local hum = participant:GetHumanoid()
+    if not hum then
         return
     end
 
-    participant._humanoid:TakeDamage(params.Amount)
+    hum:TakeDamage(params.Amount)
 end
 
 local function IsAlive(participant: Types.Participant): boolean
