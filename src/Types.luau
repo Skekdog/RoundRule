@@ -183,8 +183,6 @@ export type Participant = {
 }
 
 export type Round = {
-    RoundNumber: number,
-
     Gamemode: Gamemode,
 
     _participants: {[string]: Participant?},
@@ -209,3 +207,5 @@ export type Round = {
 
     GetFormattedRoleName: (role: Role) -> string,
 }
+
+return nil
