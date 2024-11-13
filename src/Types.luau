@@ -1,6 +1,8 @@
 export type ParticipantStatus = "Alive" | "Missing" | "Dead" | "Spectating"
 export type DamageSource = Item | "Fall" | "Drown" | "Explode" | "Burn" | "Stab" | "Shot" | "Bludgeon" | "Crush" | "Magic" | "Other"
 
+export type RoundPhase = "Waiting" | "Preparing" | "Playing" | "Highlights" | "Intermission" 
+
 export type ScoreTable = {[string]: number}
 export type EquipmentPurchases = {[string]: number}
 
@@ -41,12 +43,18 @@ export type Role = {
 export type VictoryRole = Role & {
     VictoryMusic: {Sound},
     VictoryText: string,
-
 }
 
 export type Gamemode = {
     Name: string,
     Description: string,
+    Authors: string,
+
+    MinimumPlayers: number,
+
+    DefaultVictor: (Gamemode, Role) -> Role,
+    TimeoutVictor: (Gamemode, Role) -> Role,
+    TimeoutMusic: {Sound}?,
 
     EnableFriendlyFire: boolean?,
 
@@ -58,6 +66,9 @@ export type Gamemode = {
     AssignRoles: (Gamemode, {Participant}) -> (),
     
     Roles: {[string]: Role},
+
+    OnDeath: (Gamemode, Participant) -> (),
+    OnCharacterAdded: (Gamemode, Participant) -> (),
 }
 
 export type Item = {
@@ -181,6 +192,10 @@ export type Round = {
     GetParticipants: (Round) -> {Participant},
     AddParticipant: (Round, participant: Participant) -> (),
     RemoveParticipant: (Round, participant: Participant) -> (),
+
+    _roundPhase: RoundPhase,
+    GetRoundPhase: (Round) -> RoundPhase,
+    SetRoundPhase: (Round, phase: RoundPhase) -> (),
 
     StartRound: (Round) -> (),
     PauseRound: (Round, paused: boolean) -> (),
