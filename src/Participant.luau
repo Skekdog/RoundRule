@@ -22,6 +22,10 @@ local function GetFormattedName(participant: Types.Participant): string
     return `<font color='{role.Color:ToHex()}'>{participant.Player.Name}</font>`
 end
 
+local function GetCharacter(participant: Types.Participant): Model?
+    return participant._character
+end
+
 local function GetRole(participant: Types.Participant): Types.Role?
     return participant._role
 end
@@ -141,7 +145,7 @@ local function SpawnCharacterBlocking(participant: Types.Participant): Model
     assert(hum:IsA("Humanoid"), "Humanoid is not a Humanoid!?")
 
     participant._humanoid = hum
-    participant.Character = char
+    participant._character = char
 
     tryAssignHumanoidPropertiesForRole(hum, participant:GetRole())
 
@@ -154,8 +158,10 @@ local function UnspawnCharacter(participant: Types.Participant): ()
         return
     end
 
-    char:Destroy()
+    participant._humanoid = nil
+    participant._character = nil
     participant.Player.Character = nil
+    char:Destroy()
 end
 
 function module.new(player: Player, round: Types.Round): Types.Participant
