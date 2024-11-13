@@ -195,12 +195,16 @@ export type Round = {
     GetRoundPhase: (Round) -> RoundPhase,
     SetRoundPhase: (Round, phase: RoundPhase) -> (),
 
-    StartRound: (Round) -> (),
-    PauseRound: (Round, paused: boolean) -> (),
-    EndRound: (Round, victor: Victor) -> (),
+    _roundPhaseAdvanceTime: number,
+    GetAdvanceTime: (Round) -> number,
+    SetAdvanceTime: (Round, finishTime: number) -> (),
 
-    FinishTime: number,
-    IsPaused: boolean,
+    _isPaused: boolean,
+    PauseRound: (Round, paused: boolean) -> (),
+    GetIsRoundPaused: (Round) -> boolean,
+
+    StartRound: (Round) -> (),
+    EndRound: (Round, victor: Victor) -> (),
 
     GetRoleFromRoleName: (Round, name: string) -> Role,
     GetParticipantsWithRole: (Round, role: Role) -> {Participant},
