@@ -149,8 +149,12 @@ export type Participant = {
 
     Corpse: Corpse?,
 
-    _humanoid: Humanoid?,
     _character: Model?,
+    GetCharacter: (Participant) -> Model?,
+
+    _humanoid: Humanoid?,
+    GetHumanoid: (Participant) -> Humanoid?,
+    
     SpawnCharacterBlocking: (Participant) -> Model,
     UnspawnCharacter: (Participant) -> (),
 

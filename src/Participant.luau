@@ -26,6 +26,10 @@ local function GetCharacter(participant: Types.Participant): Model?
     return participant._character
 end
 
+local function GetHumanoid(participant: Types.Participant): Humanoid?
+    return participant._humanoid
+end
+
 local function GetRole(participant: Types.Participant): Types.Role?
     return participant._role
 end
@@ -153,7 +157,7 @@ local function SpawnCharacterBlocking(participant: Types.Participant): Model
 end
 
 local function UnspawnCharacter(participant: Types.Participant): ()
-    local char = participant.Player.Character
+    local char = participant:GetCharacter()
     if not char then
         return
     end
@@ -178,6 +182,9 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         _credits = 0,
         _equipmentPurchases = {},
         _items = {},
+
+        GetCharacter = GetCharacter,
+        GetHumanoid = GetHumanoid,
 
         GetRole = GetRole,
         SetRole = SetRole,
