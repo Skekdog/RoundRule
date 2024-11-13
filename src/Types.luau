@@ -84,6 +84,8 @@ export type Item = {
 
 export type DamageParams = {
     Amount: number,
+
+    IsHeadshot: boolean?,
     Source: DamageSource,
 
     Attacker: Participant?,
@@ -111,15 +113,15 @@ export type CorpseView = {
     DeathTime: number,
     DNAExpiry: number?,
 
-    DamageSource: DamageSource & string,
+    --DamageSource: DamageSource & string,
 }
 
 export type Corpse = CorpseView & {
     Model: Model?,
 
     _searchedBy: {Participant},
-    GetSearchedBy: {Participant},
-    AddSearchedBy: (Participant) -> (),
+    GetSearchedBy: (Corpse) -> {Participant},
+    AddSearchedBy: (Corpse, participant: Participant) -> (),
 
     Killer: Participant?,
 }
