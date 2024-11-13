@@ -193,7 +193,7 @@ export type Round = {
 
     _roundPhase: RoundPhase,
     GetRoundPhase: (Round) -> RoundPhase,
-    SetRoundPhase: (Round, phase: RoundPhase) -> (),
+    SetRoundPhase: (Round, phase: RoundPhase, duration: number) -> (),
 
     _roundPhaseAdvanceTime: number,
     GetAdvanceTime: (Round) -> number,

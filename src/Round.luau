@@ -1,6 +1,9 @@
 local Types = require(script.Parent.Types)
 local module = {}
 
+local HIGHLIGHTS_TIME = 20
+local PREPARING_TIME = 20
+
 local function GetParticipant(round: Types.Round, name: string): Types.Participant?
     return round._participants[name]
 end
@@ -12,25 +15,34 @@ end
 local function AddParticipant(round: Types.Round, participant: Types.Participant): ()
     assert(not round._participants[participant.Player.Name], "Participant already exists")
     round._participants[participant.Player.Name] = participant
+
+    if #round:GetParticipants() == round.Gamemode.MinimumPlayers then
+        round:SetRoundPhase("Preparing", PREPARING_TIME)
+    end
 end
 
 local function RemoveParticipant(round: Types.Round, participant: Types.Participant): ()
     round._participants[participant.Player.Name] = nil
+
+    if #round:GetParticipants() < round.Gamemode.MinimumPlayers then
+        round:SetRoundPhase("Waiting", math.huge)
+    end
 end
 
 local function GetRoundPhase(round: Types.Round): Types.RoundPhase
     return round._roundPhase
 end
 
-local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase)
+local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase, duration: number): ()
     round._roundPhase = phase
+    round:SetAdvanceTime(workspace:GetServerTimeNow() + duration)
 end
 
 local function GetAdvanceTime(round: Types.Round): number
     return round._roundPhaseAdvanceTime
 end
 
-local function SetAdvanceTime(round: Types.Round, finishTime: number)
+local function SetAdvanceTime(round: Types.Round, finishTime: number): ()
     round._roundPhaseAdvanceTime = finishTime
 end
 
@@ -38,18 +50,17 @@ local function GetIsRoundPaused(round: Types.Round): boolean
     return round._isPaused
 end
 
-local function PauseRound(round: Types.Round, paused: boolean)
+local function PauseRound(round: Types.Round, paused: boolean): ()
     round._isPaused = paused
 end
 
 local function StartRound(round: Types.Round): ()
-    round._roundPhase = "Playing"
-    round:SetAdvanceTime(workspace:GetServerTimeNow() + round.Gamemode.Duration(#round:GetParticipants()))
+    round:SetRoundPhase("Playing", round.Gamemode.Duration(#round:GetParticipants()))
+    round.Gamemode:AssignRoles(round:GetParticipants())
 end
 
 local function EndRound(round: Types.Round, victor: Types.Victor): ()
-    round._roundPhase = "Highlights"
-    round:SetAdvanceTime(workspace:GetServerTimeNow() + 5)
+    round:SetRoundPhase("Highlights", HIGHLIGHTS_TIME)
 end
 
 local function GetRoleFromRoleName(round: Types.Round, name: string): Types.Role
@@ -71,7 +82,7 @@ local function GetFormattedRoleName(role: Types.Role): string
 end
 
 function module.new(gamemode: Types.Gamemode): Types.Round
-    local round: Types.Round = {
+    return {
         Gamemode = gamemode,
 
         _participants = {},
@@ -95,7 +106,6 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         GetParticipantsWithRole = GetParticipantsWithRole,
         GetFormattedRoleName = GetFormattedRoleName,
     }
-    return round
 end
 
 return module
