@@ -1,5 +1,7 @@
 export type ParticipantStatus = "Alive" | "Missing" | "Dead" | "Spectating"
-export type DamageSource = Item | "Fall" | "Drown" | "Explode" | "Burn" | "Stab" | "Shot" | "Bludgeon" | "Crush" | "Magic" | "Other"
+
+export type GeneralDamageSource = "Fall" | "Drown" | "Explode" | "Burn" | "Stab" | "Shot" | "Bludgeon" | "Crush" | "Magic" | "Other"
+export type DamageSource = Item | GeneralDamageSource
 
 export type RoundPhase = "Waiting" | "Preparing" | "Playing" | "Highlights" | "Intermission" 
 
@@ -114,17 +116,17 @@ export type CorpseView = {
     DeathTime: number,
     DNAExpiry: number?,
 
-    DamageSource: DamageSource & string,
+    DamageSource: GeneralDamageSource,
 }
 
-export type Corpse = CorpseView & {
+export type Corpse = {
+    CorpseView: CorpseView,
+
     Model: Model?,
 
     _searchedBy: {Participant},
     GetSearchedBy: (Corpse) -> {Participant},
     AddSearchedBy: (Corpse, participant: Participant) -> (),
-
-    GetCorpseView: (Corpse) -> CorpseView,
 
     Killer: Participant?,
 }

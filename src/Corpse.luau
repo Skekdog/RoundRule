@@ -9,45 +9,41 @@ local function AddSearchedBy(corpse: Types.Corpse, participant: Types.Participan
     table.insert(corpse._searchedBy, participant)
 end
 
-local function GetCorpseView(corpse: Types.Corpse): Types.CorpseView
-    return {
-        WasFreeKill = corpse.WasFreeKill,
-        WasHeadshot = corpse.WasHeadshot,
-        WasSelfDefense = corpse.WasSelfDefense,
-        DeathTime = corpse.DeathTime,
-        DNAExpiry = corpse.DNAExpiry,
-        DamageSource = corpse.DamageSource,
-    }
-end
-
 function module.new(participant: Types.Participant, params: Types.DamageParams): Types.Corpse
     local selfDefense
     if not params.IgnoreSelfDefense and params.Attacker then
         selfDefense = params.Attacker:HasSelfDefenseAgainstParticipant(params.Attacker)
     end
 
-    local source = params.Source
-    if typeof(source) == "table" then
-        source = source.Definition.Name
+    local source: Types.GeneralDamageSource
+    if typeof(params.Source) == "string" then
+        source = params.Source
+    else
+        source = "Shot"
     end
 
-    return {
-        WasFreeKill = participant:IsFreeKill(),
+    local corpseView: Types.CorpseView = {
+        WasFreeKill = participant:IsFreeKill() :: boolean?, 
         WasHeadshot = params.IsHeadshot,
         WasSelfDefense = selfDefense,
 
         DeathTime = workspace:GetServerTimeNow(),
+        DNAExpiry = nil :: number?,
 
         DamageSource = source,
+    }
 
+    return {
+        CorpseView = corpseView,
+
+        Model = nil :: Model?,
+        
         _searchedBy = {},
         GetSearchedBy = GetSearchedBy,
         AddSearchedBy = AddSearchedBy,
 
-        GetCorpseView = GetCorpseView,
-
         Killer = params.Attacker,
-    } :: Types.Corpse -- there is some obnoxious-looking type error here
+    }
 end
 
 return module
