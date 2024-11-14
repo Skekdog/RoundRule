@@ -1,22 +1,22 @@
 local Types = require(script.Parent.Types)
 local module = {}
 
-local function GetSearchedBy(self: Types.Corpse): {Types.Participant}
-    return self._searchedBy :: {Types.Participant}
+local function GetSearchedBy(corpse: Types.Corpse): {Types.Participant}
+    return corpse._searchedBy :: {Types.Participant}
 end
 
-local function AddSearchedBy(self: Types.Corpse, participant: Types.Participant): ()
-    table.insert(self._searchedBy, participant)
+local function AddSearchedBy(corpse: Types.Corpse, participant: Types.Participant): ()
+    table.insert(corpse._searchedBy, participant)
 end
 
-local function GetCorpseView(self: Types.Corpse): Types.CorpseView
+local function GetCorpseView(corpse: Types.Corpse): Types.CorpseView
     return {
-        WasFreeKill = self.WasFreeKill,
-        WasHeadshot = self.WasHeadshot,
-        WasSelfDefense = self.WasSelfDefense,
-        DeathTime = self.DeathTime,
-        DNAExpiry = self.DNAExpiry,
-        DamageSource = self.DamageSource,
+        WasFreeKill = corpse.WasFreeKill,
+        WasHeadshot = corpse.WasHeadshot,
+        WasSelfDefense = corpse.WasSelfDefense,
+        DeathTime = corpse.DeathTime,
+        DNAExpiry = corpse.DNAExpiry,
+        DamageSource = corpse.DamageSource,
     }
 end
 
@@ -43,6 +43,8 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
         _searchedBy = {},
         GetSearchedBy = GetSearchedBy,
         AddSearchedBy = AddSearchedBy,
+
+        GetCorpseView = GetCorpseView,
 
         Killer = params.Attacker,
     } :: Types.Corpse -- there is some obnoxious-looking type error here
