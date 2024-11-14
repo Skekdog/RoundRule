@@ -205,11 +205,11 @@ local function HasSelfDefenseAgainstParticipant(participant: Types.Participant, 
 end
 
 local function AddItem(participant: Types.Participant, item: Types.Item): ()
-    participant._items[item.Name] = item
+    participant._items[item.Definition.Name] = item
 end
 
 local function RemoveItem(participant: Types.Participant, item: Types.Item): ()
-    participant._items[item.Name] = nil
+    participant._items[item.Definition.Name] = nil
 end
 
 local function GetItems(participant: Types.Participant): {Types.Item}
@@ -221,7 +221,7 @@ local function GetEquipmentPurchases(participant: Types.Participant): Types.Equi
 end
 
 local function AddEquipmentPurchase(participant: Types.Participant, item: Types.Item): ()
-    participant._equipmentPurchases[item.Name] = (participant._equipmentPurchases[item.Name] or 0) + 1
+    participant._equipmentPurchases[item.Definition.Name] = (participant._equipmentPurchases[item.Definition.Name] or 0) + 1
 end
 
 local function SpawnCharacterBlocking(participant: Types.Participant): Model

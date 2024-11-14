@@ -20,9 +20,9 @@ export type Role = {
 
     Allegiance: VictorType,
 
-    StartingItems: {Item}?,
+    StartingItems: {ItemDefinition}?,
     StartingCredits: number?,
-    EquipmentShop: {Item}?,
+    EquipmentShop: {ItemDefinition}?,
 
     ShouldAnnounceDisconnect: boolean?,
     CanStealCreditsFromCorpses: boolean?,
@@ -58,8 +58,8 @@ export type Gamemode = {
 
     EnableFriendlyFire: boolean?,
 
-    AvailableItems: {[string]: Item},
-    StartingItems: {Item},
+    AvailableItems: {[string]: ItemDefinition},
+    StartingItems: {ItemDefinition},
 
     Duration: (numParticipants: number) -> number,
 
@@ -71,7 +71,7 @@ export type Gamemode = {
     OnCharacterAdded: (Gamemode, Participant) -> (),
 }
 
-export type Item = {
+export type ItemDefinition = {
     Name: string,
     Description: string?,
     Icon: string?,
@@ -80,6 +80,10 @@ export type Item = {
     MaxStock: number?,
 
     AllowFreeKill: boolean,
+}
+
+export type Item = {
+    Definition: ItemDefinition,
 }
 
 export type DamageParams = {

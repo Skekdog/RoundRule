@@ -17,7 +17,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
 
     local source = params.Source
     if typeof(source) == "table" then
-        source = source.Name
+        source = source.Definition.Name
     end
 
     return {
