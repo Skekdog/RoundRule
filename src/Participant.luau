@@ -22,7 +22,14 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
     end
 
     participant:_setStatus("Missing")
-    participant._corpse = Corpse.new(participant, params)
+
+    local corpse = Corpse.new(participant, params)
+    participant._corpse = corpse
+
+    participant.Round:AddEvent({
+        Kind = "DeathRoundEvent",
+        Corpse = corpse:GetCorpseView(),
+    })
 
     participant.Round.Gamemode:OnDeath(participant)
 end
@@ -279,6 +286,8 @@ end
 
 function module.new(player: Player, round: Types.Round): Types.Participant
     return {
+        Kind = "Participant",
+
         Player = player,
         Round = round,
 

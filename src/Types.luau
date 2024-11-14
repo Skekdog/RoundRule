@@ -124,6 +124,8 @@ export type Corpse = CorpseView & {
     GetSearchedBy: (Corpse) -> {Participant},
     AddSearchedBy: (Corpse, participant: Participant) -> (),
 
+    GetCorpseView: (Corpse) -> CorpseView,
+
     Killer: Participant?,
 }
 

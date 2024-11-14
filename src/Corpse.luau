@@ -9,6 +9,17 @@ local function AddSearchedBy(self: Types.Corpse, participant: Types.Participant)
     table.insert(self._searchedBy, participant)
 end
 
+local function GetCorpseView(self: Types.Corpse): Types.CorpseView
+    return {
+        WasFreeKill = self.WasFreeKill,
+        WasHeadshot = self.WasHeadshot,
+        WasSelfDefense = self.WasSelfDefense,
+        DeathTime = self.DeathTime,
+        DNAExpiry = self.DNAExpiry,
+        DamageSource = self.DamageSource,
+    }
+end
+
 function module.new(participant: Types.Participant, params: Types.DamageParams): Types.Corpse
     local selfDefense
     if not params.IgnoreSelfDefense and params.Attacker then
