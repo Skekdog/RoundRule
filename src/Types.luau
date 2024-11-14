@@ -213,6 +213,36 @@ export type Participant = {
     SetHealth: (Participant, health: number) -> (),
 }
 
+export type BaseRoundEvent = {
+    Kind: "BaseRoundEvent",
+    Timestamp: number,
+}
+
+export type RoundEventDeath = {
+    Kind: "DeathRoundEvent",
+    Timestamp: number,
+
+    View: CorpseView,
+}
+
+export type RoundEventCorpseSearched = {
+    Kind: "CorpseSearchedRoundEvent",
+    Timestamp: number,
+    
+    SearchedBy: ParticipantView,
+    Corpse: CorpseView,
+}
+
+export type RoundEventMeta = {
+    Kind: "MetaRoundEvent",
+    Timestamp: number,
+
+    Type: "Start" | "End",
+    VictoryText: string,
+}
+
+export type RoundEvent = BaseRoundEvent | RoundEventDeath | RoundEventCorpseSearched | RoundEventMeta
+
 export type Round = {
     Gamemode: Gamemode,
 
@@ -221,6 +251,10 @@ export type Round = {
     GetParticipants: (Round) -> {Participant},
     AddPlayer: (Round, player: Player) -> Participant,
     RemoveParticipant: (Round, participant: Participant) -> (),
+
+    _eventLog: {RoundEvent},
+    AddEvent: (Round, message: string) -> (),
+    GetEventLog: (Round) -> {RoundEvent},
 
     _roundPhase: RoundPhase,
     GetRoundPhase: (Round) -> RoundPhase,

@@ -56,6 +56,17 @@ local function SetAdvanceTime(round: Types.Round, finishTime: number): ()
     round._roundPhaseAdvanceTime = finishTime
 end
 
+local function AddEvent(round: Types.Round, message: string): ()
+    table.insert(round._eventLog, {
+        Timestamp = workspace:GetServerTimeNow(),
+        Message = message,
+    })
+end
+
+local function GetEventLog(round: Types.Round): {Types.RoundEvent}
+    return round._eventLog
+end
+
 local function GetIsRoundPaused(round: Types.Round): boolean
     return round._isPaused
 end
@@ -103,6 +114,11 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         _roundPhase = "Waiting",
         _isPaused = false,
         _roundPhaseAdvanceTime = 0,
+
+        _eventLog = {},
+
+        AddEvent = AddEvent,
+        GetEventLog = GetEventLog,
 
         GetParticipant = GetParticipant,
         GetParticipants = GetParticipants,
