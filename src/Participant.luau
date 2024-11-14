@@ -1,4 +1,5 @@
 local Corpse = require(script.Parent.Corpse)
+local Item = require(script.Parent.Item)
 local Types = require(script.Parent.Types)
 
 local SELF_DEFENSE_DURATION = 15
@@ -65,6 +66,14 @@ end
 
 local function SetRole(participant: Types.Participant, role: Types.Role): ()
     tryAssignHumanoidPropertiesForRole(participant._humanoid, role)
+
+    participant:AddCredits(role.StartingCredits or 0)
+    if role.StartingItems then
+        for _, v in role.StartingItems do
+            participant:AddItem(Item.new(v))
+        end
+    end
+
     participant._role = role
 end
 

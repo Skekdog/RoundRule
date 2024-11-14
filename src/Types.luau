@@ -16,8 +16,6 @@ export type Role = {
     Description: string,
     Color: Color3,
 
-    VictoryText: string?,
-
     Allegiance: VictorType,
 
     StartingItems: {ItemDefinition}?,
