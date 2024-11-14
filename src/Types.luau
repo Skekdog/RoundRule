@@ -12,11 +12,15 @@ export type VictorType = {Kind: "Role", Role: string} | {Kind: "Solo"}
 type Nillable<T> = {[keyof<T>]: index<T, "">?}
 
 export type Role = {
+    Kind: "Role",
+
     Name: string,
     Description: string,
     Color: Color3,
 
     Allegiance: VictorType,
+    VictoryText: string?,
+    VictoryMusic: {Sound}?,
 
     StartingItems: {ItemDefinition}?,
     StartingCredits: number?,
@@ -36,11 +40,6 @@ export type Role = {
     Allies: {string}?,
     RevealedRoles: {string}?,
     HighlightedRoles: {string}?,
-}
-
-export type VictoryRole = Role & {
-    VictoryMusic: {Sound},
-    VictoryText: string,
 }
 
 export type Gamemode = {
@@ -142,6 +141,8 @@ export type OwnParticipantView = ParticipantView & {
 }
 
 export type Participant = {
+    Kind: "Participant",
+    
     read Player: Player,
     read Round: Round,
 
@@ -213,35 +214,34 @@ export type Participant = {
     SetHealth: (Participant, health: number) -> (),
 }
 
-export type BaseRoundEvent = {
-    Kind: "BaseRoundEvent",
+export type RoundEvent = {
     Timestamp: number,
+    Data: RoundEventData,
 }
 
-export type RoundEventDeath = {
+export type RoundEventData = DeathEventData | CorpseSearchedEventData | StartRoundEventData | EndRoundEventData
+
+export type DeathEventData = {
     Kind: "DeathRoundEvent",
-    Timestamp: number,
 
-    View: CorpseView,
+    Corpse: CorpseView,
 }
 
-export type RoundEventCorpseSearched = {
+export type CorpseSearchedEventData = {
     Kind: "CorpseSearchedRoundEvent",
-    Timestamp: number,
     
     SearchedBy: ParticipantView,
     Corpse: CorpseView,
 }
 
-export type RoundEventMeta = {
-    Kind: "MetaRoundEvent",
-    Timestamp: number,
-
-    Type: "Start" | "End",
-    VictoryText: string,
+export type StartRoundEventData = {
+    Kind: "StartRoundEvent",
 }
 
-export type RoundEvent = BaseRoundEvent | RoundEventDeath | RoundEventCorpseSearched | RoundEventMeta
+export type EndRoundEventData = {
+    Kind: "EndRoundEvent",
+    VictoryText: string,
+}
 
 export type Round = {
     Gamemode: Gamemode,
@@ -253,7 +253,7 @@ export type Round = {
     RemoveParticipant: (Round, participant: Participant) -> (),
 
     _eventLog: {RoundEvent},
-    AddEvent: (Round, message: string) -> (),
+    AddEvent: (Round, data: RoundEventData) -> (),
     GetEventLog: (Round) -> {RoundEvent},
 
     _roundPhase: RoundPhase,

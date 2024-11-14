@@ -56,10 +56,10 @@ local function SetAdvanceTime(round: Types.Round, finishTime: number): ()
     round._roundPhaseAdvanceTime = finishTime
 end
 
-local function AddEvent(round: Types.Round, message: string): ()
+local function AddEvent(round: Types.Round, data: Types.RoundEventData): ()
     table.insert(round._eventLog, {
         Timestamp = workspace:GetServerTimeNow(),
-        Message = message,
+        Data = data,
     })
 end
 
@@ -76,11 +76,35 @@ local function PauseRound(round: Types.Round, paused: boolean): ()
 end
 
 local function StartRound(round: Types.Round): ()
+    round:AddEvent({
+        Kind = "StartRoundEvent",
+    })
+
     round:SetRoundPhase("Playing", round.Gamemode.Duration(#round:GetParticipants()))
     round.Gamemode:AssignRoles(round:GetParticipants())
 end
 
 local function EndRound(round: Types.Round, victor: Types.Victor): ()
+    local role: Types.Role
+    if victor.Kind == "Role" then
+        role = victor
+    elseif victor.Kind == "Participant" then
+        role = victor:GetRole() or error("Winning Participant has no assigned role")
+    end
+
+    local victorRole: Types.Role
+    if role.Allegiance.Kind == "Role" then
+        victorRole = round:GetRoleFromRoleName(role.Allegiance.Role)
+    elseif role.Allegiance.Kind == "Solo" then
+        victorRole = role :: Types.Role
+    end
+
+    assert(victorRole.VictoryText, "Victory role has no VictoryText")
+
+    round:AddEvent({
+        Kind = "EndRoundEvent",
+        VictoryText = victorRole.VictoryText :: string,
+    })
     round:SetRoundPhase("Highlights", HIGHLIGHTS_TIME)
 end
 
