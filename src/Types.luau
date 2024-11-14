@@ -219,7 +219,7 @@ export type Round = {
     _participants: {[string]: Participant?},
     GetParticipant: (Round, name: string) -> Participant?,
     GetParticipants: (Round) -> {Participant},
-    AddParticipant: (Round, participant: Participant) -> (),
+    AddPlayer: (Round, player: Player) -> Participant,
     RemoveParticipant: (Round, participant: Participant) -> (),
 
     _roundPhase: RoundPhase,

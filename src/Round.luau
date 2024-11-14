@@ -1,3 +1,5 @@
+local Item = require(script.Parent.Item)
+local Participant = require(script.Parent.Participant)
 local Types = require(script.Parent.Types)
 local module = {}
 
@@ -12,13 +14,21 @@ local function GetParticipants(round: Types.Round): {Types.Participant}
     return round._participants :: {Types.Participant}
 end
 
-local function AddParticipant(round: Types.Round, participant: Types.Participant): ()
-    assert(not round._participants[participant.Player.Name], "Participant already exists")
-    round._participants[participant.Player.Name] = participant
+local function AddPlayer(round: Types.Round, player: Player): Types.Participant
+    assert(not round._participants[player.Name], "Participant already exists")
+
+    local participant = Participant.new(player, round)
+    round._participants[player.Name] = participant
+
+    for _, v in round.Gamemode.StartingItems do
+        participant:AddItem(Item.new(v))
+    end
 
     if #round:GetParticipants() == round.Gamemode.MinimumPlayers then
         round:SetRoundPhase("Preparing", PREPARING_TIME)
     end
+
+    return participant
 end
 
 local function RemoveParticipant(round: Types.Round, participant: Types.Participant): ()
@@ -96,7 +106,7 @@ function module.new(gamemode: Types.Gamemode): Types.Round
 
         GetParticipant = GetParticipant,
         GetParticipants = GetParticipants,
-        AddParticipant = AddParticipant,
+        AddPlayer = AddPlayer,
         RemoveParticipant = RemoveParticipant,
         GetRoundPhase = GetRoundPhase,
         SetRoundPhase = SetRoundPhase,
