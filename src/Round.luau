@@ -45,15 +45,29 @@ end
 
 local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase, duration: number): ()
     round._roundPhase = phase
-    round:SetAdvanceTime(workspace:GetServerTimeNow() + duration)
+    round:SetAdvanceTime(workspace:GetServerTimeNow() + duration, "preserve")
 end
 
-local function GetAdvanceTime(round: Types.Round): number
-    return round._roundPhaseAdvanceTime
-end
+local function SetAdvanceTime(round: Types.Round, finishTime: number, callback: "preserve" | Types.RoundAdvanceCallback): ()
+    if round._activeAdvanceThread then
+        coroutine.close(round._activeAdvanceThread)
+    end
 
-local function SetAdvanceTime(round: Types.Round, finishTime: number): ()
-    round._roundPhaseAdvanceTime = finishTime
+    if callback == "preserve" then
+        callback = round._lastAdvanceCallback or function() end
+	else
+		round._lastAdvanceCallback = callback
+	end
+
+    round._activeAdvanceThread = coroutine.wrap(function()
+        while workspace:GetServerTimeNow() < finishTime do
+            task.wait()
+        end
+
+        assert(typeof(callback) == "function")
+		
+    	callback()
+    end)()
 end
 
 local function AddEvent(round: Types.Round, data: Types.RoundEventData): ()
@@ -131,13 +145,12 @@ local function IsRoleAlliedWithRole(role1: Types.Role, role2: Types.Role): boole
 end
 
 function module.new(gamemode: Types.Gamemode): Types.Round
-    return {
+    local round: Types.Round = {
         Gamemode = gamemode,
 
         _participants = {},
         _roundPhase = "Waiting",
         _isPaused = false,
-        _roundPhaseAdvanceTime = 0,
 
         _eventLog = {},
 
@@ -150,7 +163,6 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         RemoveParticipant = RemoveParticipant,
         GetRoundPhase = GetRoundPhase,
         SetRoundPhase = SetRoundPhase,
-        GetAdvanceTime = GetAdvanceTime,
         SetAdvanceTime = SetAdvanceTime,
         GetIsRoundPaused = GetIsRoundPaused,
         PauseRound = PauseRound,
@@ -162,6 +174,8 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         GetFormattedRoleName = GetFormattedRoleName,
         IsRoleAlliedWithRole = IsRoleAlliedWithRole,
     }
+
+    return round
 end
 
 return module

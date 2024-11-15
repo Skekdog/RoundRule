@@ -11,6 +11,8 @@ export type EquipmentPurchases = {[string]: number}
 export type Victor = Participant | Role
 export type VictorType = {Kind: "Role", Role: string} | {Kind: "Solo"}
 
+export type RoundAdvanceCallback = () -> ()
+
 type Nillable<T> = {[keyof<T>]: index<T, "">?}
 
 export type Role = {
@@ -264,9 +266,9 @@ export type Round = {
     GetRoundPhase: (Round) -> RoundPhase,
     SetRoundPhase: (Round, phase: RoundPhase, duration: number) -> (),
 
-    _roundPhaseAdvanceTime: number,
-    GetAdvanceTime: (Round) -> number,
-    SetAdvanceTime: (Round, finishTime: number) -> (),
+    _lastAdvanceCallback: RoundAdvanceCallback?,
+    _activeAdvanceThread: thread?,
+    SetAdvanceTime: (Round, finishTime: number, callback: "preserve" | RoundAdvanceCallback) -> (),
 
     _isPaused: boolean,
     PauseRound: (Round, paused: boolean) -> (),
