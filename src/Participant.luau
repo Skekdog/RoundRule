@@ -28,7 +28,7 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
 
     participant.Round:AddEvent({
         Kind = "DeathRoundEvent",
-        Corpse = corpse:GetCorpseView(),
+        Corpse = corpse.CorpseView,
     })
 
     participant.Round.Gamemode:OnDeath(participant)
