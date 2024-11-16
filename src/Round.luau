@@ -28,6 +28,8 @@ local function AddPlayer(round: Types.Round, player: Player): Types.Participant
         round:SetRoundPhase("Preparing", PREPARING_TIME)
     end
 
+    participant:SpawnCharacter()
+
     return participant
 end
 
@@ -110,6 +112,17 @@ local function PauseRound(round: Types.Round, paused: boolean): ()
 end
 
 local function StartRound(round: Types.Round): ()
+    local areAllCharactersLoaded = false
+    while not areAllCharactersLoaded do
+        for _, v in round:GetParticipants() do
+            if not v:GetCharacter() then
+                continue
+            end
+            areAllCharactersLoaded = true
+        end
+        task.wait()
+    end
+
     round:AddEvent({
         Kind = "StartRoundEvent",
     })
