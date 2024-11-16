@@ -337,7 +337,7 @@ local function TryAddSlayVote(participant: Types.Participant, other: Types.Parti
     other = other :: Types.Participant -- minor amount of type refinement nonsense here
 
     local corpse = other:GetCorpse()
-    if not corpse or corpse.CorpseView.WasCorrectKill then
+    if not corpse or corpse.WasCorrectKill ~= false then
         return
     end
 

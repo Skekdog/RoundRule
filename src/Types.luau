@@ -129,6 +129,7 @@ export type CorpseView = {
 
 export type Corpse = {
     CorpseView: CorpseView,
+    WasCorrectKill: boolean?, -- Not in CorpseView, as we don't want clients to see this
 
     Model: Model?,
 

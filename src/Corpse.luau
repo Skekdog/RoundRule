@@ -35,6 +35,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
 
     return {
         CorpseView = corpseView,
+        WasCorrectKill = if params.Attacker then params.Attacker:IsDamageJustifiedAgainstParticipant(participant) else nil,
 
         Model = nil :: Model?,
         
