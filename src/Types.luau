@@ -11,7 +11,7 @@ export type EquipmentPurchases = {[string]: number}
 export type Victor = Participant | Role
 export type VictorType = {Kind: "Role", Role: string} | {Kind: "Solo"}
 
-export type RoundAdvanceCallback = () -> ()
+export type RoundAdvanceCallback = (Round) -> ()
 
 type Nillable<T> = {[keyof<T>]: index<T, "">?}
 
@@ -53,8 +53,8 @@ export type Gamemode = {
 
     MinimumPlayers: number,
 
-    DefaultVictor: (Gamemode, Role) -> Role,
-    TimeoutVictor: (Gamemode, Role) -> Role,
+    DefaultVictor: (Gamemode, Round) -> Victor,
+    TimeoutVictor: (Gamemode, Round) -> Victor,
     TimeoutMusic: {Sound}?,
 
     EnableFriendlyFire: boolean?,
@@ -268,7 +268,7 @@ export type Round = {
 
     _lastAdvanceCallback: RoundAdvanceCallback?,
     _activeAdvanceThread: thread?,
-    SetAdvanceTime: (Round, finishTime: number, callback: "preserve" | RoundAdvanceCallback) -> (),
+    SetAdvanceTime: (Round, finishTime: number, callback: false | "preserve" | RoundAdvanceCallback) -> (),
 
     _isPaused: boolean,
     PauseRound: (Round, paused: boolean) -> (),

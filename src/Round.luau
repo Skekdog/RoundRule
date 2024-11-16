@@ -45,19 +45,39 @@ end
 
 local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase, duration: number): ()
     round._roundPhase = phase
-    round:SetAdvanceTime(workspace:GetServerTimeNow() + duration, "preserve")
+
+    local callback: Types.RoundAdvanceCallback | false
+    if phase == "Waiting" then
+        callback = false
+    elseif phase == "Preparing" then
+        callback = round.StartRound
+    elseif phase == "Playing" then
+        callback = function(round: Types.Round): ()
+            local victors = round.Gamemode:TimeoutVictor(round)
+            round:EndRound(victors)
+        end
+    elseif phase == "Highlights" then
+        callback = function(round: Types.Round): ()
+            round:SetRoundPhase("Intermission", 0)
+        end
+    elseif phase == "Intermission" then
+        callback = false
+    end
+    round:SetAdvanceTime(workspace:GetServerTimeNow() + duration, callback or (false :: false))
 end
 
-local function SetAdvanceTime(round: Types.Round, finishTime: number, callback: "preserve" | Types.RoundAdvanceCallback): ()
+local function SetAdvanceTime(round: Types.Round, finishTime: number, callback: false | "preserve" | Types.RoundAdvanceCallback): ()
     if round._activeAdvanceThread then
         coroutine.close(round._activeAdvanceThread)
     end
 
     if callback == "preserve" then
         callback = round._lastAdvanceCallback or function() end
-	else
-		round._lastAdvanceCallback = callback
-	end
+	elseif callback == false then
+		round._lastAdvanceCallback = function() end
+    else
+        round._lastAdvanceCallback = callback
+    end
 
     round._activeAdvanceThread = coroutine.wrap(function()
         while workspace:GetServerTimeNow() < finishTime do
@@ -66,7 +86,7 @@ local function SetAdvanceTime(round: Types.Round, finishTime: number, callback: 
 
         assert(typeof(callback) == "function")
 		
-    	callback()
+    	callback(round)
     end)()
 end
 
