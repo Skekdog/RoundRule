@@ -112,15 +112,10 @@ local function PauseRound(round: Types.Round, paused: boolean): ()
 end
 
 local function StartRound(round: Types.Round): ()
-    local areAllCharactersLoaded = false
-    while not areAllCharactersLoaded do
-        for _, v in round:GetParticipants() do
-            if not v:GetCharacter() then
-                continue
-            end
-            areAllCharactersLoaded = true
+    for _, v in round:GetParticipants() do
+        while not v:GetCharacter() do
+            task.wait()
         end
-        task.wait()
     end
 
     round:AddEvent({
