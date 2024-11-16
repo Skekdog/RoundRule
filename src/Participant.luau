@@ -220,7 +220,18 @@ local function HasSelfDefenseAgainstParticipant(participant: Types.Participant, 
     return false
 end
 
+local function IsItemSlotOccupied(participant: Types.Participant, slot: number): boolean
+    for _, v in participant:GetItems() do
+        if v.Definition.Slot == slot then
+            return true
+        end
+    end
+
+    return false
+end
+
 local function AddItem(participant: Types.Participant, item: Types.Item): ()
+    assert(not participant:IsItemSlotOccupied(item.Definition.Slot), "Item slot already occupied")
     participant._items[item.Definition.Name] = item
 end
 
@@ -232,12 +243,35 @@ local function GetItems(participant: Types.Participant): {Types.Item}
     return participant._items :: {Types.Item}
 end
 
-local function GetEquipmentPurchases(participant: Types.Participant): Types.EquipmentPurchases
-    return participant._equipmentPurchases :: Types.EquipmentPurchases
+local function GetItemPurchases(participant: Types.Participant): Types.EquipmentPurchases
+    return participant._itemPurchases :: Types.EquipmentPurchases
 end
 
-local function AddEquipmentPurchase(participant: Types.Participant, item: Types.Item): ()
-    participant._equipmentPurchases[item.Definition.Name] = (participant._equipmentPurchases[item.Definition.Name] or 0) + 1
+local function PurchaseItem(participant: Types.Participant, itemDefinition: Types.ItemDefinition): Types.ItemPurchaseResult
+    local role = participant:GetRole()
+
+    if not role or not role.EquipmentShop or not table.find(role.EquipmentShop, itemDefinition) then
+        return "InvalidItemForRole"
+    end
+
+    if participant:GetCredits() < itemDefinition.Cost then
+        return "NotEnoughCredits"
+    end
+
+    if (participant._itemPurchases[itemDefinition.Name] or 0) >= itemDefinition.MaxStock then
+        return "NotInStock"
+    end
+
+    if participant:IsItemSlotOccupied(itemDefinition.Slot) then
+        return "SlotOccupied"
+    end
+
+    participant:SetCredits(participant:GetCredits() - itemDefinition.Cost)
+    participant._itemPurchases[itemDefinition.Name] = (participant._itemPurchases[itemDefinition.Name] or 0) + 1
+
+    participant:AddItem(Item.new(itemDefinition))
+
+    return "Success"
 end
 
 local function SpawnCharacterBlocking(participant: Types.Participant): Model
@@ -302,7 +336,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         _scores = {},
 
         _credits = 0,
-        _equipmentPurchases = {},
+        _itemPurchases = {},
         _items = {},
 
         GetCharacter = GetCharacter,
@@ -344,8 +378,9 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         AddItem = AddItem,
         RemoveItem = RemoveItem,
         GetItems = GetItems,        
-        GetEquipmentPurchases = GetEquipmentPurchases,
-        AddEquipmentPurchase = AddEquipmentPurchase,
+        GetItemPurchases = GetItemPurchases,
+        PurchaseItem = PurchaseItem,
+        IsItemSlotOccupied = IsItemSlotOccupied,
     }
 end
 

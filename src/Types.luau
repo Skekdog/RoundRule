@@ -3,7 +3,9 @@ export type ParticipantStatus = "Alive" | "Missing" | "Dead" | "Spectating"
 export type GeneralDamageSource = "Fall" | "Drown" | "Explode" | "Burn" | "Stab" | "Shot" | "Bludgeon" | "Crush" | "Magic" | "Other"
 export type DamageSource = Item | GeneralDamageSource
 
-export type RoundPhase = "Waiting" | "Preparing" | "Playing" | "Highlights" | "Intermission" 
+export type RoundPhase = "Waiting" | "Preparing" | "Playing" | "Highlights" | "Intermission"
+
+export type ItemPurchaseResult = "Success" | "NotEnoughCredits" | "SlotOccupied" | "NotInStock" | "InvalidItemForRole"
 
 export type ScoreTable = {[string]: number}
 export type EquipmentPurchases = {[string]: number}
@@ -76,6 +78,8 @@ export type ItemDefinition = {
     Name: string,
     Description: string?,
     Icon: string?,
+
+    Slot: number,
 
     CreditCost: number?,
     MaxStock: number?,
@@ -201,14 +205,16 @@ export type Participant = {
     SetCredits: (Participant, amount: number) -> (),
     GetCredits: (Participant) -> number,
 
-    _equipmentPurchases: Nillable<EquipmentPurchases>,
-    GetEquipmentPurchases: (Participant) -> EquipmentPurchases,
-    AddEquipmentPurchase: (Participant, item: Item) -> (),
-
     _items: {[string]: Item?},
     AddItem: (Participant, item: Item) -> (),
     RemoveItem: (Participant, item: Item) -> (),
     GetItems: (Participant) -> {Item},
+
+    IsItemSlotOccupied: (Participant, slot: number) -> boolean,
+
+    _itemPurchases: Nillable<EquipmentPurchases>,
+    GetItemPurchases: (Participant) -> EquipmentPurchases,
+    PurchaseItem: (Participant, itemDefinition: ItemDefinition) -> ItemPurchaseResult,
 
     _status: ParticipantStatus,
     _setStatus: (Participant, status: ParticipantStatus) -> (),
