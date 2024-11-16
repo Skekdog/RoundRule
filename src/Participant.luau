@@ -317,12 +317,50 @@ local function IsAlliedWithParticipant(participant: Types.Participant, other: Ty
     return participant.Round.IsRoleAlliedWithRole(role1, role2)
 end
 
+local function GetSlayVotes(participant: Types.Participant): {Types.Participant}
+    return participant._slayVotes
+end
+
+local function TryAddSlayVote(participant: Types.Participant, other: Types.Participant): ()
+    if not participant.Round.Gamemode.RequiredSlayVotes then
+        return
+    end
+
+    if table.find(participant:GetSlayVotes(), other) then
+        return
+    end
+
+    if not table.find(participant:GetKillList(), other) then
+        return
+    end
+
+    other = other :: Types.Participant -- minor amount of type refinement nonsense here
+
+    local corpse = other:GetCorpse()
+    if not corpse or corpse.CorpseView.WasCorrectKill then
+        return
+    end
+
+    table.insert(participant._slayVotes, other)
+
+    if #participant._slayVotes >= participant.Round.Gamemode.RequiredSlayVotes then
+        participant:TryTakeDamage({
+            Amount = math.huge,
+            Source = "Other"
+        })
+    end
+end
+
 function module.new(player: Player, round: Types.Round): Types.Participant
     return {
         Kind = "Participant",
 
         Player = player,
         Round = round,
+
+        _slayVotes = {},
+        GetSlayVotes = GetSlayVotes,
+        TryAddSlayVote = TryAddSlayVote,
 
         _karma = 1000,
         _isFreeKill = false,

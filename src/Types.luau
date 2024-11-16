@@ -54,6 +54,8 @@ export type Gamemode = {
     Authors: string,
 
     MinimumPlayers: number,
+    
+    RequiredSlayVotes: number?,
 
     DefaultVictor: (Gamemode, Round) -> Victor,
     TimeoutVictor: (Gamemode, Round) -> Victor,
@@ -155,6 +157,10 @@ export type Participant = {
     
     read Player: Player,
     read Round: Round,
+
+    _slayVotes: {Participant},
+    GetSlayVotes: (Participant) -> {Participant},
+    TryAddSlayVote: (Participant, participant: Participant) -> (),
 
     _karma: number,
     GetKarma: (Participant) -> number,
