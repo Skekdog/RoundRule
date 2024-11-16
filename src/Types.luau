@@ -185,7 +185,7 @@ export type Participant = {
     _humanoid: Humanoid?,
     GetHumanoid: (Participant) -> Humanoid?,
     
-    SpawnCharacterBlocking: (Participant) -> Model,
+    SpawnCharacter: (Participant) -> (),
     UnspawnCharacter: (Participant) -> (),
 
     _selfDefenseList: {SelfDefenseEntry},

@@ -274,25 +274,24 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
     return "Success"
 end
 
-local function SpawnCharacterBlocking(participant: Types.Participant): Model
+local function SpawnCharacter(participant: Types.Participant): ()
     assert(not participant._isCharacterLoading, "Character is already loading")
 
     participant._isCharacterLoading = true :: any -- 'true' could not be converted into 'false' my arse
+
+    participant.Player.CharacterAdded:Once(function(char)
+        local hum = char:WaitForChild("Humanoid")
+        assert(hum:IsA("Humanoid"), "Humanoid is not a Humanoid!?")
+    
+        participant._humanoid = hum
+        participant._character = char
+    
+        tryAssignHumanoidPropertiesForRole(hum, participant:GetRole())
+    
+        participant._isCharacterLoading = false
+    end)
     
     participant.Player:LoadCharacter()
-    local char = participant.Player.CharacterAdded:Wait()
-
-    local hum = char:WaitForChild("Humanoid")
-    assert(hum:IsA("Humanoid"), "Humanoid is not a Humanoid!?")
-
-    participant._humanoid = hum
-    participant._character = char
-
-    tryAssignHumanoidPropertiesForRole(hum, participant:GetRole())
-
-    participant._isCharacterLoading = false
-
-    return char
 end
 
 local function UnspawnCharacter(participant: Types.Participant): ()
@@ -350,7 +349,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         IsFreeKill = IsFreeKill,
         SetFreeKill = SetFreeKill,
 
-        SpawnCharacterBlocking = SpawnCharacterBlocking,
+        SpawnCharacter = SpawnCharacter,
         UnspawnCharacter = UnspawnCharacter,
 
         IsAlliedWithParticipant = IsAlliedWithParticipant,
