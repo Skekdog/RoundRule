@@ -1,21 +1,95 @@
+type Nillable<T> = {[keyof<T>]: index<T, "">?}
+
 export type ParticipantStatus = "Alive" | "Missing" | "Dead" | "Spectating"
+
+export type Victor = Participant | Role
+export type VictorType = {Kind: "Role", Role: string} | {Kind: "Solo"}
+
+export type ScoreTable = {[string]: number}
+export type EquipmentPurchases = {[string]: number}
+
+export type ItemPurchaseResult = "Success" | "NotEnoughCredits" | "SlotOccupied" | "NotInStock" | "InvalidItemForRole"
 
 export type GeneralDamageSource = "Fall" | "Drown" | "Explode" | "Burn" | "Stab" | "Shot" | "Bludgeon" | "Crush" | "Magic" | "Other"
 export type DamageSource = Item | GeneralDamageSource
 
 export type RoundPhase = "Waiting" | "Preparing" | "Playing" | "Highlights" | "Intermission"
-
-export type ItemPurchaseResult = "Success" | "NotEnoughCredits" | "SlotOccupied" | "NotInStock" | "InvalidItemForRole"
-
-export type ScoreTable = {[string]: number}
-export type EquipmentPurchases = {[string]: number}
-
-export type Victor = Participant | Role
-export type VictorType = {Kind: "Role", Role: string} | {Kind: "Solo"}
-
 export type RoundAdvanceCallback = (Round) -> ()
 
-type Nillable<T> = {[keyof<T>]: index<T, "">?}
+export type Gamemode = {
+    Name: string,
+    DisplayName: string?,
+    Description: string,
+    Authors: string,
+
+    MinimumPlayers: number,
+    
+    RequiredSlayVotes: number?,
+
+    DefaultVictor: (Gamemode, Round) -> Victor,
+    TimeoutVictor: (Gamemode, Round) -> Victor,
+    TimeoutMusic: {Sound}?,
+
+    EnableFriendlyFire: boolean?,
+
+    AvailableItems: {[string]: ItemDefinition},
+    StartingItems: {ItemDefinition},
+
+    Duration: (numParticipants: number) -> number,
+
+    AssignRoles: (Gamemode, {Participant}) -> (),
+    
+    Roles: {[string]: Role},
+
+    OnDeath: (Gamemode, Participant) -> (),
+    OnCharacterAdded: (Gamemode, Participant) -> (),
+}
+
+export type Role = {
+    Kind: "Role",
+
+    Name: string,
+    DisplayName: string?,
+    Description: string,
+    Color: Color3,
+
+    Allegiance: VictorType,
+    VictoryText: string?,
+    VictoryMusic: {Sound}?,
+
+    StartingItems: {ItemDefinition}?,
+    StartingCredits: number?,
+    EquipmentShop: {ItemDefinition}?,
+
+    ShouldAnnounceDisconnect: boolean?,
+    CanStealCreditsFromCorpses: boolean?,
+    CanSeeMissingInAction: boolean?,
+    CanTeamChat: boolean?,
+
+    AwardCreditsToRolesOnDeath: {[string]: number},
+
+    WalkSpeed: number,
+    JumpPower: number,
+    Health: number,
+
+    Allies: {string}?,
+    RevealedRoles: {string}?,
+    HighlightedRoles: {string}?,
+}
+
+export type ItemDefinition = {
+    Name: string,
+    DisplayName: string?,
+    Description: string?,
+    Icon: string?,
+
+    Slot: number,
+
+    CreditCost: number?,
+    MaxStock: number?,
+
+    AllowFreeKill: boolean,
+}
 
 export type Map = {
     Name: string,
@@ -54,83 +128,33 @@ export type Map = {
     AvailableItems: {[string]: ItemDefinition},
 }
 
-export type Role = {
-    Kind: "Role",
-
-    Name: string,
-    DisplayName: string?,
-    Description: string,
-    Color: Color3,
-
-    Allegiance: VictorType,
-    VictoryText: string?,
-    VictoryMusic: {Sound}?,
-
-    StartingItems: {ItemDefinition}?,
-    StartingCredits: number?,
-    EquipmentShop: {ItemDefinition}?,
-
-    ShouldAnnounceDisconnect: boolean?,
-    CanStealCreditsFromCorpses: boolean?,
-    CanSeeMissingInAction: boolean?,
-    CanTeamChat: boolean?,
-
-    AwardCreditsToRolesOnDeath: {[string]: number},
-
-    WalkSpeed: number,
-    JumpPower: number,
-    Health: number,
-
-    Allies: {string}?,
-    RevealedRoles: {string}?,
-    HighlightedRoles: {string}?,
+export type RoundEvent = {
+    Timestamp: number,
+    Data: RoundEventData,
 }
 
-export type Gamemode = {
-    Name: string,
-    DisplayName: string?,
-    Description: string,
-    Authors: string,
+export type RoundEventData = DeathEventData | CorpseSearchedEventData | StartRoundEventData | EndRoundEventData
 
-    MinimumPlayers: number,
+export type DeathEventData = {
+    Kind: "DeathRoundEvent",
+
+    Corpse: CorpseView,
+}
+
+export type CorpseSearchedEventData = {
+    Kind: "CorpseSearchedRoundEvent",
     
-    RequiredSlayVotes: number?,
-
-    DefaultVictor: (Gamemode, Round) -> Victor,
-    TimeoutVictor: (Gamemode, Round) -> Victor,
-    TimeoutMusic: {Sound}?,
-
-    EnableFriendlyFire: boolean?,
-
-    AvailableItems: {[string]: ItemDefinition},
-    StartingItems: {ItemDefinition},
-
-    Duration: (numParticipants: number) -> number,
-
-    AssignRoles: (Gamemode, {Participant}) -> (),
-    
-    Roles: {[string]: Role},
-
-    OnDeath: (Gamemode, Participant) -> (),
-    OnCharacterAdded: (Gamemode, Participant) -> (),
+    SearchedBy: ParticipantView,
+    Corpse: CorpseView,
 }
 
-export type ItemDefinition = {
-    Name: string,
-    DisplayName: string?,
-    Description: string?,
-    Icon: string?,
-
-    Slot: number,
-
-    CreditCost: number?,
-    MaxStock: number?,
-
-    AllowFreeKill: boolean,
+export type StartRoundEventData = {
+    Kind: "StartRoundEvent",
 }
 
-export type Item = {
-    Definition: ItemDefinition,
+export type EndRoundEventData = {
+    Kind: "EndRoundEvent",
+    VictoryText: string,
 }
 
 export type DamageParams = {
@@ -149,6 +173,10 @@ export type DamageParams = {
 export type SelfDefenseParams = {
     Against: Participant,
     Duration: number,
+}
+
+export type Item = {
+    Definition: ItemDefinition,
 }
 
 export type SelfDefenseEntry = {
@@ -271,35 +299,6 @@ export type Participant = {
     TryTakeDamage: (Participant, params: DamageParams) -> (),
     GetHealth: (Participant) -> number,
     SetHealth: (Participant, health: number) -> (),
-}
-
-export type RoundEvent = {
-    Timestamp: number,
-    Data: RoundEventData,
-}
-
-export type RoundEventData = DeathEventData | CorpseSearchedEventData | StartRoundEventData | EndRoundEventData
-
-export type DeathEventData = {
-    Kind: "DeathRoundEvent",
-
-    Corpse: CorpseView,
-}
-
-export type CorpseSearchedEventData = {
-    Kind: "CorpseSearchedRoundEvent",
-    
-    SearchedBy: ParticipantView,
-    Corpse: CorpseView,
-}
-
-export type StartRoundEventData = {
-    Kind: "StartRoundEvent",
-}
-
-export type EndRoundEventData = {
-    Kind: "EndRoundEvent",
-    VictoryText: string,
 }
 
 export type Round = {
