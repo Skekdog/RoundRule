@@ -19,6 +19,7 @@ type Nillable<T> = {[keyof<T>]: index<T, "">?}
 
 export type Map = {
     Name: string,
+    DisplayName: string?,
     Description: string,
     Authors: string,
 
@@ -57,6 +58,7 @@ export type Role = {
     Kind: "Role",
 
     Name: string,
+    DisplayName: string?,
     Description: string,
     Color: Color3,
 
@@ -86,6 +88,7 @@ export type Role = {
 
 export type Gamemode = {
     Name: string,
+    DisplayName: string?,
     Description: string,
     Authors: string,
 
@@ -114,6 +117,7 @@ export type Gamemode = {
 
 export type ItemDefinition = {
     Name: string,
+    DisplayName: string?,
     Description: string?,
     Icon: string?,
 
