@@ -17,6 +17,42 @@ export type RoundAdvanceCallback = (Round) -> ()
 
 type Nillable<T> = {[keyof<T>]: index<T, "">?}
 
+export type Map = {
+    Name: string,
+    Description: string,
+    Authors: string,
+
+    MapIcons: {
+        ["16:9"]: string?,
+        ["4:3"]: string?,
+        ["1:1"]: string?,
+    },
+
+    PlayerSpawns: Folder,
+
+    StaticMap: Folder,
+    DynamicMap: Folder?,
+
+    Props: Folder?,
+    Bounds: Folder?,
+    Windows: Folder?,
+    ItemSpawns: Folder?,
+
+    Gravity: number?,
+
+    MaterialVariants: Folder?,
+
+    LightingSettings: Folder?,
+    FutureLightingSettings: Folder?,
+
+    WaterSettings: Folder?,
+
+    TerrainRegion: TerrainRegion?,
+    TerrainConfig: Folder?,
+
+    AvailableItems: {[string]: ItemDefinition},
+}
+
 export type Role = {
     Kind: "Role",
 
