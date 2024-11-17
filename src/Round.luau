@@ -6,6 +6,8 @@ local module = {}
 local HIGHLIGHTS_TIME = 20
 local PREPARING_TIME = 20
 
+local currentMap: Types.Map?
+
 local function GetParticipant(round: Types.Round, name: string): Types.Participant?
     return round._participants[name]
 end
@@ -172,9 +174,100 @@ local function IsRoleAlliedWithRole(role1: Types.Role, role2: Types.Role): boole
     return table.find(role1.Allies or {} :: {string}, role2.Name) ~= nil
 end
 
+local function GetMap(round: Types.Round): Types.Map
+    return round._map or error("Round has no map")
+end
+
+local function tryResetDynamicMapObject(mapFolder: Folder, map: Types.Map, name: keyof<Types.Map>): ()
+    local old = mapFolder:FindFirstChild(name)
+    if old then
+        old:Destroy()
+    end
+
+    if (map :: any)[name] then
+        (map :: any)[name].Parent = mapFolder
+    end
+end
+
+local function tryClone(folder: Folder?): Folder?
+    return if folder then folder:Clone() else nil
+end
+
+local function LoadMap(round: Types.Round, map: Types.Map): ()
+    local mapFolder = workspace:FindFirstChild("MapFolder") or Instance.new("Folder", workspace)
+    assert(mapFolder:IsA("Folder"), "MapFolder is not a Folder")
+
+    mapFolder.Name = "MapFolder"
+
+    map = table.clone(map)
+
+    map.DynamicMap = tryClone(map.DynamicMap)
+    map.Props = tryClone(map.Props)
+    map.Bounds = tryClone(map.Bounds)
+    map.Windows = tryClone(map.Windows)
+    map.ItemSpawns = tryClone(map.ItemSpawns)
+
+    if currentMap ~= map then
+        local oldStaticMap = mapFolder:FindFirstChild("StaticMap")
+        if oldStaticMap then
+            oldStaticMap.Parent = nil
+        end
+
+        local oldPlayerSpawns = mapFolder:FindFirstChild("PlayerSpawns")
+        if oldPlayerSpawns then
+            oldPlayerSpawns.Parent = nil
+        end
+
+        local oldFIBLighting = mapFolder:FindFirstChild("FutureLightingSettings")
+        if oldFIBLighting then
+            oldFIBLighting.Parent = nil
+        end
+
+        local oldLighting = mapFolder:FindFirstChild("LightingSettings")
+        if oldLighting then
+            oldLighting.Parent = nil
+        end
+
+        map.StaticMap.Parent = mapFolder
+        map.PlayerSpawns.Parent = mapFolder
+        map.LightingSettings.Parent = mapFolder
+
+        if map.FutureLightingSettings then
+            map.FutureLightingSettings.Parent = mapFolder
+        end
+
+        for _, v in map.WaterSettings:GetChildren() do
+            if v:IsA("ValueBase") then
+                (workspace.Terrain :: any)[v.Name] = (v :: any).Value
+            end
+        end
+
+        for _, v in map.TerrainColors:GetChildren() do
+            if v:IsA("ValueBase") then
+                workspace.Terrain:SetMaterialColor((Enum.Material :: any)[v.Name], (v :: any).Value)
+            end
+        end
+
+        workspace.Gravity = map.Gravity
+    end
+
+    tryResetDynamicMapObject(mapFolder, map, "DynamicMap" :: "DynamicMap")
+    tryResetDynamicMapObject(mapFolder, map, "Props" :: "Props")
+    tryResetDynamicMapObject(mapFolder, map, "Bounds" :: "Bounds")
+    tryResetDynamicMapObject(mapFolder, map, "Windows" :: "Windows")
+    tryResetDynamicMapObject(mapFolder, map, "ItemSpawns" :: "ItemSpawns")
+
+    round._map = map
+
+    currentMap = map
+end
+
 function module.new(gamemode: Types.Gamemode): Types.Round
     local round: Types.Round = {
         Gamemode = gamemode,
+
+        LoadMap = LoadMap,
+        GetMap = GetMap,
 
         _participants = {},
         _roundPhase = "Waiting",

@@ -92,20 +92,21 @@ export type ItemDefinition = {
 }
 
 export type Map = {
-    Name: string,
-    DisplayName: string?,
-    Description: string,
-    Authors: string,
+    read Name: string,
+    read DisplayName: string?,
+    read Description: string,
+    read Authors: string,
 
-    MapIcons: {
+    read MapIcons: {
         ["16:9"]: string?,
         ["4:3"]: string?,
         ["1:1"]: string?,
     },
 
-    PlayerSpawns: Folder,
+    read PlayerSpawns: Folder,
 
-    StaticMap: Folder,
+    read StaticMap: Folder,
+    
     DynamicMap: Folder?,
 
     Props: Folder?,
@@ -113,19 +114,19 @@ export type Map = {
     Windows: Folder?,
     ItemSpawns: Folder?,
 
-    Gravity: number?,
+    read Gravity: number,
 
-    MaterialVariants: Folder?,
+    read MaterialVariants: Folder?,
 
-    LightingSettings: Folder?,
-    FutureLightingSettings: Folder?,
+    read LightingSettings: Folder,
+    read FutureLightingSettings: Folder?,
 
-    WaterSettings: Folder?,
+    read WaterSettings: Folder,
 
-    TerrainRegion: TerrainRegion?,
-    TerrainConfig: Folder?,
+    read TerrainRegion: TerrainRegion?,
+    read TerrainColors: Folder,
 
-    AvailableItems: {[string]: ItemDefinition},
+    read AvailableItems: {[string]: ItemDefinition},
 }
 
 export type RoundEvent = {
@@ -303,6 +304,10 @@ export type Participant = {
 
 export type Round = {
     Gamemode: Gamemode,
+
+    _map: Map?,
+    LoadMap: (Round, map: Map) -> (),
+    GetMap: (Round) -> Map,
 
     _participants: {[string]: Participant?},
     GetParticipant: (Round, name: string) -> Participant?,
