@@ -296,6 +296,7 @@ export type Participant = {
     _setStatus: (Participant, status: ParticipantStatus) -> (),
     GetStatus: (Participant) -> ParticipantStatus,
 
+    _wasDeathProcessed: boolean?,
     IsAlive: (Participant) -> boolean,
     TryTakeDamage: (Participant, params: DamageParams) -> (),
     GetHealth: (Participant) -> number,

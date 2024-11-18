@@ -7,6 +7,11 @@ local SELF_DEFENSE_DURATION = 15
 local module = {}
 
 local function onDeath(participant: Types.Participant, params: Types.DamageParams): ()
+    if participant._wasDeathProcessed then
+        return
+    end
+    participant._wasDeathProcessed = true :: any
+
     local attacker = params.Attacker
     if attacker and not attacker:IsDamageJustifiedAgainstParticipant(participant) then
         attacker:SetFreeKill("Killed Teammate")
@@ -279,6 +284,8 @@ local function SpawnCharacter(participant: Types.Participant): ()
 
     participant._isCharacterLoading = true :: any -- 'true' could not be converted into 'false' my arse
 
+    participant._wasDeathProcessed = false
+
     participant.Player.CharacterAdded:Once(function(char)
         local hum = char:WaitForChild("Humanoid")
         assert(hum:IsA("Humanoid"), "Humanoid is not a Humanoid!?")
@@ -289,6 +296,13 @@ local function SpawnCharacter(participant: Types.Participant): ()
         tryAssignHumanoidPropertiesForRole(hum, participant:GetRole())
     
         participant._isCharacterLoading = false
+
+        hum.Died:Once(function()
+            onDeath(participant, {
+                Amount = 0,
+                Source = "Other"
+            })
+        end)
     end)
     
     participant.Player:LoadCharacter()
