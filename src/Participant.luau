@@ -212,7 +212,7 @@ local function AddSelfDefenseEntry(participant: Types.Participant, params: Types
     if params.Against == participant then
         return
     end
-    
+
     table.insert(participant._selfDefenseList, {
         Against = params.Against,
         Until = workspace:GetServerTimeNow() + params.Duration
@@ -290,9 +290,21 @@ local function SpawnCharacter(participant: Types.Participant): ()
 
     participant._wasDeathProcessed = false
 
-    participant.Player.CharacterAdded:Once(function(char)
+    participant.Player.CharacterAppearanceLoaded:Once(function(char)
         local hum = char:WaitForChild("Humanoid")
         assert(hum:IsA("Humanoid"), "Humanoid is not a Humanoid!?")
+
+        if not char.Parent then -- For whatever reason the character might not be parented.
+            char.AncestryChanged:Wait()
+            task.wait() -- And then for whatever reason we have to wait another frame. Lovely.
+        end
+
+        local spawns = participant.Round:GetMap().PlayerSpawns:GetChildren()
+        local chosenSpawn = spawns[math.random(#spawns)]
+
+        assert(chosenSpawn, "No spawn found")
+        assert(chosenSpawn:IsA("BasePart"), "Spawn must be a BasePart")
+        char:PivotTo(chosenSpawn:GetPivot())
     
         participant._humanoid = hum
         participant._character = char
