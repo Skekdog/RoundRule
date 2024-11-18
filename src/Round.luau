@@ -148,6 +148,8 @@ local function StartRound(round: Types.Round): ()
 end
 
 local function EndRound(round: Types.Round, victor: Types.Victor): ()
+    assert(round:IsInProgress(), "Round is not in Playing phase")
+    
     local role: Types.Role
     if victor.Kind == "Role" then
         role = victor
