@@ -133,6 +133,8 @@ local function StartRound(round: Types.Round): ()
     assert(round:IsPreGame(), "Round is not in PreGame phase")
     assert(#round:GetParticipants() >= round.Gamemode.MinimumPlayers, "Not enough players to start round")
 
+    round = round :: Types.Round -- more type refinement nonsense
+
     for _, v in round:GetParticipants() do
         while not v:GetCharacter() do
             task.wait()
@@ -144,12 +146,14 @@ local function StartRound(round: Types.Round): ()
     })
 
     round:SetRoundPhase("Playing", round.Gamemode.Duration(#round:GetParticipants()))
+
+    Random.new():Shuffle(round:GetParticipants())
     round.Gamemode:AssignRoles(round:GetParticipants())
 end
 
 local function EndRound(round: Types.Round, victor: Types.Victor): ()
     assert(round:IsInProgress(), "Round is not in Playing phase")
-    
+
     local role: Types.Role
     if victor.Kind == "Role" then
         role = victor
