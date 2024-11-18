@@ -72,8 +72,8 @@ export type Role = {
     JumpPower: number,
     Health: number,
 
-    WrongDamageKarmaMultiplier: number,
-    
+    DamageKarmaMultiplier: number,
+
     Allies: {string}?,
     RevealedRoles: {string}?,
     HighlightedRoles: {string}?,
