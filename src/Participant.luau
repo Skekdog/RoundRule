@@ -209,6 +209,10 @@ local function AddCredits(participant: Types.Participant, amount: number): ()
 end
 
 local function AddSelfDefenseEntry(participant: Types.Participant, params: Types.SelfDefenseParams): ()
+    if params.Against == participant then
+        return
+    end
+    
     table.insert(participant._selfDefenseList, {
         Against = params.Against,
         Until = workspace:GetServerTimeNow() + params.Duration
