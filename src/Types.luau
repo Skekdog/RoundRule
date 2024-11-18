@@ -31,6 +31,7 @@ export type Gamemode = {
     TimeoutMusic: {Sound}?,
 
     EnableFriendlyFire: boolean?,
+    EnableKarma: boolean?,
 
     AvailableItems: {[string]: ItemDefinition},
     StartingItems: {ItemDefinition},

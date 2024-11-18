@@ -108,11 +108,18 @@ local function SetHealth(participant: Types.Participant, health: number): ()
 end
 
 local function GetKarma(participant: Types.Participant): number
-    return participant._karma
+    if participant.Round.Gamemode.EnableKarma then
+        return participant._karma
+    end
+    return 1000
 end
 
 local function SetKarma(participant: Types.Participant, karma: number): ()
-    participant._karma = math.clamp(karma, 1, 1000)
+    if participant.Round.Gamemode.EnableKarma then
+        participant._karma = math.clamp(karma, 1, 1000)
+    else
+        participant._karma = 1000
+    end
 end
 
 local function GetKarmaDamageMultiplier(participant: Types.Participant): number
