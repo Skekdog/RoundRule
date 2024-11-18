@@ -17,6 +17,10 @@ local function GetParticipants(round: Types.Round): {Types.Participant}
 end
 
 local function AddPlayer(round: Types.Round, player: Player): Types.Participant
+    if round:GetRoundPhase() ~= "Waiting" and round:GetRoundPhase() ~= "Preparing" then
+        error("Round is not in Waiting or Preparing phase")
+    end
+    
     assert(not round._participants[player.Name], "Participant already exists")
 
     local participant = Participant.new(player, round)
