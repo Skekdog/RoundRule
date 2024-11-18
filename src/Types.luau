@@ -324,6 +324,10 @@ export type Round = {
     GetRoundPhase: (Round) -> RoundPhase,
     SetRoundPhase: (Round, phase: RoundPhase, duration: number) -> (),
 
+    IsPreGame: (Round) -> boolean,
+    IsPostGame: (Round) -> boolean,
+    IsInProgress: (Round) -> boolean,
+
     _lastAdvanceCallback: RoundAdvanceCallback?,
     _activeAdvanceThread: thread?,
     SetAdvanceTime: (Round, finishTime: number, callback: false | "preserve" | RoundAdvanceCallback) -> (),

@@ -8,6 +8,18 @@ local PREPARING_TIME = 20
 
 local currentMap: Types.Map?
 
+local function IsPreGame(round: Types.Round): boolean
+    return round:GetRoundPhase() == "Waiting" or round:GetRoundPhase() == "Preparing"
+end
+
+local function IsInProgress(round: Types.Round): boolean
+    return round:GetRoundPhase() == "Playing"
+end
+
+local function IsPostGame(round: Types.Round): boolean
+    return round:GetRoundPhase() == "Highlights" or round:GetRoundPhase() == "Intermission"
+end
+
 local function GetParticipant(round: Types.Round, name: string): Types.Participant?
     return round._participants[name]
 end
@@ -20,7 +32,7 @@ local function AddPlayer(round: Types.Round, player: Player): Types.Participant
     if round:GetRoundPhase() ~= "Waiting" and round:GetRoundPhase() ~= "Preparing" then
         error("Round is not in Waiting or Preparing phase")
     end
-    
+
     assert(not round._participants[player.Name], "Participant already exists")
 
     local participant = Participant.new(player, round)
@@ -118,6 +130,9 @@ local function PauseRound(round: Types.Round, paused: boolean): ()
 end
 
 local function StartRound(round: Types.Round): ()
+    assert(round:IsPreGame(), "Round is not in PreGame phase")
+    assert(#round:GetParticipants() >= round.Gamemode.MinimumPlayers, "Not enough players to start round")
+
     for _, v in round:GetParticipants() do
         while not v:GetCharacter() do
             task.wait()
@@ -278,6 +293,10 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         _isPaused = false,
 
         _eventLog = {},
+
+        IsPreGame = IsPreGame,
+        IsPostGame = IsPostGame,
+        IsInProgress = IsInProgress,
 
         AddEvent = AddEvent,
         GetEventLog = GetEventLog,
