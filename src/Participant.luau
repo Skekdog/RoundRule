@@ -13,7 +13,7 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
     participant._wasDeathProcessed = true :: any
 
     local attacker = params.Attacker
-    if attacker and not attacker:IsDamageJustifiedAgainstParticipant(participant) then
+    if attacker and not params.IgnoreKarma and not attacker:IsDamageJustifiedAgainstParticipant(participant) then
         attacker:SetFreeKill("Killed Teammate")
     end
 
