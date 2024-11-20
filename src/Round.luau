@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local Item = require(script.Parent.Item)
 local Participant = require(script.Parent.Participant)
 local Types = require(script.Parent.Types)
@@ -136,7 +137,7 @@ local function StartRound(round: Types.Round): ()
     round = round :: Types.Round -- more type refinement nonsense
 
     for _, v in round:GetParticipants() do
-        while not v:GetCharacter() do
+        while not v:GetCharacter() and v.Player:IsDescendantOf(Players) do
             task.wait()
         end
     end
