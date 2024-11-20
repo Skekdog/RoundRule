@@ -275,6 +275,9 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
         end
 
         workspace.Gravity = map.Gravity
+
+        workspace.Terrain:Clear()
+        workspace.Terrain:PasteRegion(map.TerrainRegion, Vector3int16.new(-32000, -32000, -32000), true)
     end
 
     tryResetDynamicMapObject(mapFolder, map, "DynamicMap" :: "DynamicMap")
