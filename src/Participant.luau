@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local Corpse = require(script.Parent.Corpse)
 local Item = require(script.Parent.Item)
 local Types = require(script.Parent.Types)
@@ -304,9 +305,11 @@ local function SpawnCharacter(participant: Types.Participant): ()
         local hum = char:WaitForChild("Humanoid")
         assert(hum:IsA("Humanoid"), "Humanoid is not a Humanoid!?")
 
-        if not char.Parent then -- For whatever reason the character might not be parented.
-            char.AncestryChanged:Wait()
-            task.wait() -- And then for whatever reason we have to wait another frame. Lovely.
+        while not char.Parent do
+            if not participant.Player:IsDescendantOf(Players) then
+                return
+            end
+            task.wait()
         end
 
         local spawns = participant.Round:GetMap().PlayerSpawns:GetChildren()
