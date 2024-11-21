@@ -55,6 +55,14 @@ end
 local function RemoveParticipant(round: Types.Round, participant: Types.Participant): ()
     round._participants[participant.Player.Name] = nil
 
+    local role = participant:GetRole()
+    if role and role.ShouldAnnounceDisconnect then
+        print(participant:GetFormattedName() .. " has disconnected. They were a " .. role.Name .. ".")
+    end
+
+    participant:UnspawnCharacter()
+    round.Gamemode:OnDeath(participant)
+
     if #round:GetParticipants() < round.Gamemode.MinimumPlayers then
         round:SetRoundPhase("Waiting", math.huge)
     end
