@@ -88,12 +88,14 @@ export type ItemDefinition = {
     Description: string?,
     Icon: string?,
 
-    Slot: number,
+    Model: BasePart?,
+
+    Slot: number?,
 
     CreditCost: number?,
     MaxStock: number?,
 
-    AllowFreeKill: boolean,
+    AllowFreeKill: boolean?,
 }
 
 export type Map = {

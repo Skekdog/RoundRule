@@ -251,7 +251,10 @@ local function IsItemSlotOccupied(participant: Types.Participant, slot: number):
 end
 
 local function AddItem(participant: Types.Participant, item: Types.Item): ()
-    assert(not participant:IsItemSlotOccupied(item.Definition.Slot), "Item slot already occupied")
+    if item.Definition.Slot then
+        assert(not participant:IsItemSlotOccupied(item.Definition.Slot), "Item slot already occupied")
+    end
+    
     participant._items[item.Definition.Name] = item
 end
 
