@@ -290,9 +290,11 @@ export type Participant = {
     GetCredits: (Participant) -> number,
 
     _items: {[string]: Item?},
-    AddItem: (Participant, item: Item) -> (),
-    RemoveItem: (Participant, item: Item) -> (),
     GetItems: (Participant) -> {Item},
+    GiveItemFromItemDefinition: (Participant, itemDefinition: ItemDefinition) -> (),
+
+    AddItem: (Participant, item: Item) -> (),
+    RemoveItem: (Participant, item: Item) -> (),    
 
     IsItemSlotOccupied: (Participant, slot: number) -> boolean,
 

@@ -83,7 +83,7 @@ local function SetRole(participant: Types.Participant, role: Types.Role): ()
     participant:AddCredits(role.StartingCredits or 0)
     if role.StartingItems then
         for _, v in role.StartingItems do
-            participant:AddItem(Item.new(v))
+            participant:GiveItemFromItemDefinition(v)
         end
     end
 
@@ -250,11 +250,22 @@ local function IsItemSlotOccupied(participant: Types.Participant, slot: number):
     return false
 end
 
+local function GiveItemFromItemDefinition(participant: Types.Participant, itemDefinition: Types.ItemDefinition): ()
+    local item: Types.Item
+    if itemDefinition.Model then
+        item = participant.Round:LoadItem(participant.Round:GetMap(), itemDefinition.Model)
+    else
+        item = Item.new(itemDefinition)
+    end
+
+    participant:AddItem(item)
+end
+
 local function AddItem(participant: Types.Participant, item: Types.Item): ()
     if item.Definition.Slot then
         assert(not participant:IsItemSlotOccupied(item.Definition.Slot), "Item slot already occupied")
     end
-    
+
     participant._items[item.Definition.Name] = item
 end
 
@@ -292,7 +303,7 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
     participant:SetCredits(participant:GetCredits() - itemDefinition.Cost)
     participant._itemPurchases[itemDefinition.Name] = (participant._itemPurchases[itemDefinition.Name] or 0) + 1
 
-    participant:AddItem(Item.new(itemDefinition))
+    participant:GiveItemFromItemDefinition(itemDefinition)
 
     return "Success"
 end
@@ -458,6 +469,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         AddCredits = AddCredits,
         AddSelfDefenseEntry = AddSelfDefenseEntry,
         HasSelfDefenseAgainstParticipant = HasSelfDefenseAgainstParticipant,
+        GiveItemFromItemDefinition = GiveItemFromItemDefinition,
         AddItem = AddItem,
         RemoveItem = RemoveItem,
         GetItems = GetItems,        
