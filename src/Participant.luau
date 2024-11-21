@@ -7,11 +7,23 @@ local SELF_DEFENSE_DURATION = 15
 
 local module = {}
 
+local function rejoinRound(participant: Types.Participant): ()
+    participant.Round:RemoveParticipant(participant)
+    participant.Round:AddPlayer(participant.Player)
+end
+
 local function onDeath(participant: Types.Participant, params: Types.DamageParams): ()
     if participant._wasDeathProcessed then
         return
     end
     participant._wasDeathProcessed = true :: any
+
+    if participant.Round:IsPreGame() then
+        participant = participant :: Types.Participant
+        return rejoinRound(participant)
+    end
+
+    participant = participant :: Types.Participant
 
     local attacker = params.Attacker
     if attacker and not params.IgnoreKarma and not attacker:IsDamageJustifiedAgainstParticipant(participant) then
