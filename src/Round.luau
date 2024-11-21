@@ -223,6 +223,22 @@ local function LoadItem(round: Types.Round, map: Types.Map, model: Types.DataMod
     local item = Item.new(itemDefinition)
     round._items[model] = item
 
+    model.Touched:Connect(function(touchPart)
+        local touchModel = touchPart:FindFirstAncestorOfClass("Model")
+
+        if not touchModel then
+            return
+        end
+
+        local participant = round:GetParticipant(touchModel.Name)
+        if not participant or not participant:IsAlive() then
+            return
+        end
+
+        model.Parent = nil
+        participant:AddItem(item)
+    end)
+
     return item
 end
 
