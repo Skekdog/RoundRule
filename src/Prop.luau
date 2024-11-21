@@ -29,7 +29,7 @@ local function TryTakeDamage(prop: Types.Prop, params: Types.DamageParams): ()
     end
 end
 
-function module.new(model: Model): Types.Prop
+function module.new(model: Types.DataModelProp): Types.Prop
     local health = model:GetAttribute("Health")
     assert(typeof(health) == "number" or health == nil)
 

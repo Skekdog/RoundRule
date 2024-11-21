@@ -195,11 +195,11 @@ local function GetProps(round: Types.Round): {Types.Prop}
     return round._props :: {Types.Prop}
 end
 
-local function GetProp(round: Types.Round, model: Model): Types.Prop?
+local function GetProp(round: Types.Round, model: Types.DataModelProp): Types.Prop?
     return round._props[model]
 end
 
-local function LoadProp(round: Types.Round, model: Model): Types.Prop
+local function LoadProp(round: Types.Round, model: Types.DataModelProp): Types.Prop
     assert(not round:GetProp(model), "Prop already exists")
     local prop = Prop.new(model)
     round._props[model] = prop
@@ -253,7 +253,7 @@ local function loadProps(round: Types.Round, map: Types.Map): ()
     end
 
     for _, v in map.Props:GetChildren() do
-        if v:IsA("Model") then
+        if v:IsA("BasePart") then
             round:LoadProp(v)
         elseif v:IsA("Folder") then
             loadProps(round, map)

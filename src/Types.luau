@@ -16,6 +16,8 @@ export type DamageSource = Item | GeneralDamageSource
 export type RoundPhase = "Waiting" | "Preparing" | "Playing" | "Highlights" | "Intermission"
 export type RoundAdvanceCallback = (Round) -> ()
 
+export type DataModelProp = BasePart
+
 export type Gamemode = {
     Name: string,
     DisplayName: string?,
@@ -306,7 +308,7 @@ export type Participant = {
 }
 
 export type Prop = {
-    Model: Model,
+    Model: DataModelProp,
 
     _health: number?,
     GetHealth: (Prop) -> number?,
@@ -322,10 +324,10 @@ export type Round = {
     LoadMap: (Round, map: Map) -> (),
     GetMap: (Round) -> Map,
 
-    _props: {[Model]: Prop?},
+    _props: {[DataModelProp]: Prop?},
     GetProps: (Round) -> {Prop},
-    GetProp: (Round, model: Model) -> Prop?,
-    LoadProp: (Round, model: Model) -> Prop,
+    GetProp: (Round, model: DataModelProp) -> Prop?,
+    LoadProp: (Round, model: DataModelProp) -> Prop,
 
     _participants: {[string]: Participant?},
     GetParticipant: (Round, name: string) -> Participant?,
