@@ -296,12 +296,21 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
             oldLighting.Parent = nil
         end
 
+        local oldMaterialVariants = mapFolder:FindFirstChild("MaterialVariants")
+        if oldMaterialVariants then
+            oldMaterialVariants.Parent = nil
+        end
+
         map.StaticMap.Parent = mapFolder
         map.PlayerSpawns.Parent = mapFolder
         map.LightingSettings.Parent = mapFolder
 
         if map.FutureLightingSettings then
             map.FutureLightingSettings.Parent = mapFolder
+        end
+
+        if map.MaterialVariants then
+            map.MaterialVariants.Parent = mapFolder
         end
 
         for _, v in map.WaterSettings:GetChildren() do
