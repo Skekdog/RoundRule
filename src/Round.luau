@@ -49,6 +49,10 @@ local function AddPlayer(round: Types.Round, player: Player): Types.Participant
 
     participant:SpawnCharacter()
 
+    player.Destroying:Once(function()
+        round:RemoveParticipant(participant)
+    end)
+
     return participant
 end
 
