@@ -271,7 +271,6 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
 
     map.DynamicMap = tryClone(map.DynamicMap)
     map.Props = tryClone(map.Props)
-    map.Bounds = tryClone(map.Bounds)
     map.Windows = tryClone(map.Windows)
     map.ItemSpawns = tryClone(map.ItemSpawns)
 
@@ -279,6 +278,11 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
         local oldStaticMap = mapFolder:FindFirstChild("StaticMap")
         if oldStaticMap then
             oldStaticMap.Parent = nil
+        end
+
+        local oldBounds = mapFolder:FindFirstChild("Bounds")
+        if oldBounds then
+            oldBounds.Parent = nil
         end
 
         local oldPlayerSpawns = mapFolder:FindFirstChild("PlayerSpawns")
@@ -333,7 +337,6 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
 
     tryResetDynamicMapObject(mapFolder, map, "DynamicMap" :: "DynamicMap")
     tryResetDynamicMapObject(mapFolder, map, "Props" :: "Props")
-    tryResetDynamicMapObject(mapFolder, map, "Bounds" :: "Bounds")
     tryResetDynamicMapObject(mapFolder, map, "Windows" :: "Windows")
     tryResetDynamicMapObject(mapFolder, map, "ItemSpawns" :: "ItemSpawns")
 

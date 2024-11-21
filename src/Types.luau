@@ -109,11 +109,10 @@ export type Map = {
     read PlayerSpawns: Folder,
 
     read StaticMap: Folder,
+    read Bounds: Folder?,
     
     DynamicMap: Folder?,
-
     Props: Folder?,
-    Bounds: Folder?,
     Windows: Folder?,
     ItemSpawns: Folder?,
 
