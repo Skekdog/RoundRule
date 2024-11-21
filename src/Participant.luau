@@ -27,6 +27,10 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
         end
     end
 
+    for _, v in participant:GetItems() do
+        participant:DropItem(v)
+    end
+
     participant:_setStatus("Missing")
 
     local corpse = Corpse.new(participant, params)
@@ -261,6 +265,18 @@ local function GiveItemFromItemDefinition(participant: Types.Participant, itemDe
     participant:AddItem(item)
 end
 
+local function DropItem(participant: Types.Participant, item: Types.Item): ()
+    local char = participant:GetCharacter()
+
+    participant:RemoveItem(item)
+    if not char or not item.Model then
+        return
+    end
+
+    item.Model:PivotTo(char:GetPivot())
+    item.Model.Parent = participant.Round:GetMap().ItemSpawns
+end
+
 local function AddItem(participant: Types.Participant, item: Types.Item): ()
     if item.Definition.Slot then
         assert(not participant:IsItemSlotOccupied(item.Definition.Slot), "Item slot already occupied")
@@ -273,8 +289,8 @@ local function RemoveItem(participant: Types.Participant, item: Types.Item): ()
     participant._items[item.Definition.Name] = nil
 end
 
-local function GetItems(participant: Types.Participant): {Types.Item}
-    return participant._items :: {Types.Item}
+local function GetItems(participant: Types.Participant): {[string]: Types.Item}
+    return participant._items :: {[string]: Types.Item}
 end
 
 local function GetItemPurchases(participant: Types.Participant): Types.EquipmentPurchases
@@ -472,6 +488,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         GiveItemFromItemDefinition = GiveItemFromItemDefinition,
         AddItem = AddItem,
         RemoveItem = RemoveItem,
+        DropItem = DropItem,
         GetItems = GetItems,        
         GetItemPurchases = GetItemPurchases,
         PurchaseItem = PurchaseItem,

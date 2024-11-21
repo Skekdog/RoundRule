@@ -290,8 +290,9 @@ export type Participant = {
     GetCredits: (Participant) -> number,
 
     _items: {[string]: Item?},
-    GetItems: (Participant) -> {Item},
+    GetItems: (Participant) -> {[string]: Item},
     GiveItemFromItemDefinition: (Participant, itemDefinition: ItemDefinition) -> (),
+    DropItem: (Participant, item: Item) -> (),
 
     AddItem: (Participant, item: Item) -> (),
     RemoveItem: (Participant, item: Item) -> (),    
