@@ -92,6 +92,7 @@ export type ItemDefinition = {
     Model: BasePart?,
 
     Slot: number?,
+    CanDrop: boolean?,
 
     CreditCost: number?,
     MaxStock: number?,

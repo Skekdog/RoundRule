@@ -278,6 +278,10 @@ local function GiveItemFromItemDefinition(participant: Types.Participant, itemDe
 end
 
 local function DropItem(participant: Types.Participant, item: Types.Item): ()
+    if not item.Definition.CanDrop then
+        return
+    end
+    
     local char = participant:GetCharacter()
 
     participant:RemoveItem(item)
