@@ -206,6 +206,26 @@ local function LoadProp(round: Types.Round, model: Types.DataModelProp): Types.P
     return prop
 end
 
+local function GetItems(round: Types.Round): {Types.Item}
+    return round._items :: {Types.Item}
+end
+
+local function GetItem(round: Types.Round, model: Types.DataModelItem): Types.Item?
+    return round._items[model]
+end
+
+local function LoadItem(round: Types.Round, map: Types.Map, model: Types.DataModelItem): Types.Item
+    assert(not round:GetItem(model), "Item already exists")
+
+    local itemDefinition = map.AvailableItems[model.Name] or round.Gamemode.AvailableItems[model.Name]
+    assert(itemDefinition, "Item does not exist in map or gamemode")
+
+    local item = Item.new(itemDefinition)
+    round._items[model] = item
+
+    return item
+end
+
 local function GetRoleFromRoleName(round: Types.Round, name: string): Types.Role
     return round.Gamemode.Roles[name] or error("Unknown role: " .. name)
 end
@@ -257,6 +277,20 @@ local function loadProps(round: Types.Round, map: Types.Map): ()
             round:LoadProp(v)
         elseif v:IsA("Folder") then
             loadProps(round, map)
+        end
+    end
+end
+
+local function loadItems(round: Types.Round, map: Types.Map): ()
+    if not map.ItemSpawns then
+        return
+    end
+
+    for _, v in map.ItemSpawns:GetChildren() do
+        if v:IsA("BasePart") then
+            round:LoadItem(map, v)
+        elseif v:IsA("Folder") then
+            loadItems(round, map)
         end
     end
 end
@@ -341,6 +375,7 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
     tryResetDynamicMapObject(mapFolder, map, "ItemSpawns" :: "ItemSpawns")
 
     loadProps(round, map)
+    loadItems(round, map)
 
     round._map = map
 
@@ -360,6 +395,11 @@ function module.new(gamemode: Types.Gamemode): Types.Round
 
         _eventLog = {},
         _props = {},
+
+        _items = {},
+        GetItems = GetItems,
+        GetItem = GetItem,
+        LoadItem = LoadItem,
 
         IsPreGame = IsPreGame,
         IsPostGame = IsPostGame,

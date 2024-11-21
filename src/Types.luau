@@ -17,6 +17,7 @@ export type RoundPhase = "Waiting" | "Preparing" | "Playing" | "Highlights" | "I
 export type RoundAdvanceCallback = (Round) -> ()
 
 export type DataModelProp = BasePart
+export type DataModelItem = BasePart
 
 export type Gamemode = {
     Name: string,
@@ -184,6 +185,7 @@ export type SelfDefenseParams = {
 
 export type Item = {
     Definition: ItemDefinition,
+    Model: Model?,
 }
 
 export type SelfDefenseEntry = {
@@ -325,6 +327,11 @@ export type Round = {
     _map: Map?,
     LoadMap: (Round, map: Map) -> (),
     GetMap: (Round) -> Map,
+
+    _items: {[DataModelItem]: Item?},
+    GetItems: (Round) -> {Item},
+    GetItem: (Round, part: DataModelItem) -> Item?,
+    LoadItem: (Round, map: Map, part: DataModelItem) -> Item,
 
     _props: {[DataModelProp]: Prop?},
     GetProps: (Round) -> {Prop},
