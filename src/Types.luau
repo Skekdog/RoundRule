@@ -306,12 +306,27 @@ export type Participant = {
     SetHealth: (Participant, health: number) -> (),
 }
 
+export type Prop = {
+    Model: Model,
+
+    _health: number?,
+    GetHealth: (Prop) -> number?,
+    SetHealth: (Prop, health: number) -> (),
+
+    TryTakeDamage: (Prop, params: DamageParams) -> (),
+}
+
 export type Round = {
     Gamemode: Gamemode,
 
     _map: Map?,
     LoadMap: (Round, map: Map) -> (),
     GetMap: (Round) -> Map,
+
+    _props: {[Model]: Prop?},
+    GetProps: (Round) -> {Prop},
+    GetProp: (Round, model: Model) -> Prop?,
+    LoadProp: (Round, model: Model) -> Prop,
 
     _participants: {[string]: Participant?},
     GetParticipant: (Round, name: string) -> Participant?,

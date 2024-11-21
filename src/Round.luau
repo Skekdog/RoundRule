@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local Item = require(script.Parent.Item)
 local Participant = require(script.Parent.Participant)
+local Prop = require(script.Parent.Prop)
 local Types = require(script.Parent.Types)
 local module = {}
 
@@ -190,6 +191,21 @@ local function EndRound(round: Types.Round, victor: Types.Victor): ()
     round:SetRoundPhase("Highlights", HIGHLIGHTS_TIME)
 end
 
+local function GetProps(round: Types.Round): {Types.Prop}
+    return round._props :: {Types.Prop}
+end
+
+local function GetProp(round: Types.Round, model: Model): Types.Prop?
+    return round._props[model]
+end
+
+local function LoadProp(round: Types.Round, model: Model): Types.Prop
+    assert(not round:GetProp(model), "Prop already exists")
+    local prop = Prop.new(model)
+    round._props[model] = prop
+    return prop
+end
+
 local function GetRoleFromRoleName(round: Types.Round, name: string): Types.Role
     return round.Gamemode.Roles[name] or error("Unknown role: " .. name)
 end
@@ -229,6 +245,20 @@ end
 
 local function tryClone(folder: Folder?): Folder?
     return if folder then folder:Clone() else nil
+end
+
+local function loadProps(round: Types.Round, map: Types.Map): ()
+    if not map.Props then
+        return
+    end
+
+    for _, v in map.Props:GetChildren() do
+        if v:IsA("Model") then
+            round:LoadProp(v)
+        elseif v:IsA("Folder") then
+            loadProps(round, map)
+        end
+    end
 end
 
 local function LoadMap(round: Types.Round, map: Types.Map): ()
@@ -298,6 +328,8 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
     tryResetDynamicMapObject(mapFolder, map, "Windows" :: "Windows")
     tryResetDynamicMapObject(mapFolder, map, "ItemSpawns" :: "ItemSpawns")
 
+    loadProps(round, map)
+
     round._map = map
 
     currentMap = map
@@ -315,6 +347,7 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         _isPaused = false,
 
         _eventLog = {},
+        _props = {},
 
         IsPreGame = IsPreGame,
         IsPostGame = IsPostGame,
@@ -339,6 +372,10 @@ function module.new(gamemode: Types.Gamemode): Types.Round
 
         GetFormattedRoleName = GetFormattedRoleName,
         IsRoleAlliedWithRole = IsRoleAlliedWithRole,
+
+        GetProps = GetProps,
+        GetProp = GetProp,
+        LoadProp = LoadProp,
     }
 
     return round
