@@ -217,7 +217,7 @@ local function _addToKillList(participant: Types.Participant): ()
 end
 
 local function GetScores(participant: Types.Participant): Types.ScoreTable
-    return participant._scores :: Types.ScoreTable
+    return participant._scores
 end
 
 local function AddScore(participant: Types.Participant, reason: string, amount: number): ()
@@ -312,7 +312,7 @@ local function GetItems(participant: Types.Participant): index<Types.Participant
 end
 
 local function GetItemPurchases(participant: Types.Participant): Types.EquipmentPurchases
-    return participant._itemPurchases :: Types.EquipmentPurchases
+    return participant._itemPurchases
 end
 
 local function PurchaseItem(participant: Types.Participant, itemDefinition: Types.ItemDefinition): Types.ItemPurchaseResult

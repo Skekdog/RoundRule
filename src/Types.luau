@@ -1,12 +1,10 @@
-type Nillable<T> = {[keyof<T>]: index<T, "">?}
-
 export type ParticipantStatus = "Alive" | "Missing" | "Dead" | "Spectating"
 
 export type Victor = Participant | Role
 export type VictorType = {Kind: "Role", Role: string} | {Kind: "Solo"}
 
-export type ScoreTable = {[string]: number}
-export type EquipmentPurchases = {[string]: number}
+export type ScoreTable = {[string]: number?}
+export type EquipmentPurchases = {[string]: number?}
 
 export type ItemPurchaseResult = "Success" | "NotEnoughCredits" | "SlotOccupied" | "NotInStock" | "InvalidItemForRole"
 
@@ -283,7 +281,7 @@ export type Participant = {
     _addToKillList: (Participant) -> (),
     GetKillList: (Participant) -> {Participant},
 
-    _scores: Nillable<ScoreTable>,
+    _scores: ScoreTable,
     GetScores: (Participant) -> ScoreTable,
     AddScore: (Participant, reason: string, amount: number) -> (),
 
@@ -302,7 +300,7 @@ export type Participant = {
 
     IsItemSlotOccupied: (Participant, slot: number) -> boolean,
 
-    _itemPurchases: Nillable<EquipmentPurchases>,
+    _itemPurchases: EquipmentPurchases,
     GetItemPurchases: (Participant) -> EquipmentPurchases,
     PurchaseItem: (Participant, itemDefinition: ItemDefinition) -> ItemPurchaseResult,
 
