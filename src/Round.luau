@@ -414,6 +414,12 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
     currentMap = map
 end
 
+local function SendMessage(round: Types.Round, to: {Player}, message: string): ()
+    for _, v in to do
+        print("Send message: " .. message .. " to: " .. v.Name)
+    end
+end
+
 function module.new(gamemode: Types.Gamemode): Types.Round
     local round: Types.Round = {
         Gamemode = gamemode,
@@ -460,6 +466,8 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         GetProps = GetProps,
         GetProp = GetProp,
         LoadProp = LoadProp,
+
+        SendMessage = SendMessage,
     }
 
     return round
