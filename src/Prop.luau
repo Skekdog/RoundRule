@@ -4,7 +4,7 @@ local module = {}
 local function destroyProp(prop: Types.Prop, params: Types.DamageParams?): ()
     local onBreak = prop.Model:FindFirstChild("OnBreak")
     if onBreak and onBreak:IsA("ModuleScript") then
-        (require)(onBreak)(prop, params)
+        ((require)(onBreak) :: Types.OnPropBreak)(prop, params)
     end
 end
 

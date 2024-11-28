@@ -137,6 +137,8 @@ export type Map = {
     read AvailableItems: {[string]: ItemDefinition},
 }
 
+export type OnPropBreak = (Prop, params: DamageParams?) -> () 
+
 export type RoundEvent = {
     Timestamp: number,
     Data: RoundEventData,
