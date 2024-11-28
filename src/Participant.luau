@@ -40,6 +40,7 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
     end
 
     for _, v in participant:GetItems() do
+        assert(v)
         participant:DropItem(v)
     end
 
@@ -258,6 +259,7 @@ end
 
 local function IsItemSlotOccupied(participant: Types.Participant, slot: number): boolean
     for _, v in participant:GetItems() do
+        assert(v)
         if v.Definition.Slot == slot then
             return true
         end
@@ -305,8 +307,8 @@ local function RemoveItem(participant: Types.Participant, item: Types.Item): ()
     participant._items[item.Definition.Name] = nil
 end
 
-local function GetItems(participant: Types.Participant): {[string]: Types.Item}
-    return participant._items :: {[string]: Types.Item}
+local function GetItems(participant: Types.Participant): index<Types.Participant, "_items">
+    return participant._items
 end
 
 local function GetItemPurchases(participant: Types.Participant): Types.EquipmentPurchases

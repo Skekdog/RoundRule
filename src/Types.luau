@@ -291,7 +291,7 @@ export type Participant = {
     GetCredits: (Participant) -> number,
 
     _items: {[string]: Item?},
-    GetItems: (Participant) -> {[string]: Item},
+    GetItems: (Participant) -> index<Participant, "_items">,
     GiveItemFromItemDefinition: (Participant, itemDefinition: ItemDefinition) -> (),
     DropItem: (Participant, item: Item) -> (),
 
@@ -333,18 +333,18 @@ export type Round = {
     GetMap: (Round) -> Map,
 
     _items: {[DataModelItem]: Item?},
-    GetItems: (Round) -> {Item},
+    GetItems: (Round) -> index<Round, "_items">,
     GetItem: (Round, part: DataModelItem) -> Item?,
     LoadItem: (Round, map: Map, part: DataModelItem) -> Item,
 
     _props: {[DataModelProp]: Prop?},
-    GetProps: (Round) -> {Prop},
+    GetProps: (Round) -> index<Round, "_props">,
     GetProp: (Round, model: DataModelProp) -> Prop?,
     LoadProp: (Round, model: DataModelProp) -> Prop,
 
     _participants: {[string]: Participant?},
     GetParticipant: (Round, name: string) -> Participant?,
-    GetParticipants: (Round) -> {Participant},
+    GetParticipants: (Round) -> index<Round, "_participants">,
     AddPlayer: (Round, player: Player) -> Participant,
     RemoveParticipant: (Round, participant: Participant) -> (),
 

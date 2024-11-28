@@ -26,8 +26,8 @@ local function GetParticipant(round: Types.Round, name: string): Types.Participa
     return round._participants[name]
 end
 
-local function GetParticipants(round: Types.Round): {Types.Participant}
-    return round._participants :: {Types.Participant}
+local function GetParticipants(round: Types.Round): index<Types.Round, "_participants">
+    return round._participants
 end
 
 local function AddPlayer(round: Types.Round, player: Player): Types.Participant
@@ -44,8 +44,13 @@ local function AddPlayer(round: Types.Round, player: Player): Types.Participant
         participant:AddItem(Item.new(v))
     end
 
-    if #round:GetParticipants() == round.Gamemode.MinimumPlayers then
-        round:SetRoundPhase("Preparing", PREPARING_TIME)
+    local count = 0
+    for _ in round:GetParticipants() do
+        count += 1
+        if count == round.Gamemode.MinimumPlayers then
+            round:SetRoundPhase("Preparing", PREPARING_TIME)
+            break
+        end
     end
 
     participant:SpawnCharacter()
@@ -68,7 +73,12 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
     participant:UnspawnCharacter()
     round.Gamemode:OnDeath(participant)
 
-    if #round:GetParticipants() < round.Gamemode.MinimumPlayers then
+    local count = 0
+    for _ in round:GetParticipants() do
+        count += 1
+    end
+
+    if count < round.Gamemode.MinimumPlayers then
         round:SetRoundPhase("Waiting", math.huge)
     end
 end
@@ -150,6 +160,7 @@ local function StartRound(round: Types.Round): ()
     round = round :: Types.Round -- more type refinement nonsense
 
     for _, v in round:GetParticipants() do
+        assert(v)
         while not v:GetCharacter() and v.Player:IsDescendantOf(Players) do
             task.wait()
         end
@@ -159,10 +170,15 @@ local function StartRound(round: Types.Round): ()
         Kind = "StartRoundEvent",
     })
 
-    round:SetRoundPhase("Playing", round.Gamemode.Duration(#round:GetParticipants()))
+    local participantList = {}
+    for _, v in round:GetParticipants() do
+        table.insert(participantList, v)
+    end
 
-    Random.new():Shuffle(round:GetParticipants())
-    round.Gamemode:AssignRoles(round:GetParticipants())
+    round:SetRoundPhase("Playing", round.Gamemode.Duration(#participantList))
+
+    Random.new():Shuffle(participantList)
+    round.Gamemode:AssignRoles(participantList)
 end
 
 local function EndRound(round: Types.Round, victor: Types.Victor): ()
@@ -191,8 +207,8 @@ local function EndRound(round: Types.Round, victor: Types.Victor): ()
     round:SetRoundPhase("Highlights", HIGHLIGHTS_TIME)
 end
 
-local function GetProps(round: Types.Round): {Types.Prop}
-    return round._props :: {Types.Prop}
+local function GetProps(round: Types.Round): index<Types.Round, "_props">
+    return round._props
 end
 
 local function GetProp(round: Types.Round, model: Types.DataModelProp): Types.Prop?
@@ -206,8 +222,8 @@ local function LoadProp(round: Types.Round, model: Types.DataModelProp): Types.P
     return prop
 end
 
-local function GetItems(round: Types.Round): {Types.Item}
-    return round._items :: {Types.Item}
+local function GetItems(round: Types.Round): index<Types.Round, "_items">
+    return round._items
 end
 
 local function GetItem(round: Types.Round, model: Types.DataModelItem): Types.Item?
