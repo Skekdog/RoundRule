@@ -414,7 +414,11 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
     currentMap = map
 end
 
-local function SendMessage(round: Types.Round, to: {Player}, message: string): ()
+local function SendMessage(round: Types.Round, to: {Player} | Player, message: string): ()
+    if typeof(to) == "Instance" then
+        to = {to}
+    end
+
     for _, v in to do
         print("Send message: " .. message .. " to: " .. v.Name)
     end

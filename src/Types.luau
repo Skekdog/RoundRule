@@ -378,7 +378,7 @@ export type Round = {
 
     IsRoleAlliedWithRole: (role1: Role, role2: Role) -> boolean,
 
-    SendMessage: (Round, to: {Player}, message: string) -> (),
+    SendMessage: (Round, to: {Player} | Player, message: string) -> (),
 }
 
 return nil
