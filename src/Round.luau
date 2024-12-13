@@ -5,6 +5,8 @@ local Prop = require(script.Parent.Prop)
 local Types = require(script.Parent.Types)
 local module = {}
 
+local data = script.Parent
+
 local HIGHLIGHTS_TIME = 20
 local PREPARING_TIME = 20
 
@@ -107,6 +109,9 @@ local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase, durati
     elseif phase == "Intermission" then
         callback = false
     end
+
+    data:SetAttribute("Phase", phase)
+
     round:SetAdvanceTime(workspace:GetServerTimeNow() + duration, callback or (false :: false))
 end
 
@@ -122,6 +127,8 @@ local function SetAdvanceTime(round: Types.Round, finishTime: number, callback: 
     else
         round._lastAdvanceCallback = callback
     end
+
+    data:SetAttribute("AdvanceTime", finishTime)
 
     round._activeAdvanceThread = coroutine.wrap(function()
         while workspace:GetServerTimeNow() < finishTime do
@@ -151,6 +158,8 @@ end
 
 local function PauseRound(round: Types.Round, paused: boolean): ()
     round._isPaused = paused
+
+    data:SetAttribute("Paused", paused)
 end
 
 local function StartRound(round: Types.Round): ()
@@ -412,6 +421,8 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
     round._map = map
 
     currentMap = map
+
+    data:SetAttribute("CurrentMap", currentMap.DisplayName)
 end
 
 local function SendMessage(round: Types.Round, to: {Player} | Player, message: string): ()
@@ -473,6 +484,11 @@ function module.new(gamemode: Types.Gamemode): Types.Round
 
         SendMessage = SendMessage,
     }
+
+    data:SetAttribute("Phase", round:GetRoundPhase())
+    data:SetAttribute("Paused", round:GetIsRoundPaused())
+    data:SetAttribute("AdvanceTime", nil)
+    data:SetAttribute("CurrentMap", nil)
 
     return round
 end
