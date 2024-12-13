@@ -254,7 +254,7 @@ export type SelfDefenseParams = {
 export type GunWeapon = {
     Kind: "Gun",
     Definition: GunWeaponDefinition,
-    Model: Model,
+    Model: BasePart,
 
     Ammo: number,
     LastFireTime: number,
@@ -265,13 +265,13 @@ export type GunWeapon = {
 export type GrenadeWeapon = {
     Kind: "Grenade",
     Definition: GrenadeWeaponDefinition,
-    Model: Model,
+    Model: BasePart,
 }
 
 export type MeleeWeapon = {
     Kind: "Melee",
     Definition: MeleeWeaponDefinition,
-    Model: Model,
+    Model: BasePart,
 
     LastAttackTime: number,
 }
@@ -279,7 +279,7 @@ export type MeleeWeapon = {
 export type Item = {
     Kind: "Item",
     Definition: ItemDefinition,
-    Model: Model?,
+    Model: BasePart?,
 }
 
 export type AnyItem = Item | GunWeapon | GrenadeWeapon | MeleeWeapon
