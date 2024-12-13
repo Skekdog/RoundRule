@@ -117,6 +117,9 @@ export type CommonWeaponDefinition = CommonItemDefinition & {
 export type ItemDefinition = CommonItemDefinition & {
     Kind: "Item",
 
+    PrimaryHint: string?,
+    AlternateHint: string?,
+
     PrimaryFire: ((Item, Participant) -> ())?,
     AlternateFire: ((Item, Participant) -> ())?,
 }
