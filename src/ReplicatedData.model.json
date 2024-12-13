@@ -1,0 +1,13 @@
+{
+    "className": "Folder",
+    "children": [
+        {
+            "name": "Events",
+            "className": "Folder"
+        },
+        {
+            "name": "Highlights",
+            "className": "Folder"
+        }
+    ]
+}

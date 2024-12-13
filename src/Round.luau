@@ -5,7 +5,7 @@ local Prop = require(script.Parent.Prop)
 local Types = require(script.Parent.Types)
 local module = {}
 
-local data = script.Parent
+local data = script.Parent.ReplicatedData
 
 local HIGHLIGHTS_TIME = 20
 local PREPARING_TIME = 20
