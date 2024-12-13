@@ -9,7 +9,7 @@ export type EquipmentPurchases = {[string]: number?}
 export type ItemPurchaseResult = "Success" | "NotEnoughCredits" | "SlotOccupied" | "NotInStock" | "InvalidItemForRole"
 
 export type GeneralDamageSource = "Fall" | "Drown" | "Explode" | "Burn" | "Stab" | "Shot" | "Bludgeon" | "Crush" | "Magic" | "Other"
-export type DamageSource = Item | GeneralDamageSource
+export type DamageSource = AnyItem | GeneralDamageSource
 
 export type RoundPhase = "Waiting" | "Preparing" | "Playing" | "Highlights" | "Intermission"
 export type RoundAdvanceCallback = (Round) -> ()
@@ -34,8 +34,8 @@ export type Gamemode = {
     EnableFriendlyFire: boolean?,
     EnableKarma: boolean?,
 
-    AvailableItems: {[string]: ItemDefinition},
-    StartingItems: {ItemDefinition},
+    AvailableItems: {[string]: AnyItemDefinition},
+    StartingItems: {AnyItemDefinition},
 
     Duration: (numParticipants: number) -> number,
 
@@ -59,9 +59,9 @@ export type Role = {
     VictoryText: string?,
     VictoryMusic: {Sound}?,
 
-    StartingItems: {ItemDefinition}?,
+    StartingItems: {AnyItemDefinition}?,
     StartingCredits: number?,
-    EquipmentShop: {ItemDefinition}?,
+    EquipmentShop: {AnyItemDefinition}?,
 
     ShouldAnnounceDisconnect: boolean?,
     CanStealCreditsFromCorpses: boolean?,
@@ -81,13 +81,20 @@ export type Role = {
     HighlightedRoles: {string}?,
 }
 
-export type ItemDefinition = {
+export type ItemDamageInfo = number | {
+    Head: number,
+    Body: number,
+    Limb: number,
+}
+
+export type CommonItemDefinition = {
     Name: string,
     DisplayName: string?,
     Description: string?,
     Icon: string?,
 
     Model: BasePart?,
+    HoldAnimation: string?,
 
     Slot: number?,
     CanDrop: boolean?,
@@ -97,6 +104,66 @@ export type ItemDefinition = {
 
     AllowFreeKill: boolean?,
 }
+
+export type CommonWeaponDefinition = CommonItemDefinition & {
+    Damage: ItemDamageInfo,
+
+    HoldAnimation: string,
+
+    BeforeHitParticipant: (Participant, Participant, DamageParams) -> (),
+    BeforeHitProp: (Prop, DamageParams) -> (),
+}
+
+export type ItemDefinition = CommonItemDefinition & {
+    Kind: "Item",
+}
+
+export type GunWeaponDefinition = CommonWeaponDefinition & {
+    Kind: "Gun",
+
+    AimAnimation: string?,
+
+    ReloadTime: number,
+    FireTime: number,
+
+    FiredSound: string,
+    ReloadSound: string,
+
+    AmmoType: string?,
+
+    AimFOV: number?,
+    HasScope: boolean?,
+    ScopeRequired: boolean?,
+    AimSpreadMultiplier: number?,
+
+    Projectile: string?,
+    
+    BulletsPerShot: number?,
+
+    BeforeHitParticipant: (Participant, Participant, DamageParams) -> (),
+    BeforeHitProp: (Prop, DamageParams) -> (),
+}
+
+export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
+    Kind: "Grenade",
+
+    FuseTime: number,
+
+    Projectile: string,
+    ProjectileForce: number,
+}
+
+export type MeleeWeaponDefinition = CommonWeaponDefinition & {
+    Kind: "Melee",
+
+    AttackAnimation: string,
+
+    AttackInterval: number,
+
+    MaxDistance: number,
+}
+
+export type AnyItemDefinition = ItemDefinition | GunWeaponDefinition | GrenadeWeaponDefinition | MeleeWeaponDefinition
 
 export type Map = {
     read Name: string,
@@ -132,7 +199,7 @@ export type Map = {
     read TerrainRegion: TerrainRegion?,
     read TerrainColors: Folder,
 
-    read AvailableItems: {[string]: ItemDefinition},
+    read AvailableItems: {[string]: AnyItemDefinition},
 }
 
 export type OnPropBreak = (Prop, params: DamageParams?) -> () 
@@ -184,10 +251,38 @@ export type SelfDefenseParams = {
     Duration: number,
 }
 
+export type GunWeapon = {
+    Kind: "Gun",
+    Definition: GunWeaponDefinition,
+    Model: Model,
+
+    Ammo: number,
+    LastFireTime: number,
+
+    IsReloading: boolean,
+}
+
+export type GrenadeWeapon = {
+    Kind: "Grenade",
+    Definition: GrenadeWeaponDefinition,
+    Model: Model,
+}
+
+export type MeleeWeapon = {
+    Kind: "Melee",
+    Definition: MeleeWeaponDefinition,
+    Model: Model,
+
+    LastAttackTime: number,
+}
+
 export type Item = {
+    Kind: "Item",
     Definition: ItemDefinition,
     Model: Model?,
 }
+
+export type AnyItem = Item | GunWeapon | GrenadeWeapon | MeleeWeapon
 
 export type SelfDefenseEntry = {
     Against: Participant,
@@ -290,19 +385,19 @@ export type Participant = {
     SetCredits: (Participant, amount: number) -> (),
     GetCredits: (Participant) -> number,
 
-    _items: {[string]: Item?},
+    _items: {[string]: AnyItem?},
     GetItems: (Participant) -> index<Participant, "_items">,
-    GiveItemFromItemDefinition: (Participant, itemDefinition: ItemDefinition) -> (),
-    DropItem: (Participant, item: Item) -> (),
+    GiveItemFromItemDefinition: (Participant, itemDefinition: AnyItemDefinition) -> (),
+    DropItem: (Participant, item: AnyItem) -> (),
 
-    AddItem: (Participant, item: Item) -> (),
-    RemoveItem: (Participant, item: Item) -> (),    
+    AddItem: (Participant, item: AnyItem) -> (),
+    RemoveItem: (Participant, item: AnyItem) -> (),    
 
     IsItemSlotOccupied: (Participant, slot: number) -> boolean,
 
     _itemPurchases: EquipmentPurchases,
     GetItemPurchases: (Participant) -> EquipmentPurchases,
-    PurchaseItem: (Participant, itemDefinition: ItemDefinition) -> ItemPurchaseResult,
+    PurchaseItem: (Participant, itemDefinition: AnyItemDefinition) -> ItemPurchaseResult,
 
     _status: ParticipantStatus,
     _setStatus: (Participant, status: ParticipantStatus) -> (),
@@ -332,10 +427,10 @@ export type Round = {
     LoadMap: (Round, map: Map) -> (),
     GetMap: (Round) -> Map,
 
-    _items: {[DataModelItem]: Item?},
+    _items: {[DataModelItem]: AnyItem?},
     GetItems: (Round) -> index<Round, "_items">,
-    GetItem: (Round, part: DataModelItem) -> Item?,
-    LoadItem: (Round, map: Map, part: DataModelItem) -> Item,
+    GetItem: (Round, part: DataModelItem) -> AnyItem?,
+    LoadItem: (Round, map: Map, part: DataModelItem) -> AnyItem,
 
     _props: {[DataModelProp]: Prop?},
     GetProps: (Round) -> index<Round, "_props">,

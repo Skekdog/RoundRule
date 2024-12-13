@@ -268,18 +268,19 @@ local function IsItemSlotOccupied(participant: Types.Participant, slot: number):
     return false
 end
 
-local function GiveItemFromItemDefinition(participant: Types.Participant, itemDefinition: Types.ItemDefinition): ()
-    local item: Types.Item
+local function GiveItemFromItemDefinition(participant: Types.Participant, itemDefinition: Types.AnyItemDefinition): ()
+    local item: Types.AnyItem
     if itemDefinition.Model then
+        assert(typeof(itemDefinition.Model) == "Instance" and itemDefinition.Model:IsA("BasePart"))
         item = participant.Round:LoadItem(participant.Round:GetMap(), itemDefinition.Model)
     else
-        item = Item.new(itemDefinition)
+        item = Item.new(itemDefinition :: Types.AnyItemDefinition)
     end
 
     participant:AddItem(item)
 end
 
-local function DropItem(participant: Types.Participant, item: Types.Item): ()
+local function DropItem(participant: Types.Participant, item: Types.AnyItem): ()
     if not item.Definition.CanDrop then
         return
     end
@@ -295,15 +296,16 @@ local function DropItem(participant: Types.Participant, item: Types.Item): ()
     item.Model.Parent = participant.Round:GetMap().ItemSpawns
 end
 
-local function AddItem(participant: Types.Participant, item: Types.Item): ()
+local function AddItem(participant: Types.Participant, item: Types.AnyItem): ()
     if item.Definition.Slot then
+        assert(typeof(item.Definition.Slot) == "number")
         assert(not participant:IsItemSlotOccupied(item.Definition.Slot), "Item slot already occupied")
     end
 
     participant._items[item.Definition.Name] = item
 end
 
-local function RemoveItem(participant: Types.Participant, item: Types.Item): ()
+local function RemoveItem(participant: Types.Participant, item: Types.AnyItem): ()
     participant._items[item.Definition.Name] = nil
 end
 
@@ -315,29 +317,31 @@ local function GetItemPurchases(participant: Types.Participant): Types.Equipment
     return participant._itemPurchases
 end
 
-local function PurchaseItem(participant: Types.Participant, itemDefinition: Types.ItemDefinition): Types.ItemPurchaseResult
+local function PurchaseItem(participant: Types.Participant, itemDefinition: Types.AnyItemDefinition): Types.ItemPurchaseResult
     local role = participant:GetRole()
 
     if not role or not role.EquipmentShop or not table.find(role.EquipmentShop, itemDefinition) then
         return "InvalidItemForRole"
     end
 
-    if participant:GetCredits() < itemDefinition.Cost then
+    assert(itemDefinition.CreditCost and itemDefinition.CreditCost > 0, "Item cost must be greater than 0")
+
+    if participant:GetCredits() < itemDefinition.CreditCost then
         return "NotEnoughCredits"
     end
 
-    if (participant._itemPurchases[itemDefinition.Name] or 0) >= itemDefinition.MaxStock then
+    if (participant._itemPurchases[itemDefinition.Name] or 0) >= (itemDefinition.MaxStock or math.huge) then
         return "NotInStock"
     end
 
-    if participant:IsItemSlotOccupied(itemDefinition.Slot) then
+    if itemDefinition.Slot and participant:IsItemSlotOccupied(itemDefinition.Slot) then
         return "SlotOccupied"
     end
 
-    participant:SetCredits(participant:GetCredits() - itemDefinition.Cost)
+    participant:SetCredits(participant:GetCredits() - itemDefinition.CreditCost)
     participant._itemPurchases[itemDefinition.Name] = (participant._itemPurchases[itemDefinition.Name] or 0) + 1
 
-    participant:GiveItemFromItemDefinition(itemDefinition)
+    participant:GiveItemFromItemDefinition(itemDefinition :: Types.AnyItemDefinition)
 
     return "Success"
 end
@@ -507,7 +511,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         AddItem = AddItem,
         RemoveItem = RemoveItem,
         DropItem = DropItem,
-        GetItems = GetItems,        
+        GetItems = GetItems,
         GetItemPurchases = GetItemPurchases,
         PurchaseItem = PurchaseItem,
         IsItemSlotOccupied = IsItemSlotOccupied,

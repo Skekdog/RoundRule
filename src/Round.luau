@@ -226,11 +226,11 @@ local function GetItems(round: Types.Round): index<Types.Round, "_items">
     return round._items
 end
 
-local function GetItem(round: Types.Round, model: Types.DataModelItem): Types.Item?
+local function GetItem(round: Types.Round, model: Types.DataModelItem): Types.AnyItem?
     return round._items[model]
 end
 
-local function LoadItem(round: Types.Round, map: Types.Map, model: Types.DataModelItem): Types.Item
+local function LoadItem(round: Types.Round, map: Types.Map, model: Types.DataModelItem): Types.AnyItem
     assert(not round:GetItem(model), "Item already exists")
 
     local itemDefinition = map.AvailableItems[model.Name] or round.Gamemode.AvailableItems[model.Name]
