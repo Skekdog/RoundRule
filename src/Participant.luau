@@ -108,6 +108,17 @@ local function SetRole(participant: Types.Participant, role: Types.Role): ()
 
     participant._role = role
 
+    for _, v in participant.Round:GetParticipants() do
+        assert(v)
+        if v:GetStatus() == "Missing" then
+            if role.CanSeeMissingInAction then
+                remotes.UpdatePlayerStatus:FireClient(v.Player, participant.Player.Name, "Missing")
+            else
+                remotes.UpdatePlayerStatus:FireClient(v.Player, participant.Player.Name, "Alive")
+            end
+        end
+    end
+
     remotes.AssignRole:FireClient(participant.Player, role.Name)
 end
 
@@ -209,7 +220,21 @@ end
 
 local function _setStatus(participant: Types.Participant, status: Types.ParticipantStatus): ()
     participant._status = status
-    remotes.UpdatePlayerStatus:FireClient(participant.Player, status)
+
+    if status == "Missing" then
+        for _, v in participant.Round:GetParticipants() do
+            assert(v)
+            local role = v:GetRole()
+            if role and role.CanSeeMissingInAction then
+                remotes.UpdatePlayerStatus:FireClient(v.Player, participant.Player.Name, status)
+            end
+        end
+    else
+        for _, v in participant.Round:GetParticipants() do
+            assert(v)
+            remotes.UpdatePlayerStatus:FireAllClients(participant.Player.Name, status)
+        end
+    end
 end
 
 local function GetKillList(participant: Types.Participant): {Types.Participant}
