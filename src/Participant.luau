@@ -117,6 +117,21 @@ local function SetRole(participant: Types.Participant, role: Types.Role): ()
                 remotes.UpdatePlayerStatus:FireClient(v.Player, participant.Player.Name, "Alive")
             end
         end
+
+        local otherRole = v:GetRole()
+        if otherRole then
+            if otherRole.RevealedRoles and table.find(otherRole.RevealedRoles, role.Name) then
+                remotes.UpdatePlayerRole:FireClient(v.Player, participant.Player.Name, role.Name)
+            else
+                remotes.UpdatePlayerRole:FireClient(v.Player, participant.Player.Name, nil)
+            end
+
+            if role.RevealedRoles and table.find(role.RevealedRoles, otherRole.Name) then
+                remotes.UpdatePlayerRole:FireClient(participant.Player, v.Player.Name, otherRole.Name)
+            else
+                remotes.UpdatePlayerRole:FireClient(participant.Player, v.Player.Name, nil)
+            end
+        end
     end
 
     remotes.AssignRole:FireClient(participant.Player, role.Name)
