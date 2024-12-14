@@ -120,8 +120,13 @@ export type ItemDefinition = CommonItemDefinition & {
     PrimaryHint: string?,
     AlternateHint: string?,
 
-    PrimaryFire: ((Item, Participant) -> ())?,
-    AlternateFire: ((Item, Participant) -> ())?,
+    PrimaryFireClient: ((Item, Participant) -> ())?,
+    AlternateFireClient: ((Item, Participant) -> ())?,
+
+    HeartbeatClient: ((Item, Participant) -> ())?,
+
+    PrimaryFireServer: ((Item, Participant) -> ())?,
+    AlternateFireServer: ((Item, Participant) -> ())?,
 }
 
 export type GunWeaponDefinition = CommonWeaponDefinition & {
