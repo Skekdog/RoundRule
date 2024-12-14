@@ -266,12 +266,16 @@ export type GunWeapon = {
     LastFireTime: number,
 
     IsReloading: boolean,
+
+    Extras: {[string]: any},
 }
 
 export type GrenadeWeapon = {
     Kind: "Grenade",
     Definition: GrenadeWeaponDefinition,
     Model: BasePart,
+
+    Extras: {[string]: any},
 }
 
 export type MeleeWeapon = {
@@ -280,12 +284,16 @@ export type MeleeWeapon = {
     Model: BasePart,
 
     LastAttackTime: number,
+
+    Extras: {[string]: any},
 }
 
 export type Item = {
     Kind: "Item",
     Definition: ItemDefinition,
     Model: BasePart?,
+
+    Extras: {[string]: any},
 }
 
 export type AnyItem = Item | GunWeapon | GrenadeWeapon | MeleeWeapon
@@ -334,6 +342,8 @@ export type OwnParticipantView = ParticipantView & {
 
 export type Participant = {
     Kind: "Participant",
+
+    Extras: {[string]: any},
     
     read Player: Player,
     read Round: Round,

@@ -9,6 +9,8 @@ function module.new(definition: Types.AnyItemDefinition): Types.AnyItem
             Kind = "Item",
             Definition = definition :: Types.ItemDefinition,
             Model = model :: BasePart?,
+
+            Extras = {},
         }
     elseif definition.Kind == "Gun" then
         return {
@@ -20,12 +22,16 @@ function module.new(definition: Types.AnyItemDefinition): Types.AnyItem
             LastFireTime = 0,
 
             IsReloading = false,
+
+            Extras = {},
         }
     elseif definition.Kind == "Grenade" then
         return {
             Kind = "Grenade",
             Definition = definition :: Types.GrenadeWeaponDefinition,
             Model = model :: BasePart,
+
+            Extras = {},
         }
     elseif definition.Kind == "Melee" then
         return {
@@ -34,6 +40,8 @@ function module.new(definition: Types.AnyItemDefinition): Types.AnyItem
             Model = model :: BasePart,
 
             LastAttackTime = 0,
+
+            Extras = {},
         }
     else
         error("Unknown item kind: " .. definition.Kind)
