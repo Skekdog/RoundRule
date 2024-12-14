@@ -6,6 +6,7 @@ local Types = require(script.Parent.Types)
 local module = {}
 
 local data = script.Parent.ReplicatedData
+local remotes = script.Parent.Remotes
 
 local HIGHLIGHTS_TIME = 20
 local PREPARING_TIME = 20
@@ -69,7 +70,7 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
 
     local role = participant:GetRole()
     if role and role.ShouldAnnounceDisconnect then
-        print(participant:GetFormattedName() .. " has disconnected. They were a " .. role.Name .. ".")
+        round:SendMessage(Players:GetPlayers(), participant:GetFormattedName() .. " has disconnected. They were a " .. role.Name .. ".")
     end
 
     participant:UnspawnCharacter()
@@ -431,7 +432,7 @@ local function SendMessage(round: Types.Round, to: {Player} | Player, message: s
     end
 
     for _, v in to do
-        print("Send message: " .. message .. " to: " .. v.Name)
+        remotes.SendMessage:FireClient(v, message)
     end
 end
 
