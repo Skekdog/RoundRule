@@ -215,6 +215,8 @@ local function EndRound(round: Types.Round, victor: Types.Victor): ()
         VictoryText = victorRole.VictoryText :: string,
     })
     round:SetRoundPhase("Highlights", HIGHLIGHTS_TIME)
+
+    remotes.RoundHighlights:FireAllClients()
 end
 
 local function GetProps(round: Types.Round): index<Types.Round, "_props">

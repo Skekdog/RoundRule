@@ -5,6 +5,8 @@ local Types = require(script.Parent.Types)
 
 local SELF_DEFENSE_DURATION = 15
 
+local remotes = script.Parent.Remotes
+
 local module = {}
 
 local function rejoinRound(participant: Types.Participant): ()
@@ -105,6 +107,8 @@ local function SetRole(participant: Types.Participant, role: Types.Role): ()
     end
 
     participant._role = role
+
+    remotes.AssignRole:FireClient(participant.Player, role.Name)
 end
 
 local function GetHealth(participant: Types.Participant): number
@@ -205,6 +209,7 @@ end
 
 local function _setStatus(participant: Types.Participant, status: Types.ParticipantStatus): ()
     participant._status = status
+    remotes.UpdatePlayerStatus:FireClient(participant.Player, status)
 end
 
 local function GetKillList(participant: Types.Participant): {Types.Participant}
@@ -230,6 +235,7 @@ end
 
 local function SetCredits(participant: Types.Participant, amount: number): ()
     participant._credits = amount
+    remotes.UpdateCredits:FireClient(participant.Player, amount)
 end
 
 local function AddCredits(participant: Types.Participant, amount: number): ()
@@ -303,10 +309,14 @@ local function AddItem(participant: Types.Participant, item: Types.AnyItem): ()
     end
 
     participant._items[item.Definition.Name] = item
+
+    remotes.UpdateInventory:FireClient(participant.Player, "Add", item)
 end
 
 local function RemoveItem(participant: Types.Participant, item: Types.AnyItem): ()
     participant._items[item.Definition.Name] = nil
+
+    remotes.UpdateInventory:FireClient(participant.Player, "Remove", item)
 end
 
 local function GetItems(participant: Types.Participant): index<Types.Participant, "_items">
