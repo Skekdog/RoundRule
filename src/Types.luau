@@ -410,6 +410,11 @@ export type Participant = {
     GetCredits: (Participant) -> number,
 
     _items: {[string]: AnyItem?},
+
+    GetEquippedItem: (Participant) -> AnyItem?,
+    SetEquippedItem: (Participant, item: AnyItem?) -> (),
+    _equippedItem: AnyItem?,
+
     GetItems: (Participant) -> index<Participant, "_items">,
     GiveItemFromItemDefinition: (Participant, itemDefinition: AnyItemDefinition) -> (),
     DropItem: (Participant, item: AnyItem) -> (),

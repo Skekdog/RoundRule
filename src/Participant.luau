@@ -170,6 +170,14 @@ local function SetKarma(participant: Types.Participant, karma: number): ()
     end
 end
 
+local function GetEquippedItem(participant: Types.Participant): Types.AnyItem?
+    return participant._equippedItem
+end
+
+local function SetEquippedItem(participant: Types.Participant, item: Types.AnyItem?): ()
+    participant._equippedItem = item
+end
+
 local function GetKarmaDamageMultiplier(participant: Types.Participant): number
     return ((0.00005 * (participant:GetKarma() ^ 2)) + 50) / 100
 end
@@ -179,6 +187,10 @@ local function IsDamageJustifiedAgainstParticipant(participant: Types.Participan
 end
 
 local function IsFreeKill(participant: Types.Participant): boolean
+    local item = participant:GetEquippedItem()
+    if item and item.Definition.AllowFreeKill then
+        return true
+    end
     return participant._isFreeKill
 end
 
@@ -522,6 +534,9 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         _credits = 0,
         _itemPurchases = {},
         _items = {},
+
+        GetEquippedItem = GetEquippedItem,
+        SetEquippedItem = SetEquippedItem,
 
         GetCharacter = GetCharacter,
         GetHumanoid = GetHumanoid,
