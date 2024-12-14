@@ -109,9 +109,6 @@ export type CommonWeaponDefinition = CommonItemDefinition & {
     Damage: ItemDamageInfo,
 
     HoldAnimation: string,
-
-    BeforeHitParticipant: (Participant, Participant, DamageParams) -> (),
-    BeforeHitProp: (Prop, DamageParams) -> (),
 }
 
 export type ItemDefinition = CommonItemDefinition & {
@@ -120,10 +117,10 @@ export type ItemDefinition = CommonItemDefinition & {
     PrimaryHint: string?,
     AlternateHint: string?,
 
-    PrimaryFireClient: ((Item, Participant) -> ())?,
-    AlternateFireClient: ((Item, Participant) -> ())?,
+    PrimaryFireClient: ((Item) -> ())?,
+    AlternateFireClient: ((Item) -> ())?,
 
-    HeartbeatClient: ((Item, Participant) -> ())?,
+    HeartbeatClient: ((Item) -> ())?,
 
     PrimaryFireServer: ((Item, Participant) -> ())?,
     AlternateFireServer: ((Item, Participant) -> ())?,
@@ -151,8 +148,8 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
     
     BulletsPerShot: number?,
 
-    BeforeHitParticipant: (Participant, Participant, DamageParams) -> (),
-    BeforeHitProp: (Prop, DamageParams) -> (),
+    BeforeHitParticipant: (GunWeapon, Participant, Participant, DamageParams) -> (),
+    BeforeHitProp: (GunWeapon, Participant, Prop, DamageParams) -> (),
 }
 
 export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
@@ -162,6 +159,9 @@ export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
 
     Projectile: string,
     ProjectileForce: number,
+
+    BeforeHitParticipant: (GrenadeWeapon, Participant, Participant, DamageParams) -> (),
+    BeforeHitProp: (GrenadeWeapon, Participant, Prop, DamageParams) -> (),
 }
 
 export type MeleeWeaponDefinition = CommonWeaponDefinition & {
@@ -172,6 +172,9 @@ export type MeleeWeaponDefinition = CommonWeaponDefinition & {
     AttackInterval: number,
 
     MaxDistance: number,
+
+    BeforeHitParticipant: (GrenadeWeapon, Participant, Participant, DamageParams) -> (),
+    BeforeHitProp: (GrenadeWeapon, Participant, Prop, DamageParams) -> (),
 }
 
 export type AnyItemDefinition = ItemDefinition | GunWeaponDefinition | GrenadeWeaponDefinition | MeleeWeaponDefinition
