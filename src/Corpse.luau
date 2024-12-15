@@ -6,6 +6,9 @@ local function GetSearchedBy(corpse: Types.Corpse): {Types.Participant}
 end
 
 local function AddSearchedBy(corpse: Types.Corpse, participant: Types.Participant): ()
+    if table.find(corpse._searchedBy, participant) then
+        return
+    end
     table.insert(corpse._searchedBy, participant)
 end
 

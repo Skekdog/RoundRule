@@ -70,6 +70,9 @@ export type Role = {
 
     AwardCreditsToRolesOnDeath: {[string]: number},
 
+    CorpseSearchResultsPublicised: boolean?,
+    ScoreForFindingBodies: number?,
+
     WalkSpeed: number,
     JumpPower: number,
     Health: number,

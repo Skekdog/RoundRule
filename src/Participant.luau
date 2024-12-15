@@ -535,7 +535,20 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
 
     if other:GetStatus() == "Missing" then
         other:_setStatus("Dead")
-        participant:AddScore("Bodies Found", 1)
+
+        if ownRole then
+            if ownRole.ScoreForFindingBodies then
+                participant:AddScore("Bodies Found", ownRole.ScoreForFindingBodies)
+            end
+
+            if ownRole.CorpseSearchResultsPublicised then
+                for _, v in participant.Round:GetParticipants() do
+                    assert(v)
+                    corpse:AddSearchedBy(v)
+                    remotes.UpdatePlayerCorpse:FireClient(v.Player, other.Player.Name, corpse)
+                end
+            end
+        end
 
         local msg = participant:GetFormattedName() .. " found the body of " .. other:GetFormattedName() .. "."
         local otherRole = other:GetRole()
@@ -551,6 +564,8 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
             Corpse = corpse.CorpseView
         })
     end
+
+    corpse:AddSearchedBy(participant)
 
     if not participant:IsAlive() or (participant:IsAlive() and (otherChar.PrimaryPart.Position - ownChar.PrimaryPart.Position).Magnitude < 10) then
         remotes.UpdatePlayerCorpse:FireClient(participant.Player, other.Player.Name, corpse)
