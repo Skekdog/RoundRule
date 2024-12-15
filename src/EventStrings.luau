@@ -16,27 +16,30 @@ local function GetEventString(event: Types.RoundEvent): string
 
         local msg: string
 
+        local victim = data.Victim:GetFormattedName()
+        local killer = if corpse.Killer then corpse.Killer:GetFormattedName() else nil
+
         local source = corpse.CorpseView.DamageSource
         if source == "Shot" then
-            msg = `{data.Victim:GetFormattedName()} was shot to death{if corpse.Killer then ` by {corpse.Killer:GetFormattedName()}` else ""}.`
+            msg = `{victim} was shot to death{if corpse.Killer then ` by {killer}` else ""}.`
         elseif source == "Bludgeon" then
-            msg = `{data.Victim:GetFormattedName()} was beat to death{if corpse.Killer then ` by {corpse.Killer:GetFormattedName()}` else ""}.`
+            msg = `{victim} was beat to death{if corpse.Killer then ` by {killer}` else ""}.`
         elseif source == "Stab" then
-            msg = `{data.Victim:GetFormattedName()} was stabbed to death{if corpse.Killer then ` by {corpse.Killer:GetFormattedName()}` else ""}.`
+            msg = `{victim} was stabbed to death{if corpse.Killer then ` by {killer}` else ""}.`
         elseif source == "Burn" then
-            msg = `{data.Victim:GetFormattedName()} was burned to death{if corpse.Killer then ` by {corpse.Killer:GetFormattedName()}` else ""}.`
+            msg = `{victim} was burned to death{if corpse.Killer then ` by {killer}` else ""}.`
         elseif source == "Crush" then
-            msg = `{data.Victim:GetFormattedName()} was crushed{if corpse.Killer then ` by {corpse.Killer:GetFormattedName()}` else ""}.`
+            msg = `{victim} was crushed{if corpse.Killer then ` by {killer}` else ""}.`
         elseif source == "Drown" then
-            msg = `{data.Victim:GetFormattedName()} drowned{if corpse.Killer then ` at the hands of {corpse.Killer:GetFormattedName()}` else ""}.`
+            msg = `{victim} drowned{if corpse.Killer then ` at the hands of {killer}` else ""}.`
         elseif source == "Fall" then
-            msg = `{data.Victim:GetFormattedName()} fell to their death{if corpse.Killer then ` at the hands of {corpse.Killer:GetFormattedName()}` else ""}.`
+            msg = `{victim} fell to their death{if corpse.Killer then ` at the hands of {killer}` else ""}.`
         elseif source == "Explode" then
-            msg = `{data.Victim:GetFormattedName()} exploded{if corpse.Killer then ` at the hands of {corpse.Killer:GetFormattedName()}` else ""}.`
+            msg = `{victim} exploded{if corpse.Killer then ` at the hands of {killer}` else ""}.`
         elseif source == "Magic" then
-            msg = `{data.Victim:GetFormattedName()} was killed by magic{if corpse.Killer then ` at the hands of {corpse.Killer:GetFormattedName()}` else ""}.`
+            msg = `{victim} was killed by magic{if corpse.Killer then ` at the hands of {killer}` else ""}.`
         elseif source == "Other" then
-            msg = `{data.Victim:GetFormattedName()} died{if corpse.Killer then ` at the hands of {corpse.Killer:GetFormattedName()}` else ""}.`
+            msg = `{victim} died{if corpse.Killer then ` at the hands of {killer}` else ""}.`
         end
 
         return msg
