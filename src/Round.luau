@@ -317,6 +317,20 @@ local function LoadAmmoBox(round: Types.Round, map: Types.Map, model: Types.Data
         end
 
         model.Parent = nil
+
+        local currentAmmo = participant:GetAmmo(model.Name)
+
+        local maxGain = math.min(ammoBox.Definition.ReserveCapacity - currentAmmo, ammoBox.Ammo)
+        if maxGain <= 0 then
+            return
+        end
+
+        ammoBox.Ammo -= maxGain
+        participant:SetAmmo(model.Name, currentAmmo + maxGain)
+
+        if ammoBox.Ammo <= 0 then
+            model:Destroy()
+        end
     end)
 
     return ammoBox
