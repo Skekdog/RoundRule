@@ -422,6 +422,7 @@ export type Participant = {
     GetCredits: (Participant) -> number,
 
     _items: {[string]: AnyItem?},
+    _ammo: {[string]: number?},
 
     GetEquippedItem: (Participant) -> AnyItem?,
     SetEquippedItem: (Participant, item: AnyItem?) -> (),
@@ -435,6 +436,10 @@ export type Participant = {
     RemoveItem: (Participant, item: AnyItem) -> (),    
 
     IsItemSlotOccupied: (Participant, slot: number) -> boolean,
+
+    GetAmmo: (Participant, kind: string) -> number,
+    SetAmmo: (Participant, kind: string, amount: number) -> (),
+    GetAllAmmo: (Participant) -> {[string]: number},
 
     _itemPurchases: EquipmentPurchases,
     GetItemPurchases: (Participant) -> EquipmentPurchases,

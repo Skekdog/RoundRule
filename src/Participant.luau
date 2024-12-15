@@ -592,6 +592,18 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
     end
 end
 
+local function GetAllAmmo(participant: Types.Participant): {[string]: number}
+    return participant._ammo :: {[string]: number}
+end
+
+local function GetAmmo(participant: Types.Participant, kind: string): number
+    return participant._ammo[kind] or 0
+end
+
+local function SetAmmo(participant: Types.Participant, kind: string, amount: number): ()
+    participant._ammo[kind] = amount
+end
+
 function module.new(player: Player, round: Types.Round): Types.Participant
     return {
         Kind = "Participant",
@@ -618,6 +630,11 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         _credits = 0,
         _itemPurchases = {},
         _items = {},
+        _ammo = {},
+
+        GetAllAmmo = GetAllAmmo,
+        GetAmmo = GetAmmo,
+        SetAmmo = SetAmmo,
 
         GetEquippedItem = GetEquippedItem,
         SetEquippedItem = SetEquippedItem,
