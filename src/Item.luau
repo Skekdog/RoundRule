@@ -13,12 +13,13 @@ function module.new(definition: Types.AnyItemDefinition): Types.AnyItem
             Extras = {},
         }
     elseif definition.Kind == "Gun" then
+        local gunDefinition = definition :: Types.GunWeaponDefinition
         return {
             Kind = "Gun",
             Definition = definition :: Types.GunWeaponDefinition,
             Model = model :: BasePart,
 
-            Ammo = 0,
+            Ammo = gunDefinition.AmmoType.Capacity,
             LastFireTime = 0,
 
             IsReloading = false,

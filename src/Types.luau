@@ -35,6 +35,8 @@ export type Gamemode = {
     EnableKarma: boolean?,
 
     AvailableItems: {[string]: AnyItemDefinition},
+    AvailableAmmo: {[string]: AmmoDefinition},
+
     StartingItems: {AnyItemDefinition},
 
     Duration: (numParticipants: number) -> number,
@@ -141,7 +143,7 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
     FiredSound: string,
     ReloadSound: string,
 
-    AmmoType: string?,
+    AmmoType: AmmoDefinition,
 
     AimFOV: number?,
     HasScope: boolean?,
@@ -181,6 +183,12 @@ export type MeleeWeaponDefinition = CommonWeaponDefinition & {
     BeforeHitProp: (GrenadeWeapon, Participant, Prop, DamageParams) -> (),
 }
 
+export type AmmoDefinition = {
+    Name: string,
+    DisplayName: string?,
+    Capacity: number,
+}
+
 export type AnyItemDefinition = ItemDefinition | GunWeaponDefinition | GrenadeWeaponDefinition | MeleeWeaponDefinition
 
 export type Map = {
@@ -218,6 +226,7 @@ export type Map = {
     read TerrainColors: Folder,
 
     read AvailableItems: {[string]: AnyItemDefinition},
+    read AvailableAmmo: {[string]: AmmoDefinition},
 }
 
 export type OnPropBreak = (Prop, params: DamageParams?) -> () 
