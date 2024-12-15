@@ -241,14 +241,15 @@ export type RoundEventData = DeathEventData | CorpseSearchedEventData | StartRou
 export type DeathEventData = {
     Kind: "DeathRoundEvent",
 
-    Corpse: CorpseView,
+    Victim: Participant,
 }
 
 export type CorpseSearchedEventData = {
     Kind: "CorpseSearchedRoundEvent",
     
     SearchedBy: Participant,
-    Corpse: CorpseView,
+    Victim: Participant,
+    FoundCredits: number?,
 }
 
 export type StartRoundEventData = {
@@ -346,19 +347,6 @@ export type Corpse = {
     AddSearchedBy: (Corpse, participant: Participant) -> (),
 
     Killer: Participant?,
-}
-
-export type ParticipantView = {
-    Name: string,
-    FormattedName: string,
-
-    Role: string?,
-    Status: ParticipantStatus,
-}
-
-export type OwnParticipantView = ParticipantView & {
-    Credits: number,
-    EquipmentPurchases: EquipmentPurchases,
 }
 
 export type Participant = {

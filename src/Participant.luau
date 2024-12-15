@@ -54,7 +54,7 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
 
     participant.Round:AddEvent({
         Kind = "DeathRoundEvent",
-        Corpse = corpse.CorpseView,
+        Victim = participant,
     })
 
     participant.Round.Gamemode:OnDeath(participant)
@@ -564,7 +564,7 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
         participant.Round:AddEvent({
             Kind = "CorpseSearchedRoundEvent",
             SearchedBy = participant,
-            Corpse = corpse.CorpseView
+            Victim = participant
         })
     end
 

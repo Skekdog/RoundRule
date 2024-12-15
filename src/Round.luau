@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local EventStrings = require(script.Parent.EventStrings)
 local Item = require(script.Parent.Item)
 local Participant = require(script.Parent.Participant)
 local Prop = require(script.Parent.Prop)
@@ -230,7 +231,7 @@ local function EndRound(round: Types.Round, victor: Types.Victor): ()
     for _, v in round:GetEventLog() do
         local value = Instance.new("StringValue")
         value.Name = tostring(v.Timestamp)
-        value.Value = ""
+        value.Value = EventStrings(v)
     end
 
     remotes.RoundHighlights:FireAllClients()
