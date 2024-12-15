@@ -187,6 +187,7 @@ export type AmmoDefinition = {
     Name: string,
     DisplayName: string?,
     Capacity: number,
+    Model: BasePart,
 }
 
 export type AnyItemDefinition = ItemDefinition | GunWeaponDefinition | GrenadeWeaponDefinition | MeleeWeaponDefinition
@@ -319,6 +320,13 @@ export type Item = {
 }
 
 export type AnyItem = Item | GunWeapon | GrenadeWeapon | MeleeWeapon
+
+export type AmmoBox = {
+    Kind: "AmmoBox",
+    Definition: AmmoDefinition,
+    Model: BasePart,
+    Ammo: number,
+}
 
 export type SelfDefenseEntry = {
     Against: Participant,
@@ -463,6 +471,11 @@ export type Round = {
     GetItems: (Round) -> index<Round, "_items">,
     GetItem: (Round, part: DataModelItem) -> AnyItem?,
     LoadItem: (Round, map: Map, part: DataModelItem) -> AnyItem,
+
+    _ammoBoxes: {[DataModelItem]: AmmoBox?},
+    GetAmmoBoxes: (Round) -> index<Round, "_ammoBoxes">,
+    GetAmmoBox: (Round, part: DataModelItem) -> AmmoBox?,
+    LoadAmmoBox: (Round, map: Map, part: DataModelItem) -> AmmoBox,
 
     _props: {[DataModelProp]: Prop?},
     GetProps: (Round) -> index<Round, "_props">,

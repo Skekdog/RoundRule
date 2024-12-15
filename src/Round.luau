@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local AmmoBox = require(script.Parent.AmmoBox)
 local EventStrings = require(script.Parent.EventStrings)
 local Item = require(script.Parent.Item)
 local Participant = require(script.Parent.Participant)
@@ -288,6 +289,39 @@ local function LoadItem(round: Types.Round, map: Types.Map, model: Types.DataMod
     return item
 end
 
+local function GetAmmoBoxes(round: Types.Round): index<Types.Round, "_ammoBoxes">
+    return round._ammoBoxes
+end
+
+local function GetAmmoBox(round: Types.Round, model: Types.DataModelItem): Types.AmmoBox?
+    return round._ammoBoxes[model]
+end
+
+local function LoadAmmoBox(round: Types.Round, map: Types.Map, model: Types.DataModelItem): Types.AmmoBox
+    assert(not round:GetAmmoBox(model), "AmmoBox already exists")
+
+    local definition = map.AvailableAmmo[model.Name] or round.Gamemode.AvailableAmmo[model.Name]
+    local ammoBox = AmmoBox.new(definition, model)
+    round._ammoBoxes[model] = ammoBox
+
+    model.Touched:Connect(function(touchPart)
+        local touchModel = touchPart:FindFirstAncestorOfClass("Model")
+
+        if not touchModel then
+            return
+        end
+
+        local participant = round:GetParticipant(touchModel.Name)
+        if not participant or not participant:IsAlive() then
+            return
+        end
+
+        model.Parent = nil
+    end)
+
+    return ammoBox
+end
+
 local function GetRoleFromRoleName(round: Types.Round, name: string): Types.Role
     return round.Gamemode.Roles[name] or error("Unknown role: " .. name)
 end
@@ -483,6 +517,11 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         IsPreGame = IsPreGame,
         IsPostGame = IsPostGame,
         IsInProgress = IsInProgress,
+
+        _ammoBoxes = {},
+        GetAmmoBoxes = GetAmmoBoxes,
+        GetAmmoBox = GetAmmoBox,
+        LoadAmmoBox = LoadAmmoBox,
 
         AddEvent = AddEvent,
         GetEventLog = GetEventLog,
