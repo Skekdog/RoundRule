@@ -234,7 +234,7 @@ export type DeathEventData = {
 export type CorpseSearchedEventData = {
     Kind: "CorpseSearchedRoundEvent",
     
-    SearchedBy: ParticipantView,
+    SearchedBy: Participant,
     Corpse: CorpseView,
 }
 
@@ -381,6 +381,8 @@ export type Participant = {
 
     _corpse: Corpse?,
     GetCorpse: (Participant) -> Corpse?,
+
+    TryViewOtherParticipantCorpse: (Participant, other: Participant) -> (),
 
     _isCharacterLoading: boolean,
     _character: Model?,

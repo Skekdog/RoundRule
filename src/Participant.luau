@@ -508,6 +508,55 @@ local function TryAddSlayVote(participant: Types.Participant, other: Types.Parti
     end
 end
 
+local function TryViewOtherParticipantCorpse(participant: Types.Participant, other: Types.Participant): ()
+    local corpse = other:GetCorpse()
+    if not corpse then
+        return
+    end
+
+    if table.find(corpse:GetSearchedBy(), participant) then
+        return
+    end
+
+    local ownChar = participant:GetCharacter()
+    if not ownChar or not ownChar.PrimaryPart then
+        return
+    end
+
+    local otherChar = other:GetCharacter()
+    if not otherChar or not otherChar.PrimaryPart then
+        return
+    end
+
+    local ownRole = participant:GetRole()
+    if ownRole and ownRole.CanStealCreditsFromCorpses then
+        participant:AddCredits(math.max(other:GetCredits(), 0))
+    end
+
+    if other:GetStatus() == "Missing" then
+        other:_setStatus("Dead")
+        participant:AddScore("Bodies Found", 1)
+
+        local msg = participant:GetFormattedName() .. " found the body of " .. other:GetFormattedName() .. "."
+        local otherRole = other:GetRole()
+        if otherRole then
+            msg ..= " They were a " .. participant.Round.GetFormattedRoleName(otherRole) .. "."
+        end
+
+        participant.Round:SendMessage(Players:GetPlayers(), msg)
+
+        participant.Round:AddEvent({
+            Kind = "CorpseSearchedRoundEvent",
+            SearchedBy = participant,
+            Corpse = corpse.CorpseView
+        })
+    end
+
+    if not participant:IsAlive() or (participant:IsAlive() and (otherChar.PrimaryPart.Position - ownChar.PrimaryPart.Position).Magnitude < 10) then
+        remotes.UpdatePlayerCorpse:FireClient(participant.Player, other.Player.Name, corpse)
+    end
+end
+
 function module.new(player: Player, round: Types.Round): Types.Participant
     return {
         Kind = "Participant",
@@ -545,6 +594,8 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         SetRole = SetRole,
 
         GetCorpse = GetCorpse,
+
+        TryViewOtherParticipantCorpse = TryViewOtherParticipantCorpse,
 
         IsFreeKill = IsFreeKill,
         SetFreeKill = SetFreeKill,
