@@ -436,6 +436,7 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
     currentMap = map
 
     data:SetAttribute("CurrentMap", currentMap.DisplayName)
+    data:SetAttribute("MapAuthors", currentMap.Authors)
 end
 
 local function GetExclamatoryString(role: Types.Role): string
@@ -508,6 +509,7 @@ function module.new(gamemode: Types.Gamemode): Types.Round
     data:SetAttribute("Paused", round:GetIsRoundPaused())
     data:SetAttribute("AdvanceTime", nil)
     data:SetAttribute("CurrentMap", nil)
+    data:SetAttribute("MapAuthors", nil)
 
     return round
 end
