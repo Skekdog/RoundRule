@@ -537,13 +537,15 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
     if other:GetStatus() == "Missing" and not covert then
         other:_setStatus("Dead")
 
+        local round = participant.Round
+
         if ownRole then
             if ownRole.ScoreForFindingBodies then
                 participant:AddScore("Bodies Found", ownRole.ScoreForFindingBodies)
             end
 
             if ownRole.CorpseSearchResultsPublicised then
-                for _, v in participant.Round:GetParticipants() do
+                for _, v in round:GetParticipants() do
                     assert(v)
                     corpse:AddSearchedBy(v)
                 end
@@ -554,10 +556,10 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
         local msg = participant:GetFormattedName() .. " found the body of " .. other:GetFormattedName() .. "."
         local otherRole = other:GetRole()
         if otherRole then
-            msg ..= " They were a " .. participant.Round.GetFormattedRoleName(otherRole) .. participant.Round.GetExclamatoryString(otherRole)
+            msg ..= " They were a " .. round.GetFormattedRoleName(otherRole) .. round.GetExclamatoryString(otherRole)
         end
 
-        participant.Round:SendMessage(Players:GetPlayers(), msg)
+        round:SendMessage(Players:GetPlayers(), msg)
 
         participant.Round:AddEvent({
             Kind = "CorpseSearchedRoundEvent",
