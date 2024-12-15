@@ -210,11 +210,21 @@ local function EndRound(round: Types.Round, victor: Types.Victor): ()
 
     assert(victorRole.VictoryText, "Victory role has no VictoryText")
 
+    round = round :: Types.Round
+
     round:AddEvent({
         Kind = "EndRoundEvent",
         VictoryText = victorRole.VictoryText :: string,
     })
     round:SetRoundPhase("Highlights", HIGHLIGHTS_TIME)
+
+    data.Events:ClearAllChildren()
+    data.Highlights:ClearAllChildren()
+    for _, v in round:GetEventLog() do
+        local value = Instance.new("StringValue")
+        value.Name = tostring(v.Timestamp)
+        value.Value = ""
+    end
 
     remotes.RoundHighlights:FireAllClients()
 end
