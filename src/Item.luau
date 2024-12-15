@@ -1,14 +1,16 @@
 local Types = require(script.Parent.Types)
 local module = {}
 
-function module.new(definition: Types.AnyItemDefinition): Types.AnyItem
-    local model = if definition.Model then definition.Model:Clone() else nil
+function module.new(definition: Types.AnyItemDefinition, model: BasePart?): Types.AnyItem
+    if not model then
+        model = if definition.Model then definition.Model:Clone() else nil
+    end
 
     if definition.Kind == "Item" then
         return {
             Kind = "Item",
             Definition = definition :: Types.ItemDefinition,
-            Model = model :: BasePart?,
+            Model = model,
 
             Extras = {},
         }

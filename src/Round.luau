@@ -267,7 +267,7 @@ local function LoadItem(round: Types.Round, map: Types.Map, model: Types.DataMod
     local itemDefinition = map.AvailableItems[model.Name] or round.Gamemode.AvailableItems[model.Name]
     assert(itemDefinition, "Item does not exist in map or gamemode")
 
-    local item = Item.new(itemDefinition)
+    local item = Item.new(itemDefinition, model)
     round._items[model] = item
 
     model.Touched:Connect(function(touchPart)
