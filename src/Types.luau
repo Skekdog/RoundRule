@@ -213,6 +213,7 @@ export type Map = {
     Props: Folder?,
     Windows: Folder?,
     ItemSpawns: Folder?,
+    AmmoSpawns: Folder?,
 
     read Gravity: number,
 

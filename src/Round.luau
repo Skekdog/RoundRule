@@ -391,6 +391,20 @@ local function loadItems(round: Types.Round, map: Types.Map): ()
     end
 end
 
+local function loadAmmoBoxes(round: Types.Round, map: Types.Map): ()
+    if not map.AmmoSpawns then
+        return
+    end
+
+    for _, v in map.AmmoSpawns:GetChildren() do
+        if v:IsA("BasePart") then
+            round:LoadAmmoBox(map, v)
+        elseif v:IsA("Folder") then
+            loadAmmoBoxes(round, map)
+        end
+    end
+end
+
 local function LoadMap(round: Types.Round, map: Types.Map): ()
     local mapFolder = workspace:FindFirstChild("MapFolder") or Instance.new("Folder", workspace)
     assert(mapFolder:IsA("Folder"), "MapFolder is not a Folder")
