@@ -529,9 +529,19 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
         return
     end
 
+    local otherCredits: number?
     local ownRole = participant:GetRole()
     if ownRole and ownRole.CanStealCreditsFromCorpses then
-        participant:AddCredits(math.max(other:GetCredits(), 0))
+        otherCredits = math.max(other:GetCredits(), 0)
+        participant:AddCredits(otherCredits)
+        other:SetCredits(0)
+
+        participant.Round:AddEvent({
+            Kind = "CorpseSearchedRoundEvent",
+            SearchedBy = participant,
+            Victim = other,
+            FoundCredits = otherCredits :: number?,
+        })
     end
 
     if other:GetStatus() == "Missing" and not covert then
@@ -561,11 +571,13 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
 
         round:SendMessage(Players:GetPlayers(), msg)
 
-        participant.Round:AddEvent({
-            Kind = "CorpseSearchedRoundEvent",
-            SearchedBy = participant,
-            Victim = participant
-        })
+        if not otherCredits then
+            participant.Round:AddEvent({
+                Kind = "CorpseSearchedRoundEvent",
+                SearchedBy = participant,
+                Victim = participant,
+            })
+        end
     end
 
     corpse:AddSearchedBy(participant)
