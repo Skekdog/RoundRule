@@ -30,6 +30,7 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
     local attacker = params.Attacker
     if attacker and not params.IgnoreKarma and not attacker:IsDamageJustifiedAgainstParticipant(participant) then
         attacker:SetFreeKill("Killed Teammate")
+        remotes.SlayVote:FireClient(participant.Player, attacker.Player.Name)
     end
 
     local role = participant:GetRole()
