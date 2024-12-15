@@ -339,7 +339,7 @@ local function GiveItemFromItemDefinition(participant: Types.Participant, itemDe
     participant:AddItem(item)
 end
 
-local function DropItem(participant: Types.Participant, item: Types.AnyItem): ()
+local function DropItem(participant: Types.Participant, item: Types.AnyItem, throw: boolean?): ()
     if not item.Definition.CanDrop then
         return
     end
@@ -351,7 +351,12 @@ local function DropItem(participant: Types.Participant, item: Types.AnyItem): ()
         return
     end
 
-    item.Model:PivotTo(char:GetPivot())
+    local targetCFrame = char:GetPivot()
+    if throw then
+        targetCFrame = targetCFrame + targetCFrame.LookVector * 7.5
+    end
+    
+    item.Model:PivotTo(targetCFrame)
     item.Model.Parent = participant.Round:GetMap().ItemSpawns
 end
 

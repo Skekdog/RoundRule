@@ -420,7 +420,7 @@ export type Participant = {
 
     GetItems: (Participant) -> index<Participant, "_items">,
     GiveItemFromItemDefinition: (Participant, itemDefinition: AnyItemDefinition) -> (),
-    DropItem: (Participant, item: AnyItem) -> (),
+    DropItem: (Participant, item: AnyItem, throw: boolean?) -> (),
 
     AddItem: (Participant, item: AnyItem) -> (),
     RemoveItem: (Participant, item: AnyItem) -> (),    
