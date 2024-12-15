@@ -54,6 +54,7 @@ export type Role = {
     DisplayName: string?,
     Description: string,
     Color: Color3,
+    IsExclamatory: boolean?,
 
     Allegiance: VictorType,
     VictoryText: string?,
@@ -504,6 +505,7 @@ export type Round = {
     GetParticipantsWithRole: (Round, role: Role) -> {Participant},
 
     GetFormattedRoleName: (role: Role) -> string,
+    GetExclamatoryString: (role: Role) -> string,
 
     IsRoleAlliedWithRole: (role1: Role, role2: Role) -> boolean,
 

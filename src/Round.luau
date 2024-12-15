@@ -70,7 +70,7 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
 
     local role = participant:GetRole()
     if role and role.ShouldAnnounceDisconnect then
-        round:SendMessage(Players:GetPlayers(), participant:GetFormattedName() .. " has disconnected. They were a " .. role.Name .. ".")
+        round:SendMessage(Players:GetPlayers(), participant:GetFormattedName() .. " has disconnected. They were a " .. role.Name .. round.GetExclamatoryString(role :: Types.Role))
     end
 
     participant:UnspawnCharacter()
@@ -428,6 +428,10 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
     data:SetAttribute("CurrentMap", currentMap.DisplayName)
 end
 
+local function GetExclamatoryString(role: Types.Role): string
+    return if role.IsExclamatory then "!" else "."
+end
+
 local function SendMessage(round: Types.Round, to: {Player} | Player, message: string): ()
     if typeof(to) == "Instance" then
         to = {to}
@@ -463,6 +467,8 @@ function module.new(gamemode: Types.Gamemode): Types.Round
 
         AddEvent = AddEvent,
         GetEventLog = GetEventLog,
+
+        GetExclamatoryString = GetExclamatoryString,
 
         GetParticipant = GetParticipant,
         GetParticipants = GetParticipants,
