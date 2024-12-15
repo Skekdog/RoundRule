@@ -386,7 +386,7 @@ export type Participant = {
     _corpse: Corpse?,
     GetCorpse: (Participant) -> Corpse?,
 
-    TryViewOtherParticipantCorpse: (Participant, other: Participant) -> (),
+    TryViewOtherParticipantCorpse: (Participant, other: Participant, covert: boolean?) -> (),
 
     _isCharacterLoading: boolean,
     _character: Model?,

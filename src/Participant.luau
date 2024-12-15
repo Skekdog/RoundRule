@@ -508,7 +508,7 @@ local function TryAddSlayVote(participant: Types.Participant, other: Types.Parti
     end
 end
 
-local function TryViewOtherParticipantCorpse(participant: Types.Participant, other: Types.Participant): ()
+local function TryViewOtherParticipantCorpse(participant: Types.Participant, other: Types.Participant, covert: boolean?): ()
     local corpse = other:GetCorpse()
     if not corpse then
         return
@@ -533,7 +533,7 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
         participant:AddCredits(math.max(other:GetCredits(), 0))
     end
 
-    if other:GetStatus() == "Missing" then
+    if other:GetStatus() == "Missing" and not covert then
         other:_setStatus("Dead")
 
         if ownRole then
