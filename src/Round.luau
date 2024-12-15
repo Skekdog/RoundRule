@@ -33,7 +33,7 @@ local function GetParticipants(round: Types.Round): index<Types.Round, "_partici
     return round._participants
 end
 
-local function AddPlayer(round: Types.Round, player: Player): Types.Participant
+local function AddPlayer(round: Types.Round, player: Player, addAsSpectator: boolean?): Types.Participant
     if round:GetRoundPhase() ~= "Waiting" and round:GetRoundPhase() ~= "Preparing" then
         error("Round is not in Waiting or Preparing phase")
     end
@@ -43,20 +43,27 @@ local function AddPlayer(round: Types.Round, player: Player): Types.Participant
     local participant = Participant.new(player, round)
     round._participants[player.Name] = participant
 
-    for _, v in round.Gamemode.StartingItems do
-        participant:AddItem(Item.new(v))
-    end
-
-    local count = 0
-    for _ in round:GetParticipants() do
-        count += 1
-        if count == round.Gamemode.MinimumPlayers then
-            round:SetRoundPhase("Preparing", PREPARING_TIME)
-            break
+    if not addAsSpectator then
+        for _, v in round.Gamemode.StartingItems do
+            participant:AddItem(Item.new(v))
         end
-    end
 
-    participant:SpawnCharacter()
+        local count = 0
+        for _, v in round:GetParticipants() do
+            assert(v)
+            if v:GetStatus() ~= "Spectating" then
+                count += 1
+                if count == round.Gamemode.MinimumPlayers then
+                    round:SetRoundPhase("Preparing", PREPARING_TIME)
+                    break
+                end
+            end
+        end
+
+        participant:SpawnCharacter()
+    else
+        participant:_setStatus("Spectating")
+    end
 
     player.Destroying:Once(function()
         round:RemoveParticipant(participant)

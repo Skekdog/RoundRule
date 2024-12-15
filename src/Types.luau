@@ -475,7 +475,7 @@ export type Round = {
     _participants: {[string]: Participant?},
     GetParticipant: (Round, name: string) -> Participant?,
     GetParticipants: (Round) -> index<Round, "_participants">,
-    AddPlayer: (Round, player: Player) -> Participant,
+    AddPlayer: (Round, player: Player, addAsSpectator: boolean?) -> Participant,
     RemoveParticipant: (Round, participant: Participant) -> (),
 
     _eventLog: {RoundEvent},
