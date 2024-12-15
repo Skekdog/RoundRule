@@ -546,8 +546,8 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
                 for _, v in participant.Round:GetParticipants() do
                     assert(v)
                     corpse:AddSearchedBy(v)
-                    remotes.UpdatePlayerCorpse:FireClient(v.Player, other.Player.Name, corpse)
                 end
+                remotes.UpdatePlayerCorpse:FireAllClients(other.Player.Name, corpse)
             end
         end
 
