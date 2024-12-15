@@ -187,6 +187,7 @@ export type AmmoDefinition = {
     Name: string,
     DisplayName: string?,
     Capacity: number,
+    ReserveCapacity: number,
     Model: BasePart,
 }
 
