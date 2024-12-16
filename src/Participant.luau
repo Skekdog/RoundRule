@@ -618,7 +618,10 @@ local function DropAmmoBoxForCurrentItem(participant: Types.Participant): ()
         return
     end
 
-    local ammoBox = AmmoBox.new(definition, item.Model)
+    local subtractAmount = math.min(ammo, definition.Capacity)
+    item.Ammo -= subtractAmount
+
+    local ammoBox = AmmoBox.new(definition, item.Model, subtractAmount)
     ammoBox.Model.Parent = participant.Round:GetMap().AmmoSpawns
 end
 
