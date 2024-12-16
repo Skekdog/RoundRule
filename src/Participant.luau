@@ -1,3 +1,4 @@
+local InsertService = game:GetService("InsertService")
 local Players = game:GetService("Players")
 local AmmoBox = require(script.Parent.AmmoBox)
 local Corpse = require(script.Parent.Corpse)
@@ -71,6 +72,22 @@ local function tryAssignHumanoidPropertiesForRole(humanoid: Humanoid?, role: Typ
 
     humanoid.WalkSpeed = role.WalkSpeed
     humanoid.JumpPower = role.JumpPower
+
+    for _, v in role.Accessories do
+        local id = tonumber(v:split("//")[2])
+        if not id then
+            continue
+        end
+
+        local success, accessory = pcall(function()
+            return InsertService:LoadAsset(id):FindFirstChildOfClass("Accessory")
+        end)
+        if not success or not accessory then
+            continue
+        end
+
+        humanoid:AddAccessory(accessory)
+    end
 end
 
 local function GetFormattedName(participant: Types.Participant): string

@@ -80,6 +80,8 @@ export type Role = {
     JumpPower: number,
     Health: number,
 
+    Accessories: {string},
+
     DamageKarmaMultiplier: number,
 
     Allies: {string}?,
