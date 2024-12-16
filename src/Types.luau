@@ -174,6 +174,8 @@ export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
 
     BeforeHitParticipant: ((GrenadeWeapon, Participant, Participant, DamageParams) -> ())?,
     BeforeHitProp: ((GrenadeWeapon, Participant, Prop, DamageParams) -> ())?,
+
+    OnExplode: ((GrenadeWeapon, Participant, BasePart) -> ())?,
 }
 
 export type MeleeWeaponDefinition = CommonWeaponDefinition & {
