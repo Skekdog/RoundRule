@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local AmmoBox = require(script.Parent.AmmoBox)
 local Corpse = require(script.Parent.Corpse)
 local Item = require(script.Parent.Item)
 local Types = require(script.Parent.Types)
@@ -604,6 +605,23 @@ local function SetAmmo(participant: Types.Participant, kind: string, amount: num
     participant._ammo[kind] = amount
 end
 
+local function DropAmmoBoxForCurrentItem(participant: Types.Participant): ()
+    local item = participant:GetEquippedItem()
+    if not item or item.Kind ~= "Gun" then
+        return
+    end
+
+    local definition = item.Definition.AmmoType
+    local ammo = item.Ammo
+
+    if ammo < (definition.Capacity / 4) then
+        return
+    end
+
+    local ammoBox = AmmoBox.new(definition, item.Model)
+    ammoBox.Model.Parent = participant.Round:GetMap().AmmoSpawns
+end
+
 function module.new(player: Player, round: Types.Round): Types.Participant
     return {
         Kind = "Participant",
@@ -631,6 +649,8 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         _itemPurchases = {},
         _items = {},
         _ammo = {},
+
+        DropAmmoBoxForCurrentItem = DropAmmoBoxForCurrentItem,
 
         GetAllAmmo = GetAllAmmo,
         GetAmmo = GetAmmo,

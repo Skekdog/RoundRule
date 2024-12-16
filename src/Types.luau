@@ -425,6 +425,8 @@ export type Participant = {
     _items: {[string]: AnyItem?},
     _ammo: {[string]: number?},
 
+    DropAmmoBoxForCurrentItem: (Participant) -> (),
+
     GetEquippedItem: (Participant) -> AnyItem?,
     SetEquippedItem: (Participant, item: AnyItem?) -> (),
     _equippedItem: AnyItem?,
@@ -469,6 +471,9 @@ export type Prop = {
 
 export type Round = {
     Gamemode: Gamemode,
+
+    GetItemDefinition: (Round, item: string) -> AnyItemDefinition?,
+    GetAmmoDefinition: (Round, ammo: string) -> AmmoDefinition?,
 
     _map: Map?,
     LoadMap: (Round, map: Map) -> (),

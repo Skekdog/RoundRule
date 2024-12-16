@@ -264,7 +264,7 @@ end
 local function LoadItem(round: Types.Round, map: Types.Map, model: Types.DataModelItem): Types.AnyItem
     assert(not round:GetItem(model), "Item already exists")
 
-    local itemDefinition = map.AvailableItems[model.Name] or round.Gamemode.AvailableItems[model.Name]
+    local itemDefinition = round:GetItemDefinition(model.Name)
     assert(itemDefinition, "Item does not exist in map or gamemode")
 
     local item = Item.new(itemDefinition, model)
@@ -300,7 +300,7 @@ end
 local function LoadAmmoBox(round: Types.Round, map: Types.Map, model: Types.DataModelItem): Types.AmmoBox
     assert(not round:GetAmmoBox(model), "AmmoBox already exists")
 
-    local definition = map.AvailableAmmo[model.Name] or round.Gamemode.AvailableAmmo[model.Name]
+    local definition = round:GetAmmoDefinition(model.Name) or error("AmmoBox does not exist in map or gamemode")
     local ammoBox = AmmoBox.new(definition, model)
     round._ammoBoxes[model] = ammoBox
 
@@ -360,6 +360,14 @@ end
 
 local function GetMap(round: Types.Round): Types.Map
     return round._map or error("Round has no map")
+end
+
+local function GetAmmoDefinition(round: Types.Round, ammo: string): Types.AmmoDefinition?
+    return round:GetMap().AvailableAmmo[ammo] or round.Gamemode.AvailableAmmo[ammo]
+end
+
+local function GetItemDefinition(round: Types.Round, item: string): Types.AnyItemDefinition?
+    return round:GetMap().AvailableItems[item] or round.Gamemode.AvailableItems[item]
 end
 
 local function tryResetDynamicMapObject(mapFolder: Folder, map: Types.Map, name: keyof<Types.Map>): ()
@@ -544,6 +552,9 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         GetItems = GetItems,
         GetItem = GetItem,
         LoadItem = LoadItem,
+
+        GetAmmoDefinition = GetAmmoDefinition,
+        GetItemDefinition = GetItemDefinition,
 
         IsPreGame = IsPreGame,
         IsPostGame = IsPostGame,
