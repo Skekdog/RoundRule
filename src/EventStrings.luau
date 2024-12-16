@@ -21,25 +21,25 @@ local function GetEventString(event: Types.RoundEvent): string
 
         local source = corpse.CorpseView.DamageSource
         if source == "Shot" then
-            msg = `{victim} was shot to death{if corpse.Killer then ` by {killer}` else ""}.`
+            msg = `{victim} was shot to death{if killer then ` by {killer}` else ""}.`
         elseif source == "Bludgeon" then
-            msg = `{victim} was beat to death{if corpse.Killer then ` by {killer}` else ""}.`
+            msg = `{victim} was beat to death{if killer then ` by {killer}` else ""}.`
         elseif source == "Stab" then
-            msg = `{victim} was stabbed to death{if corpse.Killer then ` by {killer}` else ""}.`
+            msg = `{victim} was stabbed to death{if killer then ` by {killer}` else ""}.`
         elseif source == "Burn" then
-            msg = `{victim} was burned to death{if corpse.Killer then ` by {killer}` else ""}.`
+            msg = `{victim} was burned to death{if killer then ` by {killer}` else ""}.`
         elseif source == "Crush" then
-            msg = `{victim} was crushed{if corpse.Killer then ` by {killer}` else ""}.`
+            msg = `{victim} was crushed{if killer then ` by {killer}` else ""}.`
         elseif source == "Drown" then
-            msg = `{victim} drowned{if corpse.Killer then ` at the hands of {killer}` else ""}.`
+            msg = `{victim} drowned{if killer then ` at the hands of {killer}` else ""}.`
         elseif source == "Fall" then
-            msg = `{victim} fell to their death{if corpse.Killer then ` at the hands of {killer}` else ""}.`
+            msg = `{victim} fell to their death{if killer then ` at the hands of {killer}` else ""}.`
         elseif source == "Explode" then
-            msg = `{victim} exploded{if corpse.Killer then ` at the hands of {killer}` else ""}.`
+            msg = `{victim} exploded{if killer then ` at the hands of {killer}` else ""}.`
         elseif source == "Magic" then
-            msg = `{victim} was killed by magic{if corpse.Killer then ` at the hands of {killer}` else ""}.`
+            msg = `{victim} was killed by magic{if killer then ` at the hands of {killer}` else ""}.`
         elseif source == "Other" then
-            msg = `{victim} died{if corpse.Killer then ` at the hands of {killer}` else ""}.`
+            msg = `{victim} died{if killer then ` at the hands of {killer}` else ""}.`
         end
 
         return msg
