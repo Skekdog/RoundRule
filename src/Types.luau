@@ -156,8 +156,12 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
     
     BulletsPerShot: number?,
 
-    BeforeHitParticipant: (GunWeapon, Participant, Participant, DamageParams) -> (),
-    BeforeHitProp: (GunWeapon, Participant, Prop, DamageParams) -> (),
+    Spread: number,
+    RecoilX: number,
+    RecoilY: number,
+
+    BeforeHitParticipant: ((GunWeapon, Participant, Participant, DamageParams) -> ())?,
+    BeforeHitProp: ((GunWeapon, Participant, Prop, DamageParams) -> ())?,
 }
 
 export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
@@ -168,8 +172,8 @@ export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
     Projectile: string,
     ProjectileForce: number,
 
-    BeforeHitParticipant: (GrenadeWeapon, Participant, Participant, DamageParams) -> (),
-    BeforeHitProp: (GrenadeWeapon, Participant, Prop, DamageParams) -> (),
+    BeforeHitParticipant: ((GrenadeWeapon, Participant, Participant, DamageParams) -> ())?,
+    BeforeHitProp: ((GrenadeWeapon, Participant, Prop, DamageParams) -> ())?,
 }
 
 export type MeleeWeaponDefinition = CommonWeaponDefinition & {
@@ -181,8 +185,8 @@ export type MeleeWeaponDefinition = CommonWeaponDefinition & {
 
     MaxDistance: number,
 
-    BeforeHitParticipant: (GrenadeWeapon, Participant, Participant, DamageParams) -> (),
-    BeforeHitProp: (GrenadeWeapon, Participant, Prop, DamageParams) -> (),
+    BeforeHitParticipant: ((MeleeWeapon, Participant, Participant, DamageParams) -> ())?,
+    BeforeHitProp: ((MeleeWeapon, Participant, Prop, DamageParams) -> ())?,
 }
 
 export type AmmoDefinition = {
