@@ -200,21 +200,21 @@ export type AmmoDefinition = {
 export type AnyItemDefinition = ItemDefinition | GunWeaponDefinition | GrenadeWeaponDefinition | MeleeWeaponDefinition
 
 export type Map = {
-    read Name: string,
-    read DisplayName: string?,
-    read Description: string,
-    read Authors: string,
+    Name: string,
+    DisplayName: string?,
+    Description: string,
+    Authors: string,
 
-    read MapIcons: {
+    MapIcons: {
         ["16:9"]: string?,
         ["4:3"]: string?,
         ["1:1"]: string?,
     },
 
-    read PlayerSpawns: Folder,
+    PlayerSpawns: Folder,
 
-    read StaticMap: Folder,
-    read Bounds: Folder?,
+    StaticMap: Folder,
+    Bounds: Folder?,
     
     DynamicMap: Folder?,
     Props: Folder?,
@@ -222,20 +222,20 @@ export type Map = {
     ItemSpawns: Folder?,
     AmmoSpawns: Folder?,
 
-    read Gravity: number,
+    Gravity: number,
 
-    read MaterialVariants: Folder?,
+    MaterialVariants: Folder?,
 
-    read LightingSettings: Folder,
-    read FutureLightingSettings: Folder?,
+    LightingSettings: Folder,
+    FutureLightingSettings: Folder?,
 
-    read WaterSettings: Folder,
+    WaterSettings: Folder,
 
-    read TerrainRegion: TerrainRegion?,
-    read TerrainColors: Folder,
+    TerrainRegion: TerrainRegion?,
+    TerrainColors: Folder,
 
-    read AvailableItems: {[string]: AnyItemDefinition},
-    read AvailableAmmo: {[string]: AmmoDefinition},
+    AvailableItems: {[string]: AnyItemDefinition},
+    AvailableAmmo: {[string]: AmmoDefinition},
 }
 
 export type OnPropBreak = (Prop, params: DamageParams?) -> () 
@@ -370,8 +370,8 @@ export type Participant = {
 
     Extras: {[string]: any},
     
-    read Player: Player,
-    read Round: Round,
+    Player: Player,
+    Round: Round,
 
     _slayVotes: {Participant},
     GetSlayVotes: (Participant) -> {Participant},
