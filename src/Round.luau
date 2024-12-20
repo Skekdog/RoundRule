@@ -174,7 +174,14 @@ end
 
 local function StartRound(round: Types.Round): ()
     assert(round:IsPreGame(), "Round is not in PreGame phase")
-    assert(#round:GetParticipants() >= round.Gamemode.MinimumPlayers, "Not enough players to start round")
+
+    local participantList = {}
+    for _, v in round:GetParticipants() do
+        assert(v)
+        table.insert(participantList, v)
+    end
+
+    assert(#participantList >= round.Gamemode.MinimumPlayers, "Not enough players to start round")
 
     round = round :: Types.Round -- more type refinement nonsense
 
@@ -188,11 +195,6 @@ local function StartRound(round: Types.Round): ()
     round:AddEvent({
         Kind = "StartRoundEvent",
     })
-
-    local participantList = {}
-    for _, v in round:GetParticipants() do
-        table.insert(participantList, v)
-    end
 
     round:SetRoundPhase("Playing", round.Gamemode.Duration(#participantList))
 
