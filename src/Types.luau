@@ -439,7 +439,7 @@ export type Participant = {
     SetEquippedItem: (Participant, item: AnyItem?) -> (),
     _equippedItem: AnyItem?,
 
-    GetItems: (Participant) -> index<Participant, "_items">,
+    GetItems: (Participant) -> {[string]: AnyItem?},
     GiveItemFromItemDefinition: (Participant, itemDefinition: AnyItemDefinition) -> (),
     DropItem: (Participant, item: AnyItem, throw: boolean?) -> (),
 
@@ -488,23 +488,23 @@ export type Round = {
     GetMap: (Round) -> Map,
 
     _items: {[DataModelItem]: AnyItem?},
-    GetItems: (Round) -> index<Round, "_items">,
+    GetItems: (Round) -> {[DataModelItem]: AnyItem?},
     GetItem: (Round, part: DataModelItem) -> AnyItem?,
     LoadItem: (Round, map: Map, part: DataModelItem) -> AnyItem,
 
     _ammoBoxes: {[DataModelItem]: AmmoBox?},
-    GetAmmoBoxes: (Round) -> index<Round, "_ammoBoxes">,
+    GetAmmoBoxes: (Round) -> {[DataModelItem]: AmmoBox?},
     GetAmmoBox: (Round, part: DataModelItem) -> AmmoBox?,
     LoadAmmoBox: (Round, map: Map, part: DataModelItem) -> AmmoBox,
 
     _props: {[DataModelProp]: Prop?},
-    GetProps: (Round) -> index<Round, "_props">,
+    GetProps: (Round) -> {[DataModelProp]: Prop?},
     GetProp: (Round, model: DataModelProp) -> Prop?,
     LoadProp: (Round, model: DataModelProp) -> Prop,
 
     _participants: {[string]: Participant?},
     GetParticipant: (Round, name: string) -> Participant?,
-    GetParticipants: (Round) -> index<Round, "_participants">,
+    GetParticipants: (Round) -> {[string]: Participant?},
     AddPlayer: (Round, player: Player, addAsSpectator: boolean?) -> Participant,
     RemoveParticipant: (Round, participant: Participant) -> (),
 
