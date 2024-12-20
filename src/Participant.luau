@@ -395,7 +395,7 @@ local function RemoveItem(participant: Types.Participant, item: Types.AnyItem): 
     remotes.UpdateInventory:FireClient(participant.Player, "Remove", item)
 end
 
-local function GetItems(participant: Types.Participant): index<Types.Participant, "_items">
+local function GetItems(participant: Types.Participant): {[string]: Types.AnyItem?}
     return participant._items
 end
 

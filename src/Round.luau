@@ -31,7 +31,7 @@ local function GetParticipant(round: Types.Round, name: string): Types.Participa
     return round._participants[name]
 end
 
-local function GetParticipants(round: Types.Round): index<Types.Round, "_participants">
+local function GetParticipants(round: Types.Round): {[string]: Types.Participant?}
     return round._participants
 end
 
@@ -240,7 +240,7 @@ local function EndRound(round: Types.Round, victor: Types.Victor): ()
     remotes.RoundHighlights:FireAllClients()
 end
 
-local function GetProps(round: Types.Round): index<Types.Round, "_props">
+local function GetProps(round: Types.Round): {[Types.DataModelProp]: Types.Prop?}
     return round._props
 end
 
@@ -255,7 +255,7 @@ local function LoadProp(round: Types.Round, model: Types.DataModelProp): Types.P
     return prop
 end
 
-local function GetItems(round: Types.Round): index<Types.Round, "_items">
+local function GetItems(round: Types.Round): {[Types.DataModelItem]: Types.AnyItem?}
     return round._items
 end
 
@@ -291,7 +291,7 @@ local function LoadItem(round: Types.Round, map: Types.Map, model: Types.DataMod
     return item
 end
 
-local function GetAmmoBoxes(round: Types.Round): index<Types.Round, "_ammoBoxes">
+local function GetAmmoBoxes(round: Types.Round): {[Types.DataModelItem]: Types.AmmoBox?}
     return round._ammoBoxes
 end
 
