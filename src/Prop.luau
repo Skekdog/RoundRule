@@ -36,7 +36,7 @@ function module.new(model: Types.DataModelProp): Types.Prop
     return {
         Model = model,
 
-        _health = health or 0 :: number?,
+        _health = (health or 0) :: number?,
 
         GetHealth = GetHealth,
         SetHealth = SetHealth,

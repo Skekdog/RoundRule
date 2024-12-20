@@ -556,7 +556,7 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
     local ownRole = participant:GetRole()
     if ownRole and ownRole.CanStealCreditsFromCorpses then
         otherCredits = math.max(other:GetCredits(), 0)
-        participant:AddCredits(otherCredits)
+        participant:AddCredits(otherCredits :: number)
         other:SetCredits(0)
 
         participant.Round:AddEvent({

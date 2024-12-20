@@ -346,6 +346,7 @@ local function GetParticipantsWithRole(round: Types.Round, role: Types.Role): {T
     local participants = {}
     
     for _, v in round:GetParticipants() do
+        assert(v)
         table.insert(participants, v)
     end
 
@@ -372,7 +373,7 @@ local function GetItemDefinition(round: Types.Round, item: string): Types.AnyIte
     return round:GetMap().AvailableItems[item] or round.Gamemode.AvailableItems[item]
 end
 
-local function tryResetDynamicMapObject(mapFolder: Folder, map: Types.Map, name: keyof<Types.Map>): ()
+local function tryResetDynamicMapObject(mapFolder: Folder, map: Types.Map, name: string): ()
     local old = mapFolder:FindFirstChild(name)
     if old then
         old:Destroy()
@@ -501,7 +502,10 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
         workspace.Gravity = map.Gravity
 
         workspace.Terrain:Clear()
-        workspace.Terrain:PasteRegion(map.TerrainRegion, Vector3int16.new(-32000, -32000, -32000), true)
+
+        if map.TerrainRegion then
+            workspace.Terrain:PasteRegion(map.TerrainRegion, Vector3int16.new(-32000, -32000, -32000), true)
+        end
     end
 
     tryResetDynamicMapObject(mapFolder, map, "DynamicMap" :: "DynamicMap")
@@ -517,6 +521,7 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
     round._map = map
 
     currentMap = map
+    assert(currentMap)
 
     data:SetAttribute("CurrentMap", currentMap.DisplayName)
     data:SetAttribute("MapAuthors", currentMap.Authors)
@@ -531,7 +536,7 @@ local function SendMessage(round: Types.Round, to: {Player} | Player, message: s
         to = {to}
     end
 
-    for _, v in to do
+    for _, v in to :: {Player} do
         remotes.SendMessage:FireClient(v, message)
     end
 end
