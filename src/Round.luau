@@ -606,6 +606,7 @@ function module.new(gamemode: Types.Gamemode): Types.Round
     data:SetAttribute("AdvanceTime", nil)
     data:SetAttribute("CurrentMap", nil)
     data:SetAttribute("MapAuthors", nil)
+    data:SetAttribute("Gamemode", gamemode.Name)
 
     return round
 end
