@@ -34,6 +34,7 @@ function module.new(model: Types.DataModelProp): Types.Prop
     assert(typeof(health) == "number" or health == nil)
 
     return {
+        Kind = "Prop",
         Model = model,
 
         _health = (health or 0) :: number?,

@@ -468,6 +468,7 @@ export type Participant = {
 }
 
 export type Prop = {
+    Kind: "Prop",
     Model: DataModelProp,
 
     _health: number?,
