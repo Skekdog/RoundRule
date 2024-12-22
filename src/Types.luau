@@ -192,6 +192,7 @@ export type MeleeWeaponDefinition = CommonWeaponDefinition & {
 }
 
 export type AmmoDefinition = {
+    Kind: "Ammo",
     Name: string,
     DisplayName: string?,
     Capacity: number,
