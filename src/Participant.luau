@@ -345,7 +345,7 @@ local function IsItemSlotOccupied(participant: Types.Participant, slot: number):
     return false
 end
 
-local function GiveItemFromItemDefinition(participant: Types.Participant, itemDefinition: Types.AnyItemDefinition): ()
+local function GiveItemFromItemDefinition(participant: Types.Participant, itemDefinition: Types.AnyItemDefinition): Types.AnyItem
     local item: Types.AnyItem
     if itemDefinition.Model then
         assert(typeof(itemDefinition.Model) == "Instance" and itemDefinition.Model:IsA("BasePart"))
@@ -355,6 +355,8 @@ local function GiveItemFromItemDefinition(participant: Types.Participant, itemDe
     end
 
     participant:AddItem(item)
+
+    return item
 end
 
 local function DropItem(participant: Types.Participant, item: Types.AnyItem, throw: boolean?): ()
@@ -427,7 +429,11 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
     participant:SetCredits(participant:GetCredits() - itemDefinition.CreditCost)
     participant._itemPurchases[itemDefinition.Name] = (participant._itemPurchases[itemDefinition.Name] or 0) + 1
 
-    participant:GiveItemFromItemDefinition(itemDefinition :: Types.AnyItemDefinition)
+    local item = participant:GiveItemFromItemDefinition(itemDefinition :: Types.AnyItemDefinition)
+
+    if itemDefinition.Kind == "Item" and itemDefinition.OnPurchase then
+        itemDefinition.OnPurchase(item :: Types.Item, participant)
+    end
 
     return "Success"
 end

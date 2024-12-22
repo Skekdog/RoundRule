@@ -132,6 +132,8 @@ export type ItemDefinition = CommonItemDefinition & {
 
     PrimaryFireServer: ((Item, Participant) -> ())?,
     AlternateFireServer: ((Item, Participant) -> ())?,
+
+    OnPurchase: ((Item, Participant) -> ())?,
 }
 
 export type GunWeaponDefinition = CommonWeaponDefinition & {
@@ -441,7 +443,7 @@ export type Participant = {
     _equippedItem: AnyItem?,
 
     GetItems: (Participant) -> {[string]: AnyItem?},
-    GiveItemFromItemDefinition: (Participant, itemDefinition: AnyItemDefinition) -> (),
+    GiveItemFromItemDefinition: (Participant, itemDefinition: AnyItemDefinition) -> AnyItem,
     DropItem: (Participant, item: AnyItem, throw: boolean?) -> (),
 
     AddItem: (Participant, item: AnyItem) -> (),
