@@ -272,10 +272,7 @@ local function _setStatus(participant: Types.Participant, status: Types.Particip
             end
         end
     else
-        for _, v in participant.Round:GetParticipants() do
-            assert(v)
-            remotes.UpdatePlayerStatus:FireAllClients(participant.Player.Name, status)
-        end
+        remotes.UpdatePlayerStatus:FireAllClients(participant.Player.Name, status)
     end
 end
 
