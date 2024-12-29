@@ -319,11 +319,9 @@ local function LoadAmmoBox(round: Types.Round, map: Types.Map, model: Types.Data
         end
 
         local participant = round:GetParticipant(touchModel.Name)
-        if not participant or not participant:IsAlive() then
+        if not participant or not participant:IsAlive() or not participant:HasWeaponOfAmmoType(model.Name) then
             return
         end
-
-        model.Parent = nil
 
         local currentAmmo = participant:GetAmmo(model.Name)
 

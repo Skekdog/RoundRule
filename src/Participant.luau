@@ -628,6 +628,17 @@ local function SetAmmo(participant: Types.Participant, kind: string, amount: num
     participant._ammo[kind] = amount
 end
 
+local function HasWeaponOfAmmoType(participant: Types.Participant, ammoType: string): boolean
+    for _, v in participant:GetItems() do
+        assert(v)
+        if v.Definition.Kind == "Gun" and v.Definition.AmmoType.Name == ammoType then
+            return true
+        end
+    end
+
+    return false
+end
+
 local function DropAmmoBoxForCurrentItem(participant: Types.Participant): ()
     local item = participant:GetEquippedItem()
     if not item or item.Kind ~= "Gun" then
@@ -681,6 +692,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         GetAllAmmo = GetAllAmmo,
         GetAmmo = GetAmmo,
         SetAmmo = SetAmmo,
+        HasWeaponOfAmmoType = HasWeaponOfAmmoType,
 
         GetEquippedItem = GetEquippedItem,
         SetEquippedItem = SetEquippedItem,
