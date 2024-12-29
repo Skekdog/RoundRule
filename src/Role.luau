@@ -10,7 +10,7 @@ local function GetExclamatoryString(role: Types.Role): string
 end
 
 local function IsAlliedWith(role: Types.Role, otherRole: Types.Role): boolean
-    return table.find(role.Definition.Allies or {} :: {string}, otherRole.Definition.Name) ~= nil
+    return table.find(role.Definition.Allies or {}, otherRole.Definition.Name) ~= nil
 end
 
 function module.fromDefinition(roleDefinition: Types.RoleDefinition): Types.Role

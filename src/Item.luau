@@ -9,19 +9,18 @@ function module.new(definition: Types.AnyItemDefinition, model: BasePart?): Type
     if definition.Kind == "Item" then
         return {
             Kind = "Item",
-            Definition = definition :: Types.ItemDefinition,
+            Definition = definition,
             Model = model,
 
             Extras = {},
         }
     elseif definition.Kind == "Gun" then
-        local gunDefinition = definition :: Types.GunWeaponDefinition
         return {
             Kind = "Gun",
-            Definition = definition :: Types.GunWeaponDefinition,
+            Definition = definition,
             Model = model :: BasePart,
 
-            Ammo = gunDefinition.AmmoType.Capacity,
+            Ammo = definition.AmmoType.Capacity,
             LastFireTime = 0,
 
             IsReloading = false,
@@ -31,7 +30,7 @@ function module.new(definition: Types.AnyItemDefinition, model: BasePart?): Type
     elseif definition.Kind == "Grenade" then
         return {
             Kind = "Grenade",
-            Definition = definition :: Types.GrenadeWeaponDefinition,
+            Definition = definition,
             Model = model :: BasePart,
 
             Extras = {},
@@ -39,7 +38,7 @@ function module.new(definition: Types.AnyItemDefinition, model: BasePart?): Type
     elseif definition.Kind == "Melee" then
         return {
             Kind = "Melee",
-            Definition = definition :: Types.MeleeWeaponDefinition,
+            Definition = definition,
             Model = model :: BasePart,
 
             LastAttackTime = 0,

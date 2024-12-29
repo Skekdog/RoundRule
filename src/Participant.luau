@@ -20,14 +20,11 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
     if participant._wasDeathProcessed then
         return
     end
-    participant._wasDeathProcessed = true :: any
+    participant._wasDeathProcessed = true
 
     if participant.Round:IsPreGame() then
-        participant = participant :: Types.Participant
         return rejoinRound(participant)
     end
-
-    participant = participant :: Types.Participant
 
     local attacker = params.Attacker
     if attacker and not params.IgnoreKarma and not attacker:IsDamageJustifiedAgainstParticipant(participant) then
@@ -350,7 +347,7 @@ local function GiveItemFromItemDefinition(participant: Types.Participant, itemDe
         assert(typeof(itemDefinition.Model) == "Instance" and itemDefinition.Model:IsA("BasePart"))
         item = participant.Round:LoadItem(participant.Round:GetMap(), itemDefinition.Model)
     else
-        item = Item.new(itemDefinition :: Types.AnyItemDefinition)
+        item = Item.new(itemDefinition)
     end
 
     participant:AddItem(item)
@@ -428,7 +425,7 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
     participant:SetCredits(participant:GetCredits() - itemDefinition.CreditCost)
     participant._itemPurchases[itemDefinition.Name] = (participant._itemPurchases[itemDefinition.Name] or 0) + 1
 
-    local item = participant:GiveItemFromItemDefinition(itemDefinition :: Types.AnyItemDefinition)
+    local item = participant:GiveItemFromItemDefinition(itemDefinition)
 
     if itemDefinition.Kind == "Item" and itemDefinition.OnPurchase then
         itemDefinition.OnPurchase(item :: Types.Item, participant)
@@ -440,8 +437,7 @@ end
 local function SpawnCharacter(participant: Types.Participant): ()
     assert(not participant._isCharacterLoading, "Character is already loading")
 
-    participant._isCharacterLoading = true :: any -- 'true' could not be converted into 'false' my arse
-
+    participant._isCharacterLoading = true
     participant._wasDeathProcessed = false
 
     participant.Player.CharacterAppearanceLoaded:Once(function(char)
@@ -520,8 +516,6 @@ local function TryAddSlayVote(participant: Types.Participant, other: Types.Parti
         return
     end
 
-    other = other :: Types.Participant -- minor amount of type refinement nonsense here
-
     local corpse = other:GetCorpse()
     if not corpse or corpse.WasCorrectKill ~= false then
         return
@@ -568,7 +562,7 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
             Kind = "CorpseSearchedRoundEvent",
             SearchedBy = participant,
             Victim = other,
-            FoundCredits = otherCredits :: number?,
+            FoundCredits = otherCredits,
         })
     end
 

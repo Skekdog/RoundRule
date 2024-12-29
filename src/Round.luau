@@ -125,7 +125,7 @@ local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase, durati
 
     data:SetAttribute("Phase", phase)
 
-    round:SetAdvanceTime(workspace:GetServerTimeNow() + duration, callback or (false :: false))
+    round:SetAdvanceTime(workspace:GetServerTimeNow() + duration, callback or false)
 end
 
 local function SetAdvanceTime(round: Types.Round, finishTime: number, callback: false | "preserve" | Types.RoundAdvanceCallback): ()
@@ -186,8 +186,6 @@ local function StartRound(round: Types.Round): ()
 
     assert(#participantList >= round.Gamemode.MinimumPlayers, "Not enough players to start round")
 
-    round = round :: Types.Round -- more type refinement nonsense
-
     for _, v in round:GetParticipants() do
         assert(v)
         while not v:GetCharacter() and v.Player:IsDescendantOf(Players) do
@@ -219,16 +217,14 @@ local function EndRound(round: Types.Round, victor: Types.Victor): ()
     if role.Definition.Allegiance.Kind == "Role" then
         victorRole = round:GetRoleFromRoleName(role.Definition.Allegiance.Role)
     elseif role.Definition.Allegiance.Kind == "Solo" then
-        victorRole = role :: Types.Role
+        victorRole = role
     end
 
     assert(victorRole.Definition.VictoryText, "Victory role has no VictoryText")
 
-    round = round :: Types.Round
-
     round:AddEvent({
         Kind = "EndRoundEvent",
-        VictoryText = victorRole.Definition.VictoryText :: string,
+        VictoryText = victorRole.Definition.VictoryText,
     })
     round:SetRoundPhase("Highlights", HIGHLIGHTS_TIME)
 

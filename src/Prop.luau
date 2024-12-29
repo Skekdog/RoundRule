@@ -31,13 +31,13 @@ end
 
 function module.new(model: Types.DataModelProp): Types.Prop
     local health = model:GetAttribute("Health")
-    assert(typeof(health) == "number" or health == nil)
+    assert((typeof(health) == "number") or typeof(health) == "nil")
 
     return {
         Kind = "Prop",
         Model = model,
 
-        _health = (health or 0) :: number?,
+        _health = health or 0,
 
         GetHealth = GetHealth,
         SetHealth = SetHealth,

@@ -2,7 +2,7 @@ local Types = require(script.Parent.Types)
 local module = {}
 
 local function GetSearchedBy(corpse: Types.Corpse): {Types.Participant}
-    return corpse._searchedBy :: {Types.Participant}
+    return corpse._searchedBy
 end
 
 local function AddSearchedBy(corpse: Types.Corpse, participant: Types.Participant): ()
@@ -26,12 +26,11 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
     end
 
     local corpseView: Types.CorpseView = {
-        WasFreeKill = participant:IsFreeKill() :: boolean?, 
+        WasFreeKill = participant:IsFreeKill(), 
         WasHeadshot = params.IsHeadshot,
         WasSelfDefense = selfDefense,
 
         DeathTime = workspace:GetServerTimeNow(),
-        DNAExpiry = nil :: number?,
 
         DamageSource = source,
     }
@@ -39,8 +38,6 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
     return {
         CorpseView = corpseView,
         WasCorrectKill = if params.Attacker then params.Attacker:IsDamageJustifiedAgainstParticipant(participant) else nil,
-
-        Model = nil :: Model?,
         
         _searchedBy = {},
         GetSearchedBy = GetSearchedBy,
