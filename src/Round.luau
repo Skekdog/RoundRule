@@ -6,6 +6,7 @@ local Item = require(script.Parent.Item)
 local Map = require(script.Parent.Map)
 local Participant = require(script.Parent.Participant)
 local Prop = require(script.Parent.Prop)
+local Role = require(script.Parent.Role)
 local Types = require(script.Parent.Types)
 local module = {}
 
@@ -80,8 +81,8 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
     round._participants[participant.Player.Name] = nil
 
     local role = participant:GetRole()
-    if role and role.ShouldAnnounceDisconnect then
-        round:SendMessage(Players:GetPlayers(), participant:GetFormattedName() .. " has disconnected. They were a " .. role.Name .. round.GetExclamatoryString(role :: Types.Role))
+    if role and role.Definition.ShouldAnnounceDisconnect then
+        round:SendMessage(Players:GetPlayers(), `{participant:GetFormattedName()} has disconnected. They were a {role:GetFormattedName()}{role:GetExclamatoryString()}`)
     end
 
     participant:UnspawnCharacter()
@@ -215,19 +216,19 @@ local function EndRound(round: Types.Round, victor: Types.Victor): ()
     end
 
     local victorRole: Types.Role
-    if role.Allegiance.Kind == "Role" then
-        victorRole = round:GetRoleFromRoleName(role.Allegiance.Role)
-    elseif role.Allegiance.Kind == "Solo" then
+    if role.Definition.Allegiance.Kind == "Role" then
+        victorRole = round:GetRoleFromRoleName(role.Definition.Allegiance.Role)
+    elseif role.Definition.Allegiance.Kind == "Solo" then
         victorRole = role :: Types.Role
     end
 
-    assert(victorRole.VictoryText, "Victory role has no VictoryText")
+    assert(victorRole.Definition.VictoryText, "Victory role has no VictoryText")
 
     round = round :: Types.Round
 
     round:AddEvent({
         Kind = "EndRoundEvent",
-        VictoryText = victorRole.VictoryText :: string,
+        VictoryText = victorRole.Definition.VictoryText :: string,
     })
     round:SetRoundPhase("Highlights", HIGHLIGHTS_TIME)
 
@@ -342,7 +343,7 @@ local function LoadAmmoBox(round: Types.Round, map: Types.Map, model: Types.Data
 end
 
 local function GetRoleFromRoleName(round: Types.Round, name: string): Types.Role
-    return round.Gamemode.Roles[name] or error("Unknown role: " .. name)
+    return round._roles[name] or error("Unknown role: " .. name)
 end
 
 local function GetParticipantsWithRole(round: Types.Round, role: Types.Role): {Types.Participant}
@@ -354,14 +355,6 @@ local function GetParticipantsWithRole(round: Types.Round, role: Types.Role): {T
     end
 
     return participants
-end
-
-local function GetFormattedRoleName(role: Types.Role): string
-    return `<font color='#{role.Color:ToHex()}'>#{role.Name}</font>`
-end
-
-local function IsRoleAlliedWithRole(role1: Types.Role, role2: Types.Role): boolean
-    return table.find(role1.Allies or {} :: {string}, role2.Name) ~= nil
 end
 
 local function GetMap(round: Types.Round): Types.Map
@@ -480,7 +473,7 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
     assert(currentMap)
 end
 
-local function GetExclamatoryString(role: Types.Role): string
+local function GetExclamatoryString(role: Types.RoleDefinition): string
     return if role.IsExclamatory then "!" else "."
 end
 
@@ -495,6 +488,11 @@ local function SendMessage(round: Types.Round, to: {Player} | Player, message: s
 end
 
 function module.new(gamemode: Types.Gamemode): Types.Round
+    local roles: {[string]: Types.Role} = {}
+    for _, v in gamemode.Roles do
+        roles[v.Name] = Role.fromDefinition(v)
+    end
+
     local round: Types.Round = {
         Gamemode = gamemode,
 
@@ -507,6 +505,8 @@ function module.new(gamemode: Types.Gamemode): Types.Round
 
         _eventLog = {},
         _props = {},
+
+        _roles = roles,
 
         _items = {},
         GetItems = GetItems,
@@ -543,9 +543,6 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         EndRound = EndRound,
         GetRoleFromRoleName = GetRoleFromRoleName,
         GetParticipantsWithRole = GetParticipantsWithRole,
-
-        GetFormattedRoleName = GetFormattedRoleName,
-        IsRoleAlliedWithRole = IsRoleAlliedWithRole,
 
         GetProps = GetProps,
         GetProp = GetProp,

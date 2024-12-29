@@ -37,7 +37,7 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
 
     local role = participant:GetRole()
     if role then
-        for otherRoleName, amount in role.AwardCreditsToRolesOnDeath do
+        for otherRoleName, amount in role.Definition.AwardCreditsToRolesOnDeath do
             for _, otherParticipant in participant.Round:GetParticipantsWithRole(participant.Round:GetRoleFromRoleName(otherRoleName)) do
                 otherParticipant:AddCredits(amount)
             end
@@ -67,13 +67,13 @@ local function tryAssignHumanoidPropertiesForRole(humanoid: Humanoid?, role: Typ
         return
     end
 
-    humanoid.MaxHealth = role.Health
-    humanoid.Health = role.Health
+    humanoid.MaxHealth = role.Definition.Health
+    humanoid.Health = role.Definition.Health
 
-    humanoid.WalkSpeed = role.WalkSpeed
-    humanoid.JumpPower = role.JumpPower
+    humanoid.WalkSpeed = role.Definition.WalkSpeed
+    humanoid.JumpPower = role.Definition.JumpPower
 
-    for _, v in role.Accessories do
+    for _, v in role.Definition.Accessories do
         local id = tonumber(v:split("//")[2])
         if not id then
             continue
@@ -96,7 +96,7 @@ local function GetFormattedName(participant: Types.Participant): string
         return participant.Player.Name
     end
 
-    return `<font color='#{role.Color:ToHex()}'>{participant.Player.Name}</font>`
+    return `<font color='#{role.Definition.Color:ToHex()}'>{participant.Player.Name}</font>`
 end
 
 local function GetCharacter(participant: Types.Participant): Model?
@@ -115,8 +115,9 @@ local function GetRole(participant: Types.Participant): Types.Role?
     return participant._role
 end
 
-local function SetRole(participant: Types.Participant, role: Types.Role): ()
-    tryAssignHumanoidPropertiesForRole(participant._humanoid, role)
+local function SetRole(participant: Types.Participant, role: Types.RoleDefinition): ()
+    participant._role = participant.Round:GetRoleFromRoleName(role.Name)
+    tryAssignHumanoidPropertiesForRole(participant._humanoid, participant._role)
 
     participant:AddCredits(role.StartingCredits or 0)
     if role.StartingItems then
@@ -124,8 +125,6 @@ local function SetRole(participant: Types.Participant, role: Types.Role): ()
             participant:GiveItemFromItemDefinition(v)
         end
     end
-
-    participant._role = role
 
     for _, v in participant.Round:GetParticipants() do
         assert(v)
@@ -139,14 +138,14 @@ local function SetRole(participant: Types.Participant, role: Types.Role): ()
 
         local otherRole = v:GetRole()
         if otherRole then
-            if otherRole.RevealedRoles and table.find(otherRole.RevealedRoles, role.Name) then
+            if otherRole.Definition.RevealedRoles and table.find(otherRole.Definition.RevealedRoles, role.Name) then
                 remotes.UpdatePlayerRole:FireClient(v.Player, participant.Player.Name, role.Name)
             else
                 remotes.UpdatePlayerRole:FireClient(v.Player, participant.Player.Name, nil)
             end
 
-            if role.RevealedRoles and table.find(role.RevealedRoles, otherRole.Name) then
-                remotes.UpdatePlayerRole:FireClient(participant.Player, v.Player.Name, otherRole.Name)
+            if role.RevealedRoles and table.find(role.RevealedRoles, otherRole.Definition.Name) then
+                remotes.UpdatePlayerRole:FireClient(participant.Player, v.Player.Name, otherRole.Definition.Name)
             else
                 remotes.UpdatePlayerRole:FireClient(participant.Player, v.Player.Name, nil)
             end
@@ -243,7 +242,7 @@ local function TryTakeDamage(participant: Types.Participant, params: Types.Damag
         local role = participant:GetRole()
         if role and not params.IgnoreKarma then
             local karma = participant:GetKarma()
-            karma = karma + (params.Amount * role.DamageKarmaMultiplier) * (if attacker:IsDamageJustifiedAgainstParticipant(participant) then 1 else -1)
+            karma = karma + (params.Amount * role.Definition.DamageKarmaMultiplier) * (if attacker:IsDamageJustifiedAgainstParticipant(participant) then 1 else -1)
             participant:SetKarma(karma)
         end
     end
@@ -271,7 +270,7 @@ local function _setStatus(participant: Types.Participant, status: Types.Particip
         for _, v in participant.Round:GetParticipants() do
             assert(v)
             local role = v:GetRole()
-            if role and role.CanSeeMissingInAction then
+            if role and role.Definition.CanSeeMissingInAction then
                 remotes.UpdatePlayerStatus:FireClient(v.Player, participant.Player.Name, status)
             end
         end
@@ -408,7 +407,7 @@ end
 local function PurchaseItem(participant: Types.Participant, itemDefinition: Types.AnyItemDefinition): Types.ItemPurchaseResult
     local role = participant:GetRole()
 
-    if not role or not role.EquipmentShop or not table.find(role.EquipmentShop, itemDefinition) then
+    if not role or not role.Definition.EquipmentShop or not table.find(role.Definition.EquipmentShop, itemDefinition) then
         return "InvalidItemForRole"
     end
 
@@ -501,7 +500,7 @@ local function IsAlliedWithParticipant(participant: Types.Participant, other: Ty
         return false
     end
 
-    return participant.Round.IsRoleAlliedWithRole(role1, role2)
+    return role1:IsAlliedWith(role2)
 end
 
 local function GetSlayVotes(participant: Types.Participant): {Types.Participant}
@@ -560,7 +559,7 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
 
     local otherCredits: number?
     local ownRole = participant:GetRole()
-    if ownRole and ownRole.CanStealCreditsFromCorpses then
+    if ownRole and ownRole.Definition.CanStealCreditsFromCorpses then
         otherCredits = math.max(other:GetCredits(), 0)
         participant:AddCredits(otherCredits :: number)
         other:SetCredits(0)
@@ -579,11 +578,9 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
         local round = participant.Round
 
         if ownRole then
-            if ownRole.ScoreForFindingBodies then
-                participant:AddScore("Bodies Found", ownRole.ScoreForFindingBodies)
-            end
+            participant:AddScore("Bodies Found", ownRole.Definition.ScoreForFindingBodies or 0)
 
-            if ownRole.CorpseSearchResultsPublicised then
+            if ownRole.Definition.CorpseSearchResultsPublicised then
                 for _, v in round:GetParticipants() do
                     assert(v)
                     corpse:AddSearchedBy(v)
@@ -592,10 +589,10 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
             end
         end
 
-        local msg = participant:GetFormattedName() .. " found the body of " .. other:GetFormattedName() .. "."
+        local msg = `{participant:GetFormattedName()} found the body of {other:GetFormattedName()}.`
         local otherRole = other:GetRole()
         if otherRole then
-            msg ..= " They were a " .. round.GetFormattedRoleName(otherRole) .. round.GetExclamatoryString(otherRole)
+            msg ..= ` They were a {otherRole:GetExclamatoryString()}{otherRole:GetExclamatoryString()}`
         end
 
         round:SendMessage(Players:GetPlayers(), msg)

@@ -43,14 +43,14 @@ export type Gamemode = {
 
     AssignRoles: (Gamemode, {Participant}) -> (),
     
-    Roles: {[string]: Role},
+    Roles: {[string]: RoleDefinition},
 
     OnDeath: (Gamemode, Participant) -> (),
     OnCharacterAdded: (Gamemode, Participant) -> (),
 }
 
-export type Role = {
-    Kind: "Role",
+export type RoleDefinition = {
+    Kind: "RoleDefinition",
 
     Name: string,
     DisplayName: string?,
@@ -246,6 +246,15 @@ export type Map = MapDefinition & {
     GetDisplayName: (Map) -> string,
 }
 
+export type Role = {
+    Kind: "Role",
+    Definition: RoleDefinition,
+    
+    IsAlliedWith: (Role, other: Role) -> boolean,
+    GetFormattedName: (Role) -> string,
+    GetExclamatoryString: (Role) -> string,
+}
+
 export type OnPropBreak = (Prop, params: DamageParams?) -> () 
 
 export type RoundEvent = {
@@ -397,7 +406,7 @@ export type Participant = {
 
     _role: Role?,
     GetRole: (Participant) -> Role?,
-    SetRole: (Participant, role: Role) -> (),
+    SetRole: (Participant, role: RoleDefinition) -> (),
 
     IsAlliedWithParticipant: (Participant, other: Participant) -> boolean,
     IsDamageJustifiedAgainstParticipant: (Participant, other: Participant) -> boolean,
@@ -539,13 +548,10 @@ export type Round = {
     StartRound: (Round) -> (),
     EndRound: (Round, victor: Victor) -> (),
 
+    _roles: {[string]: Role?},
+
     GetRoleFromRoleName: (Round, name: string) -> Role,
     GetParticipantsWithRole: (Round, role: Role) -> {Participant},
-
-    GetFormattedRoleName: (role: Role) -> string,
-    GetExclamatoryString: (role: Role) -> string,
-
-    IsRoleAlliedWithRole: (role1: Role, role2: Role) -> boolean,
 
     SendMessage: (Round, to: {Player} | Player, message: string) -> (),
 }
