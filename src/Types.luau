@@ -56,6 +56,7 @@ export type RoleDefinition = {
     DisplayName: string?,
     Description: string,
     Color: Color3,
+    Sound: string,
     IsExclamatory: boolean?,
 
     Allegiance: VictorType,

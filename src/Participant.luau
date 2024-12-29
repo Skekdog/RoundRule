@@ -125,6 +125,11 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
 
     for _, v in participant.Round:GetParticipants() do
         assert(v)
+
+        if v == participant then
+            remotes.UpdatePlayerRole:FireClient(v.Player, participant.Player.Name, role.Name)
+        end
+
         if v:GetStatus() == "Missing" then
             if role.CanSeeMissingInAction then
                 remotes.UpdatePlayerStatus:FireClient(v.Player, participant.Player.Name, "Missing")
@@ -148,8 +153,6 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
             end
         end
     end
-
-    remotes.AssignRole:FireClient(participant.Player, role.Name)
 end
 
 local function GetHealth(participant: Types.Participant): number
