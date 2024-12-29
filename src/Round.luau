@@ -285,6 +285,10 @@ local function LoadItem(round: Types.Round, map: Types.Map, model: Types.DataMod
             return
         end
 
+        if item.Definition.Slot and participant:IsItemSlotOccupied(item.Definition.Slot) then
+            return
+        end
+
         model.Parent = nil
         participant:AddItem(item)
     end)
