@@ -38,34 +38,51 @@ local function GetParticipants(round: Types.Round): {[string]: Types.Participant
     return round._participants
 end
 
+local function spawnParticipant(participant: Types.Participant)
+    local round = participant.Round
+
+    participant:_setStatus("Alive")
+
+    for _, v in round.Gamemode.StartingItems do
+        participant:AddItem(Item.new(v))
+    end
+
+    local count = 0
+    for _, v in round:GetParticipants() do
+        assert(v)
+        if v:GetStatus() ~= "Spectating" then
+            count += 1
+            if count == round.Gamemode.MinimumPlayers then
+                round:SetRoundPhase("Preparing", PREPARING_TIME)
+                break
+            end
+        end
+    end
+
+    participant:SpawnCharacter()
+end
+
 local function AddPlayer(round: Types.Round, player: Player, addAsSpectator: boolean?): Types.Participant
     if round:GetRoundPhase() ~= "Waiting" and round:GetRoundPhase() ~= "Preparing" then
         error("Round is not in Waiting or Preparing phase")
     end
 
-    assert(not round._participants[player.Name], "Participant already exists")
+    local existingParticipant = round:GetParticipant(player.Name)
+    if existingParticipant then
+        if existingParticipant:GetStatus() == "Spectating" then
+            assert(not addAsSpectator, "Participant already exists as spectator")
+            spawnParticipant(existingParticipant)
+            return existingParticipant
+        else
+            error("Participant already exists")
+        end
+    end
 
     local participant = Participant.new(player, round)
     round._participants[player.Name] = participant
 
     if not addAsSpectator then
-        for _, v in round.Gamemode.StartingItems do
-            participant:AddItem(Item.new(v))
-        end
-
-        local count = 0
-        for _, v in round:GetParticipants() do
-            assert(v)
-            if v:GetStatus() ~= "Spectating" then
-                count += 1
-                if count == round.Gamemode.MinimumPlayers then
-                    round:SetRoundPhase("Preparing", PREPARING_TIME)
-                    break
-                end
-            end
-        end
-
-        participant:SpawnCharacter()
+        
     else
         participant:_setStatus("Spectating")
     end
