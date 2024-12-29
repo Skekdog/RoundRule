@@ -204,7 +204,7 @@ export type AmmoDefinition = {
 
 export type AnyItemDefinition = ItemDefinition | GunWeaponDefinition | GrenadeWeaponDefinition | MeleeWeaponDefinition
 
-export type Map = {
+export type MapDefinition = {
     Name: string,
     DisplayName: string?,
     Description: string,
@@ -216,31 +216,32 @@ export type Map = {
         ["1:1"]: string?,
     },
 
-    PlayerSpawns: Folder,
-
-    StaticMap: Folder,
-    Bounds: Folder?,
-    
-    DynamicMap: Folder?,
-    Props: Folder?,
-    Windows: Folder?,
-    ItemSpawns: Folder?,
-    AmmoSpawns: Folder?,
+    AvailableItems: {[string]: AnyItemDefinition},
+    AvailableAmmo: {[string]: AmmoDefinition},
 
     Gravity: number,
 
-    MaterialVariants: Folder?,
+    LightingSettings: {[string]: any},
+    FutureLightingSettings: {[string]: any}?,
 
-    LightingSettings: Folder,
-    FutureLightingSettings: Folder?,
+    WaterSettings: {[string]: any},
+    TerrainColors: {[string]: any},
+}
 
-    WaterSettings: Folder,
+export type Map = MapDefinition & {
+    PlayerSpawns: Folder,
 
     TerrainRegion: TerrainRegion?,
-    TerrainColors: Folder,
+    StaticMap: Folder,
+    Bounds: Folder,
+    
+    DynamicMap: Folder,
+    Props: Folder,
+    Windows: Folder,
+    ItemSpawns: Folder,
+    AmmoSpawns: Folder,
 
-    AvailableItems: {[string]: AnyItemDefinition},
-    AvailableAmmo: {[string]: AmmoDefinition},
+    MaterialVariants: Folder?,
 }
 
 export type OnPropBreak = (Prop, params: DamageParams?) -> () 
@@ -488,7 +489,7 @@ export type Round = {
     GetAmmoDefinition: (Round, ammo: string) -> AmmoDefinition?,
 
     _map: Map?,
-    LoadMap: (Round, map: Map) -> (),
+    LoadMap: (Round, mapScript: ModuleScript) -> (),
     GetMap: (Round) -> Map,
 
     _items: {[DataModelItem]: AnyItem?},

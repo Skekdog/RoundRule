@@ -1,7 +1,9 @@
+local MaterialService = game:GetService("MaterialService")
 local Players = game:GetService("Players")
 local AmmoBox = require(script.Parent.AmmoBox)
 local EventStrings = require(script.Parent.EventStrings)
 local Item = require(script.Parent.Item)
+local Map = require(script.Parent.Map)
 local Participant = require(script.Parent.Participant)
 local Prop = require(script.Parent.Prop)
 local Types = require(script.Parent.Types)
@@ -373,21 +375,6 @@ local function GetItemDefinition(round: Types.Round, item: string): Types.AnyIte
     return round:GetMap().AvailableItems[item] or round.Gamemode.AvailableItems[item]
 end
 
-local function tryResetDynamicMapObject(mapFolder: Folder, map: Types.Map, name: string): ()
-    local old = mapFolder:FindFirstChild(name)
-    if old then
-        old:Destroy()
-    end
-
-    if (map :: any)[name] then
-        (map :: any)[name].Parent = mapFolder
-    end
-end
-
-local function tryClone(folder: Folder?): Folder?
-    return if folder then folder:Clone() else nil
-end
-
 local function loadProps(round: Types.Round, map: Types.Map): ()
     if not map.Props then
         return
@@ -430,89 +417,58 @@ local function loadAmmoBoxes(round: Types.Round, map: Types.Map): ()
     end
 end
 
-local function LoadMap(round: Types.Round, map: Types.Map): ()
-    local mapFolder = workspace:FindFirstChild("MapFolder") or Instance.new("Folder", workspace)
-    assert(mapFolder:IsA("Folder"), "MapFolder is not a Folder")
+local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
+    mapScript = mapScript:Clone()
+    local map = Map.fromModuleScript(mapScript)
 
-    mapFolder.Name = "MapFolder"
+    local lastMap: Types.Map?
 
-    map = table.clone(map)
+    local lastMapScript = workspace:FindFirstChild("Map")
+    if lastMapScript then
+        assert(lastMapScript:IsA("ModuleScript"), "Invalid Map in Workspace")
 
-    map.DynamicMap = tryClone(map.DynamicMap)
-    map.Props = tryClone(map.Props)
-    map.Windows = tryClone(map.Windows)
-    map.ItemSpawns = tryClone(map.ItemSpawns)
-    map.AmmoSpawns = tryClone(map.AmmoSpawns)
+        lastMap = Map.fromModuleScript(lastMapScript)
+    end
 
-    if currentMap ~= map then
-        local oldStaticMap = mapFolder:FindFirstChild("StaticMap")
-        if oldStaticMap then
-            oldStaticMap.Parent = nil
+    if not lastMap or lastMap and lastMap.Name ~= map.Name then
+        if lastMapScript then
+            lastMapScript:Destroy()
         end
 
-        local oldBounds = mapFolder:FindFirstChild("Bounds")
-        if oldBounds then
-            oldBounds.Parent = nil
-        end
-
-        local oldPlayerSpawns = mapFolder:FindFirstChild("PlayerSpawns")
-        if oldPlayerSpawns then
-            oldPlayerSpawns.Parent = nil
-        end
-
-        local oldFIBLighting = mapFolder:FindFirstChild("FutureLightingSettings")
-        if oldFIBLighting then
-            oldFIBLighting.Parent = nil
-        end
-
-        local oldLighting = mapFolder:FindFirstChild("LightingSettings")
-        if oldLighting then
-            oldLighting.Parent = nil
-        end
-
-        local oldMaterialVariants = mapFolder:FindFirstChild("MaterialVariants")
-        if oldMaterialVariants then
-            oldMaterialVariants.Parent = nil
-        end
-
-        map.StaticMap.Parent = mapFolder
-        map.PlayerSpawns.Parent = mapFolder
-        map.LightingSettings.Parent = mapFolder
-
-        if map.FutureLightingSettings then
-            map.FutureLightingSettings.Parent = mapFolder
-        end
-
-        if map.MaterialVariants then
-            map.MaterialVariants.Parent = mapFolder
-        end
-
-        for _, v in map.WaterSettings:GetChildren() do
-            if v:IsA("ValueBase") then
-                (workspace.Terrain :: any)[v.Name] = (v :: any).Value
-            end
-        end
-
-        for _, v in map.TerrainColors:GetChildren() do
-            if v:IsA("ValueBase") then
-                workspace.Terrain:SetMaterialColor((Enum.Material :: any)[v.Name], (v :: any).Value)
-            end
+        local lastMapMaterialVariants = MaterialService:FindFirstChild("MapMaterialVariants")
+        if lastMapMaterialVariants then
+            lastMapMaterialVariants:Destroy()
         end
 
         workspace.Gravity = map.Gravity
 
-        workspace.Terrain:Clear()
+        for i, v in map.WaterSettings do
+            (workspace.Terrain :: any)[i] = v
+        end
 
+        for i, v in map.TerrainColors do
+            workspace.Terrain:SetMaterialColor((Enum.Material :: any)[i], v)
+        end
+
+        workspace.Terrain:Clear()
         if map.TerrainRegion then
             workspace.Terrain:PasteRegion(map.TerrainRegion, Vector3int16.new(-32000, -32000, -32000), true)
         end
-    end
 
-    tryResetDynamicMapObject(mapFolder, map, "DynamicMap" :: "DynamicMap")
-    tryResetDynamicMapObject(mapFolder, map, "Props" :: "Props")
-    tryResetDynamicMapObject(mapFolder, map, "Windows" :: "Windows")
-    tryResetDynamicMapObject(mapFolder, map, "ItemSpawns" :: "ItemSpawns")
-    tryResetDynamicMapObject(mapFolder, map, "AmmoSpawns" :: "AmmoSpawns")
+        if map.MaterialVariants then
+            map.MaterialVariants.Name = "MapMaterialVariants"
+            map.MaterialVariants.Parent = MaterialService
+        end
+
+        mapScript.Name = "Map"
+        mapScript.Parent = workspace
+    elseif lastMap then
+        lastMap.DynamicMap:Destroy()
+        lastMap.Props:Destroy()
+        lastMap.Windows:Destroy()
+        lastMap.ItemSpawns:Destroy()
+        lastMap.AmmoSpawns:Destroy()
+    end
 
     loadProps(round, map)
     loadItems(round, map)
@@ -522,9 +478,6 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
 
     currentMap = map
     assert(currentMap)
-
-    data:SetAttribute("CurrentMap", currentMap.DisplayName)
-    data:SetAttribute("MapAuthors", currentMap.Authors)
 end
 
 local function GetExclamatoryString(role: Types.Role): string
@@ -604,8 +557,6 @@ function module.new(gamemode: Types.Gamemode): Types.Round
     data:SetAttribute("Phase", round:GetRoundPhase())
     data:SetAttribute("Paused", round:GetIsRoundPaused())
     data:SetAttribute("AdvanceTime", nil)
-    data:SetAttribute("CurrentMap", nil)
-    data:SetAttribute("MapAuthors", nil)
     data:SetAttribute("Gamemode", gamemode.Name)
 
     return round
