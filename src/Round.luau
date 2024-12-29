@@ -268,8 +268,7 @@ end
 local function LoadItem(round: Types.Round, map: Types.Map, model: Types.DataModelItem): Types.AnyItem
     assert(not round:GetItem(model), "Item already exists")
 
-    local itemDefinition = round:GetItemDefinition(model.Name)
-    assert(itemDefinition, "Item does not exist in map or gamemode")
+    local itemDefinition = round:GetItemDefinition(model.Name) or error(`Item {model.Name} does not exist in map or gamemode`)
 
     local item = Item.new(itemDefinition, model)
     round._items[model] = item
@@ -304,7 +303,7 @@ end
 local function LoadAmmoBox(round: Types.Round, map: Types.Map, model: Types.DataModelItem): Types.AmmoBox
     assert(not round:GetAmmoBox(model), "AmmoBox already exists")
 
-    local definition = round:GetAmmoDefinition(model.Name) or error("AmmoBox does not exist in map or gamemode")
+    local definition = round:GetAmmoDefinition(model.Name) or error(`AmmoBox {model.Name} does not exist in map or gamemode`)
     local ammoBox = AmmoBox.new(definition, model)
     round._ammoBoxes[model] = ammoBox
 
@@ -470,11 +469,11 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
         lastMap.AmmoSpawns:Destroy()
     end
 
+    round._map = map -- Must be done here otherwise we fail to load everything below
+
     loadProps(round, map)
     loadItems(round, map)
     loadAmmoBoxes(round, map)
-
-    round._map = map
 
     currentMap = map
     assert(currentMap)
