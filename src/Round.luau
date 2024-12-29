@@ -456,10 +456,9 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
             workspace.Terrain:PasteRegion(map.TerrainRegion, Vector3int16.new(-32000, -32000, -32000), true)
         end
 
-        if map.MaterialVariants then
-            map.MaterialVariants.Name = "MapMaterialVariants"
-            map.MaterialVariants.Parent = MaterialService
-        end
+        local materialVariants = map.MaterialVariants:Clone()
+        materialVariants.Name = "MapMaterialVariants"
+        materialVariants.Parent = MaterialService
 
         mapScript.Name = "Map"
         mapScript.Parent = workspace

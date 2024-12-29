@@ -1,37 +1,26 @@
 local Types = require(script.Parent.Types)
 local module = {}
 
-local function newFolderWithNameAndParent(name: string, parent: Instance): Folder
-    local folder = Instance.new("Folder")
-    folder.Name = name
-    folder.Parent = parent
-    return folder
-end
-
-local function findFirstFolder(parent: Instance, name: string): Folder?
-    local folder = parent:FindFirstChild(name)
-    if not folder then
-        return nil
-    end
-
+-- We always want to use WaitForChild, because if a client is using this script, not all children may be replicated immediately.
+local function waitForFolder(parent: Instance, name: string): Folder
+    local folder = assert(parent:WaitForChild(name), "Instance not found")
     assert(folder:IsA("Folder"), "Instance is not a folder")
-
     return folder
 end
 
 function module.fromModuleScript(mapScript: ModuleScript): Types.Map
     local definition = (require)(mapScript)
 
-    local playerSpawns = assert(findFirstFolder(mapScript, "PlayerSpawns"), "PlayerSpawns folder not found")
-    local staticMap = assert(findFirstFolder(mapScript, "StaticMap"), "StaticMap folder not found")
+    local playerSpawns = waitForFolder(mapScript, "PlayerSpawns")
+    local staticMap = waitForFolder(mapScript, "StaticMap")
 
-    local bounds = findFirstFolder(mapScript, "Bounds") or newFolderWithNameAndParent("Bounds", mapScript)
+    local bounds = waitForFolder(mapScript, "Bounds")
 
-    local dynamicMap = findFirstFolder(mapScript, "DynamicMap") or newFolderWithNameAndParent("DynamicMap", mapScript)
-    local props = findFirstFolder(mapScript, "Props") or newFolderWithNameAndParent("Props", mapScript)
-    local windows = findFirstFolder(mapScript, "Windows") or newFolderWithNameAndParent("Windows", mapScript)
-    local itemSpawns = findFirstFolder(mapScript, "ItemSpawns") or newFolderWithNameAndParent("ItemSpawns", mapScript)
-    local ammoSpawns = findFirstFolder(mapScript, "AmmoSpawns") or newFolderWithNameAndParent("AmmoSpawns", mapScript)
+    local dynamicMap = waitForFolder(mapScript, "DynamicMap")
+    local props = waitForFolder(mapScript, "Props")
+    local windows = waitForFolder(mapScript, "Windows")
+    local itemSpawns = waitForFolder(mapScript, "ItemSpawns")
+    local ammoSpawns = waitForFolder(mapScript, "AmmoSpawns")
 
     return {
         Name = definition.Name,
@@ -63,7 +52,7 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
         ItemSpawns = itemSpawns,
         AmmoSpawns = ammoSpawns,
 
-        MaterialVariants = findFirstFolder(mapScript, "MaterialVariants"),
+        MaterialVariants = waitForFolder(mapScript, "MaterialVariants"),
     }
 end
 
