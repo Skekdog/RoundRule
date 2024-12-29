@@ -472,6 +472,12 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
         lastMap.Windows:Destroy()
         lastMap.ItemSpawns:Destroy()
         lastMap.AmmoSpawns:Destroy()
+
+        map.DynamicMap.Parent = lastMapScript
+        map.Props.Parent = lastMapScript
+        map.Windows.Parent = lastMapScript
+        map.ItemSpawns.Parent = lastMapScript
+        map.AmmoSpawns.Parent = lastMapScript
     end
 
     round._map = map -- Must be done here otherwise we fail to load everything below
