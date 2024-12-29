@@ -13,8 +13,8 @@ local module = {}
 local data = script.Parent.ReplicatedData
 local remotes = script.Parent.Remotes
 
-local HIGHLIGHTS_TIME = 20
-local PREPARING_TIME = 20
+local HIGHLIGHTS_TIME = 5
+local PREPARING_TIME = 5
 
 local currentMap: Types.Map?
 
@@ -151,7 +151,7 @@ local function SetAdvanceTime(round: Types.Round, finishTime: number, callback: 
     end
 
     if callback == "preserve" then
-        callback = round._lastAdvanceCallback or function() end
+        round._lastAdvanceCallback = round._lastAdvanceCallback or function() end
 	elseif callback == false then
 		round._lastAdvanceCallback = function() end
     else
@@ -164,10 +164,8 @@ local function SetAdvanceTime(round: Types.Round, finishTime: number, callback: 
         while workspace:GetServerTimeNow() < finishTime do
             task.wait()
         end
-
-        assert(typeof(callback) == "function")
 		
-    	callback(round)
+        assert(round._lastAdvanceCallback)(round)
     end)()
 end
 
