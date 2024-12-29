@@ -240,8 +240,10 @@ export type Map = MapDefinition & {
     Windows: Folder,
     ItemSpawns: Folder,
     AmmoSpawns: Folder,
-    
+
     MaterialVariants: Folder,
+
+    GetDisplayName: (Map) -> string,
 }
 
 export type OnPropBreak = (Prop, params: DamageParams?) -> () 
