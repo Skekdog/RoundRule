@@ -574,6 +574,8 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
             Victim = other,
             FoundCredits = otherCredits,
         })
+
+        participant.Round:SendMessage(participant.Player, `You found {otherCredits} {if otherCredits == 1 then "credit" else "credits"} on the corpse.`, "Team")
     end
 
     if other:GetStatus() == "Missing" and not covert then

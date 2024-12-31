@@ -535,13 +535,13 @@ local function GetExclamatoryString(role: Types.RoleDefinition): string
     return if role.IsExclamatory then "!" else "."
 end
 
-local function SendMessage(round: Types.Round, to: {Player} | Player, message: string): ()
+local function SendMessage(round: Types.Round, to: {Player} | Player, message: string, kind: Types.MessageKind?): ()
     if typeof(to) == "Instance" then
         to = {to}
     end
 
     for _, v in to :: {Player} do
-        remotes.SendMessage:FireClient(v, message)
+        remotes.SendMessage:FireClient(v, message, kind or "All")
     end
 end
 

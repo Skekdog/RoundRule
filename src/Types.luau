@@ -17,6 +17,8 @@ export type RoundAdvanceCallback = (Round) -> ()
 export type DataModelProp = BasePart
 export type DataModelItem = BasePart
 
+export type MessageKind = "Chat" | "Team" | "All"
+
 export type Gamemode = {
     Name: string,
     DisplayName: string?,
@@ -555,7 +557,7 @@ export type Round = {
     GetRoleFromRoleName: (Round, name: string) -> Role,
     GetParticipantsWithRole: (Round, role: Role) -> {Participant},
 
-    SendMessage: (Round, to: {Player} | Player, message: string) -> (),
+    SendMessage: (Round, to: {Player} | Player, message: string, kind: MessageKind?) -> (),
 }
 
 return nil
