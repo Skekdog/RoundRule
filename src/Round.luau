@@ -10,6 +10,7 @@ local Role = require(script.Parent.Role)
 local Types = require(script.Parent.Types)
 local module = {}
 
+-- We can get away with this, because if a property is not known, that means no map has overriden it, meaning it's still the default.
 local knownWaterSettings: {string} = {}
 local knownTerrainColours: {[Enum.Material]: Color3} = {}
 
