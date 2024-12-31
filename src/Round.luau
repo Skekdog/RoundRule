@@ -10,6 +10,9 @@ local Role = require(script.Parent.Role)
 local Types = require(script.Parent.Types)
 local module = {}
 
+local knownWaterSettings: {string} = {}
+local knownTerrainColours: {[Enum.Material]: Color3} = {}
+
 local data = script.Parent.ReplicatedData
 local remotes = script.Parent.Remotes
 
@@ -465,12 +468,27 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
 
         workspace.Gravity = map.Gravity
 
+        for _, v in knownWaterSettings do
+            workspace.Terrain:ResetPropertyToDefault(v)
+        end
+
         for i, v in map.WaterSettings do
+            if not table.find(knownWaterSettings, i) then
+                table.insert(knownWaterSettings, v)
+            end
             (workspace.Terrain :: any)[i] = v
         end
 
+        for i, v in knownTerrainColours do
+            workspace.Terrain:SetMaterialColor(i, v)
+        end
+
         for i, v in map.TerrainColors do
-            workspace.Terrain:SetMaterialColor((Enum.Material :: any)[i], v)
+            local material = (Enum.Material :: any)[i]
+            if not knownTerrainColours[material] then
+                knownTerrainColours[material] = workspace.Terrain:GetMaterialColor(material)
+            end
+            workspace.Terrain:SetMaterialColor(material, v)
         end
 
         workspace.Terrain:Clear()
