@@ -151,7 +151,12 @@ local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase, durati
     round:SetAdvanceTime(workspace:GetServerTimeNow() + duration, callback or false)
 end
 
+local function GetAdvanceTime(round: Types.Round): number
+    return round._advanceTime or 0
+end
+
 local function SetAdvanceTime(round: Types.Round, finishTime: number, callback: false | "preserve" | Types.RoundAdvanceCallback): ()
+    round._advanceTime = finishTime
     if round._activeAdvanceThread then
         coroutine.close(round._activeAdvanceThread)
     end
@@ -168,7 +173,10 @@ local function SetAdvanceTime(round: Types.Round, finishTime: number, callback: 
 
     round._activeAdvanceThread = coroutine.wrap(function()
         while workspace:GetServerTimeNow() < finishTime do
-            task.wait()
+            local dt = task.wait()
+            if round:GetIsRoundPaused() then
+                finishTime += dt
+            end
         end
 		
         assert(round._lastAdvanceCallback)(round)
@@ -191,6 +199,10 @@ local function GetIsRoundPaused(round: Types.Round): boolean
 end
 
 local function PauseRound(round: Types.Round, paused: boolean): ()
+    if not paused then
+        round:SetAdvanceTime(round:GetAdvanceTime() + workspace:GetServerTimeNow(), "preserve")
+    end
+
     round._isPaused = paused
 
     data:SetAttribute("Paused", paused)
@@ -572,6 +584,8 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         LoadProp = LoadProp,
 
         SendMessage = SendMessage,
+
+        GetAdvanceTime = GetAdvanceTime,
     }
 
     data:SetAttribute("Phase", round:GetRoundPhase())

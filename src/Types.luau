@@ -538,6 +538,8 @@ export type Round = {
 
     _lastAdvanceCallback: RoundAdvanceCallback?,
     _activeAdvanceThread: thread?,
+    _advanceTime: number?,
+    GetAdvanceTime: (Round) -> number,
     SetAdvanceTime: (Round, finishTime: number, callback: false | "preserve" | RoundAdvanceCallback) -> (),
 
     _isPaused: boolean,
