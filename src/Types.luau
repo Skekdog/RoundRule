@@ -536,6 +536,7 @@ export type Round = {
     IsPostGame: (Round) -> boolean,
     IsInProgress: (Round) -> boolean,
 
+    _pausedAt: number?,
     _lastAdvanceCallback: RoundAdvanceCallback?,
     _activeAdvanceThread: thread?,
     _advanceTime: number?,

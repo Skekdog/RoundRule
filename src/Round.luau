@@ -177,13 +177,15 @@ local function SetAdvanceTime(round: Types.Round, finishTime: number, callback: 
 
     round._activeAdvanceThread = coroutine.wrap(function()
         while workspace:GetServerTimeNow() < finishTime do
-            local dt = task.wait()
+            task.wait()
             if round:GetIsRoundPaused() then
-                finishTime += dt
+                break
             end
         end
 		
-        assert(round._lastAdvanceCallback)(round)
+        if not round:GetIsRoundPaused() then
+            assert(round._lastAdvanceCallback)(round)
+        end
     end)()
 end
 
@@ -203,8 +205,10 @@ local function GetIsRoundPaused(round: Types.Round): boolean
 end
 
 local function PauseRound(round: Types.Round, paused: boolean): ()
-    if not paused then
-        round:SetAdvanceTime(round:GetAdvanceTime() + workspace:GetServerTimeNow(), "preserve")
+    if paused then
+        round._pausedAt = workspace:GetServerTimeNow()
+    else
+        round:SetAdvanceTime(workspace:GetServerTimeNow() + round:GetAdvanceTime() - (round._pausedAt or 0), "preserve")
     end
 
     round._isPaused = paused
