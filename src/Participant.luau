@@ -408,6 +408,10 @@ local function GetItemPurchases(participant: Types.Participant): Types.Equipment
 end
 
 local function PurchaseItem(participant: Types.Participant, itemDefinition: Types.AnyItemDefinition): Types.ItemPurchaseResult
+    if participant:GetStatus() ~= "Alive" then
+        return "NotInRound"
+    end
+    
     local role = participant:GetRole()
 
     if not role or not role.Definition.EquipmentShop or not table.find(role.Definition.EquipmentShop, itemDefinition) then

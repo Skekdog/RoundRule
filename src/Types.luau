@@ -6,7 +6,7 @@ export type VictorType = {Kind: "Role", Role: string} | {Kind: "Solo"}
 export type ScoreTable = {[string]: number?}
 export type EquipmentPurchases = {[string]: number?}
 
-export type ItemPurchaseResult = "Success" | "NotEnoughCredits" | "SlotOccupied" | "NotInStock" | "InvalidItemForRole"
+export type ItemPurchaseResult = "Success" | "NotEnoughCredits" | "SlotOccupied" | "NotInStock" | "InvalidItemForRole" | "NotInRound"
 
 export type GeneralDamageSource = "Fall" | "Drown" | "Explode" | "Burn" | "Stab" | "Shot" | "Bludgeon" | "Crush" | "Magic" | "Other"
 export type DamageSource = AnyItem | GeneralDamageSource
