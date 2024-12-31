@@ -110,13 +110,22 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
         count += 1
     end
 
-    if count < round.Gamemode.MinimumPlayers then
+    if count < round.Gamemode.MinimumPlayers and round:IsPreGame() then
         round:SetRoundPhase("Waiting", math.huge)
     end
 end
 
 local function GetRoundPhase(round: Types.Round): Types.RoundPhase
     return round._roundPhase
+end
+
+local function destroyRound(round: Types.Round): ()
+    for _, v in round:GetParticipants() do
+        assert(v)
+        v:SetRole(nil)
+        v:_setStatus("Spectating")
+        v:UnspawnCharacter()
+    end
 end
 
 local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase, duration: number): ()
@@ -135,6 +144,7 @@ local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase, durati
     elseif phase == "Highlights" then
         callback = function(round: Types.Round): ()
             round:SetRoundPhase("Intermission", 0)
+            destroyRound(round)
         end
     elseif phase == "Intermission" then
         callback = false

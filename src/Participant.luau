@@ -112,7 +112,13 @@ local function GetRole(participant: Types.Participant): Types.Role?
     return participant._role
 end
 
-local function SetRole(participant: Types.Participant, role: Types.RoleDefinition): ()
+local function SetRole(participant: Types.Participant, role: Types.RoleDefinition?): ()
+    if not role then
+        participant._role = nil
+        remotes.UpdatePlayerRole:FireAllClients(participant.Player.Name, nil)
+        return
+    end
+    
     participant._role = participant.Round:GetRoleFromRoleName(role.Name)
     tryAssignHumanoidPropertiesForRole(participant._humanoid, participant._role)
 
