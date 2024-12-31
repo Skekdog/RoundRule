@@ -2,7 +2,7 @@ local Types = require(script.Parent.Types)
 local module = {}
 
 local function GetFormattedName(role: Types.Role): string
-    return `<font color="{role.Definition.Color:ToHex()}">{role.Definition.Name}</font>`
+    return `<font color="#{role.Definition.Color:ToHex()}">{role.Definition.Name}</font>`
 end
 
 local function GetExclamatoryString(role: Types.Role): string
