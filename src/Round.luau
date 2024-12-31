@@ -63,10 +63,6 @@ local function spawnParticipant(participant: Types.Participant)
 end
 
 local function AddPlayer(round: Types.Round, player: Player, addAsSpectator: boolean?): Types.Participant
-    if round:GetRoundPhase() ~= "Waiting" and round:GetRoundPhase() ~= "Preparing" then
-        error("Round is not in Waiting or Preparing phase")
-    end
-
     local existingParticipant = round:GetParticipant(player.Name)
     if existingParticipant then
         if existingParticipant:GetStatus() == "Spectating" then
@@ -82,7 +78,7 @@ local function AddPlayer(round: Types.Round, player: Player, addAsSpectator: boo
     round._participants[player.Name] = participant
 
     if not addAsSpectator then
-        
+        spawnParticipant(participant)
     else
         participant:_setStatus("Spectating")
     end
