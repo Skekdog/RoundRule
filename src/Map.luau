@@ -8,10 +8,6 @@ local function waitForFolder(parent: Instance, name: string): Folder
     return folder
 end
 
-local function GetDisplayName(map: Types.Map): string
-    return map.DisplayName or map.Name
-end
-
 function module.fromModuleScript(mapScript: ModuleScript): Types.Map
     local definition = (require)(mapScript)
 
@@ -59,8 +55,6 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
         AmmoSpawns = ammoSpawns,
 
         MaterialVariants = materialVariants,
-
-        GetDisplayName = GetDisplayName,
     }
 end
 

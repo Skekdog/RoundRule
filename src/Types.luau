@@ -243,8 +243,6 @@ export type Map = MapDefinition & {
     AmmoSpawns: Folder,
 
     MaterialVariants: Folder,
-
-    GetDisplayName: (Map) -> string,
 }
 
 export type Role = {
