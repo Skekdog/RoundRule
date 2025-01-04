@@ -102,8 +102,13 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
         round:SendMessage(Players:GetPlayers(), `{participant:GetFormattedName()} has disconnected. They were a {role:GetFormattedName()}{role:GetExclamatoryString()}`)
     end
 
-    participant:UnspawnCharacter()
-    round.Gamemode:OnDeath(participant)
+    if participant:IsAlive() then
+        participant:UnspawnCharacter()
+
+        if round:IsInProgress() then
+            round.Gamemode:OnDeath(participant)
+        end
+    end
 
     local count = 0
     for _ in round:GetParticipants() do
