@@ -8,6 +8,10 @@
         {
             "name": "Highlights",
             "className": "Folder"
+        },
+        {
+            "name": "Scores",
+            "className": "Folder"
         }
     ]
 }

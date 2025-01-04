@@ -238,6 +238,7 @@ local function StartRound(round: Types.Round): ()
         Kind = "StartRoundEvent",
     })
 
+    data:SetAttribute("StartTime", workspace:GetServerTimeNow())
     round:SetRoundPhase("Playing", round.Gamemode.Duration(#participantList))
 
     Random.new():Shuffle(participantList)
@@ -267,17 +268,43 @@ local function EndRound(round: Types.Round, victor: Types.Victor): ()
         Kind = "EndRoundEvent",
         VictoryText = victorRole.Definition.VictoryText,
     })
-    round:SetRoundPhase("Highlights", HIGHLIGHTS_TIME)
-
+    
     data.Events:ClearAllChildren()
     data.Highlights:ClearAllChildren()
+    data.Scores:ClearAllChildren()
     for _, v in round:GetEventLog() do
         local value = Instance.new("StringValue")
         value.Name = tostring(v.Timestamp)
         value.Value = EventStrings(v)
+
+        if v.Data.Kind == "DeathRoundEvent" then
+            local corpse = v.Data.Victim:GetCorpse()
+            assert(corpse, "Victim has no corpse")
+
+            value:SetAttribute("WasSelfDefense", corpse.CorpseView.WasSelfDefense)
+            value:SetAttribute("WasFreeKill", corpse.CorpseView.WasFreeKill)
+            value:SetAttribute("WasCorrectKill", corpse.WasCorrectKill)
+        end
+
+        value.Parent = data.Events
     end
 
-    remotes.RoundHighlights:FireAllClients()
+    for _, v in round:GetParticipants() do
+        assert(v)
+        local value = Instance.new("StringValue")
+        value.Name = v.Player.Name
+        
+        for reason, score in v:GetScores() do
+            assert(score)
+            value:SetAttribute(reason, score)
+        end
+
+        value.Parent = data.Scores
+    end
+
+    data:SetAttribute("WinnerKind", victor.Kind)
+    data:SetAttribute("Winner", if victor.Kind == "Role" then victor:GetFormattedName() else victor:GetFormattedName())
+    round:SetRoundPhase("Highlights", HIGHLIGHTS_TIME)
 end
 
 local function GetProps(round: Types.Round): {[Types.DataModelProp]: Types.Prop?}
@@ -621,6 +648,9 @@ function module.new(gamemode: Types.Gamemode): Types.Round
     data:SetAttribute("Paused", round:GetIsRoundPaused())
     data:SetAttribute("AdvanceTime", nil)
     data:SetAttribute("Gamemode", gamemode.Name)
+    data:SetAttribute("StartTime", nil)
+    data:SetAttribute("Winner", nil)
+    data:SetAttribute("WinnerKind", nil)
 
     return round
 end
