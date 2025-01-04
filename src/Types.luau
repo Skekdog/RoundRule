@@ -556,7 +556,7 @@ export type Round = {
     GetIsRoundPaused: (Round) -> boolean,
 
     StartRound: (Round) -> (),
-    EndRound: (Round, victor: Victor) -> (),
+    EndRound: (Round, victor: Victor, isTimeout: boolean?) -> (),
 
     _roles: {[string]: Role?},
 

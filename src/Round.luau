@@ -1,5 +1,6 @@
 local MaterialService = game:GetService("MaterialService")
 local Players = game:GetService("Players")
+local SoundService = game:GetService("SoundService")
 local AmmoBox = require(script.Parent.AmmoBox)
 local EventStrings = require(script.Parent.EventStrings)
 local Item = require(script.Parent.Item)
@@ -144,7 +145,7 @@ local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase, durati
     elseif phase == "Playing" then
         callback = function(round: Types.Round): ()
             local victors = round.Gamemode:TimeoutVictor(round)
-            round:EndRound(victors)
+            round:EndRound(victors, true)
         end
     elseif phase == "Highlights" then
         callback = function(round: Types.Round): ()
@@ -250,7 +251,7 @@ local function StartRound(round: Types.Round): ()
     round.Gamemode:AssignRoles(participantList)
 end
 
-local function EndRound(round: Types.Round, victor: Types.Victor): ()
+local function EndRound(round: Types.Round, victor: Types.Victor, isTimeout: boolean?): ()
     assert(round:IsInProgress(), "Round is not in Playing phase")
 
     local role: Types.Role
@@ -305,6 +306,25 @@ local function EndRound(round: Types.Round, victor: Types.Victor): ()
         end
 
         value.Parent = data.Scores
+    end
+
+    local possibleMusic: {Sound}
+    if isTimeout and round.Gamemode.TimeoutMusic then
+        possibleMusic = round.Gamemode.TimeoutMusic
+    else
+        possibleMusic = victorRole.Definition.VictoryMusic or {}
+    end
+    local chosenMusic = if #possibleMusic > 0 then possibleMusic[math.random(#possibleMusic)] else nil -- note: math.random(0) errors
+    if chosenMusic then
+        chosenMusic = chosenMusic:Clone()
+        chosenMusic:SetAttribute("IsRoundVictoryMusic", true)
+        chosenMusic.Parent = SoundService
+
+        chosenMusic.Ended:Once(function()
+            chosenMusic:Destroy()
+        end)
+
+        chosenMusic:Play()
     end
 
     data:SetAttribute("WinnerKind", victor.Kind)
@@ -656,6 +676,12 @@ function module.new(gamemode: Types.Gamemode): Types.Round
     data:SetAttribute("StartTime", nil)
     data:SetAttribute("Winner", nil)
     data:SetAttribute("WinnerKind", nil)
+
+    for _, v in SoundService:GetChildren() do
+        if v:GetAttribute("IsRoundVictoryMusic") then
+            v:Destroy()
+        end
+    end
 
     return round
 end
