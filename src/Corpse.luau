@@ -1,3 +1,4 @@
+local GetDisplayName = require(script.Parent.GetDisplayName)
 local Types = require(script.Parent.Types)
 local module = {}
 
@@ -18,17 +19,26 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
         selfDefense = params.Attacker:HasSelfDefenseAgainstParticipant(params.Attacker)
     end
 
-    local source: Types.GeneralDamageSource
-    if typeof(params.Source) == "string" then
-        source = params.Source
-    else
-        source = "Shot"
+    local source: Types.NamedDamageSource = if typeof(params.Source) == "table" then GetDisplayName(params.Source.Definition) else params.Source
+
+    local killList: {string} = {}
+    for _, v in participant:GetKillList() do
+        table.insert(killList, v:GetFormattedName())
+    end
+
+    local equipmentList: {string} = {}
+    for i in participant:GetItemPurchases() do
+        table.insert(equipmentList, i)
     end
 
     local corpseView: Types.CorpseView = {
+        Name = participant.Player.Name,
         WasFreeKill = participant:IsFreeKill(), 
         WasHeadshot = params.IsHeadshot,
         WasSelfDefense = selfDefense,
+
+        KillList = killList,
+        EquipmentList = equipmentList,
 
         DeathTime = workspace:GetServerTimeNow(),
 

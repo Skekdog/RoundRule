@@ -9,6 +9,7 @@ export type EquipmentPurchases = {[string]: number?}
 export type ItemPurchaseResult = "Success" | "NotEnoughCredits" | "SlotOccupied" | "NotInStock" | "InvalidItemForRole" | "NotInRound"
 
 export type GeneralDamageSource = "Fall" | "Drown" | "Explode" | "Burn" | "Stab" | "Shot" | "Bludgeon" | "Crush" | "Magic" | "Other"
+export type NamedDamageSource = GeneralDamageSource | string
 export type DamageSource = AnyItem | GeneralDamageSource
 
 export type RoundPhase = "Waiting" | "Preparing" | "Playing" | "Highlights" | "Intermission"
@@ -186,6 +187,7 @@ export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
 export type MeleeWeaponDefinition = CommonWeaponDefinition & {
     Kind: "Melee",
 
+    DamageKind: "Bludgeon" | "Stab",
     AttackAnimation: string,
 
     AttackInterval: number,
@@ -360,14 +362,18 @@ export type SelfDefenseEntry = {
 }
 
 export type CorpseView = {
+    Name: string,
     WasFreeKill: boolean?,
     WasHeadshot: boolean?,
     WasSelfDefense: boolean?,
 
+    KillList: {string},
+    EquipmentList: {string},
+
     DeathTime: number,
     DNAExpiry: number?,
 
-    DamageSource: GeneralDamageSource,
+    DamageSource: NamedDamageSource,
 }
 
 export type Corpse = {
