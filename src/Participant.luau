@@ -377,6 +377,9 @@ local function DropItem(participant: Types.Participant, item: Types.AnyItem, thr
     if throw then
         targetCFrame = targetCFrame + targetCFrame.LookVector * 7.5
     end
+
+    item.Model:SetAttribute("AmmoType", if item.Kind == "Gun" then item.Definition.AmmoType.Name else nil)
+    item.Model:SetAttribute("StoredAmmo", if item.Kind == "Gun" then item.Ammo else nil)
     
     item.Model:PivotTo(targetCFrame)
     item.Model.Parent = participant.Round:GetMap().ItemSpawns
