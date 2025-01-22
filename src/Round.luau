@@ -136,14 +136,24 @@ local function destroyRound(round: Types.Round): ()
 end
 
 local function setAdvanceTime(round: Types.Round, duration: number, callback: () -> ()): ()
+    data:SetAttribute("AdvanceTime", duration + workspace:GetServerTimeNow())
+
     if round._heartbeat then
         round._heartbeat:Disconnect()
     end
 
+    local wasPaused = false
+
     local elapsedTime = 0
     round._heartbeat = RunService.Heartbeat:Connect(function(dt)
         if round:GetIsRoundPaused() then
+            wasPaused = true
             return
+        end
+        
+        if wasPaused then
+            wasPaused = false
+            data:SetAttribute("AdvanceTime", (duration - elapsedTime) + workspace:GetServerTimeNow())
         end
 
         elapsedTime += dt
@@ -180,7 +190,6 @@ local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase, durati
     end
 
     data:SetAttribute("Phase", phase)
-    data:SetAttribute("AdvanceTime", duration + workspace:GetServerTimeNow())
 
     setAdvanceTime(round, duration, callback or function() end)
 end
