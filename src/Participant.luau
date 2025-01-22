@@ -43,7 +43,12 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
 
     for _, v in participant:GetItems() do
         assert(v)
-        participant:DropItem(v)
+
+        if v.Definition.CanDrop then
+            participant:DropItem(v)
+        else
+            participant:RemoveItem(v)
+        end
     end
 
     participant:_setStatus("Missing")
@@ -399,7 +404,7 @@ end
 local function RemoveItem(participant: Types.Participant, item: Types.AnyItem): ()
     participant._items[item.Definition.Name] = nil
 
-    remotes.UpdateInventory:FireClient(participant.Player, "Remove", item)
+    remotes.UpdateInventory:FireClient(participant.Player, "Remove", item.Definition.Name)
 end
 
 local function GetItems(participant: Types.Participant): {[string]: Types.AnyItem?}
