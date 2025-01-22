@@ -1,5 +1,6 @@
 local MaterialService = game:GetService("MaterialService")
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 local AmmoBox = require(script.Parent.AmmoBox)
 local EventStrings = require(script.Parent.EventStrings)
@@ -134,21 +135,43 @@ local function destroyRound(round: Types.Round): ()
     end
 end
 
+local function setAdvanceTime(round: Types.Round, duration: number, callback: () -> ()): ()
+    if round._heartbeat then
+        round._heartbeat:Disconnect()
+    end
+
+    local elapsedTime = 0
+    round._heartbeat = RunService.Heartbeat:Connect(function(dt)
+        if round:GetIsRoundPaused() then
+            return
+        end
+
+        elapsedTime += dt
+
+        if elapsedTime >= duration then
+            assert(round._heartbeat):Disconnect()
+            callback()
+        end
+    end)
+end
+
 local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase, duration: number): ()
     round._roundPhase = phase
 
-    local callback: Types.RoundAdvanceCallback | false
+    local callback: (() -> ()) | false
     if phase == "Waiting" then
         callback = false
     elseif phase == "Preparing" then
-        callback = round.StartRound
+        callback = function()
+            round:StartRound()
+        end
     elseif phase == "Playing" then
-        callback = function(round: Types.Round): ()
+        callback = function(): ()
             local victors = round.Gamemode:TimeoutVictor(round)
             round:EndRound(victors, true)
         end
     elseif phase == "Highlights" then
-        callback = function(round: Types.Round): ()
+        callback = function(): ()
             round:SetRoundPhase("Intermission", 0)
             destroyRound(round)
         end
@@ -157,42 +180,9 @@ local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase, durati
     end
 
     data:SetAttribute("Phase", phase)
+    data:SetAttribute("AdvanceTime", duration + workspace:GetServerTimeNow())
 
-    round:SetAdvanceTime(workspace:GetServerTimeNow() + duration, callback or false)
-end
-
-local function GetAdvanceTime(round: Types.Round): number
-    return round._advanceTime or 0
-end
-
-local function SetAdvanceTime(round: Types.Round, finishTime: number, callback: false | "preserve" | Types.RoundAdvanceCallback): ()
-    round._advanceTime = finishTime
-    if round._activeAdvanceThread then
-        coroutine.close(round._activeAdvanceThread)
-    end
-
-    if callback == "preserve" then
-        round._lastAdvanceCallback = round._lastAdvanceCallback or function() end
-	elseif callback == false then
-		round._lastAdvanceCallback = function() end
-    else
-        round._lastAdvanceCallback = callback
-    end
-
-    data:SetAttribute("AdvanceTime", finishTime)
-
-    round._activeAdvanceThread = coroutine.wrap(function()
-        while workspace:GetServerTimeNow() < finishTime do
-            task.wait()
-            if round:GetIsRoundPaused() then
-                break
-            end
-        end
-		
-        if not round:GetIsRoundPaused() then
-            assert(round._lastAdvanceCallback)(round)
-        end
-    end)()
+    setAdvanceTime(round, duration, callback or function() end)
 end
 
 local function AddEvent(round: Types.Round, data: Types.RoundEventData): ()
@@ -211,14 +201,7 @@ local function GetIsRoundPaused(round: Types.Round): boolean
 end
 
 local function PauseRound(round: Types.Round, paused: boolean): ()
-    if paused then
-        round._pausedAt = workspace:GetServerTimeNow()
-    else
-        round:SetAdvanceTime(workspace:GetServerTimeNow() + round:GetAdvanceTime() - (round._pausedAt or 0), "preserve")
-    end
-
     round._isPaused = paused
-
     data:SetAttribute("Paused", paused)
 end
 
@@ -652,7 +635,6 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         RemoveParticipant = RemoveParticipant,
         GetRoundPhase = GetRoundPhase,
         SetRoundPhase = SetRoundPhase,
-        SetAdvanceTime = SetAdvanceTime,
         GetIsRoundPaused = GetIsRoundPaused,
         PauseRound = PauseRound,
         StartRound = StartRound,
@@ -665,8 +647,6 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         LoadProp = LoadProp,
 
         SendMessage = SendMessage,
-
-        GetAdvanceTime = GetAdvanceTime,
     }
 
     data:SetAttribute("Phase", round:GetRoundPhase())

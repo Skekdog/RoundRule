@@ -13,7 +13,6 @@ export type NamedDamageSource = GeneralDamageSource | string
 export type DamageSource = AnyItem | GeneralDamageSource
 
 export type RoundPhase = "Waiting" | "Preparing" | "Playing" | "Highlights" | "Intermission"
-export type RoundAdvanceCallback = (Round) -> ()
 
 export type DataModelProp = BasePart
 export type DataModelItem = BasePart
@@ -536,6 +535,7 @@ export type Round = {
     AddEvent: (Round, data: RoundEventData) -> (),
     GetEventLog: (Round) -> {RoundEvent},
 
+    _heartbeat: RBXScriptConnection?,
     _roundPhase: RoundPhase,
     GetRoundPhase: (Round) -> RoundPhase,
     SetRoundPhase: (Round, phase: RoundPhase, duration: number) -> (),
@@ -543,13 +543,6 @@ export type Round = {
     IsPreGame: (Round) -> boolean,
     IsPostGame: (Round) -> boolean,
     IsInProgress: (Round) -> boolean,
-
-    _pausedAt: number?,
-    _lastAdvanceCallback: RoundAdvanceCallback?,
-    _activeAdvanceThread: thread?,
-    _advanceTime: number?,
-    GetAdvanceTime: (Round) -> number,
-    SetAdvanceTime: (Round, finishTime: number, callback: false | "preserve" | RoundAdvanceCallback) -> (),
 
     _isPaused: boolean,
     PauseRound: (Round, paused: boolean) -> (),
