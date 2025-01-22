@@ -61,7 +61,9 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
         Victim = participant,
     })
 
-    participant.Round.Gamemode:OnDeath(participant)
+    if participant.Round:IsInProgress() then
+        participant.Round.Gamemode:OnDeath(participant)
+    end
 end
 
 local function tryAssignHumanoidPropertiesForRole(humanoid: Humanoid?, role: Types.Role?): ()
