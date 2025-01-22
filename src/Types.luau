@@ -157,6 +157,8 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
     ScopeRequired: boolean?,
     AimSpreadMultiplier: number?,
 
+    LaserColor: Color3?,
+
     Projectile: string?,
     
     BulletsPerShot: number?,
