@@ -43,12 +43,7 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
 
     for _, v in participant:GetItems() do
         assert(v)
-
-        if v.Definition.CanDrop then
-            participant:DropItem(v)
-        else
-            participant:RemoveItem(v)
-        end
+        participant:TryDropItem(v)
     end
 
     participant:_setStatus("Missing")
@@ -392,6 +387,14 @@ local function DropItem(participant: Types.Participant, item: Types.AnyItem, thr
     item.Model.Parent = participant.Round:GetMap().ItemSpawns
 end
 
+local function TryDropItem(participant: Types.Participant, item: Types.AnyItem, throw: boolean?): ()
+    if item.Definition.CanDrop then
+        participant:DropItem(item)
+    else
+        participant:RemoveItem(item)
+    end
+end
+
 local function AddItem(participant: Types.Participant, item: Types.AnyItem): ()
     if item.Definition.Slot then
         assert(typeof(item.Definition.Slot) == "number")
@@ -502,6 +505,11 @@ local function UnspawnCharacter(participant: Types.Participant): ()
     local char = participant:GetCharacter()
     if not char then
         return
+    end
+
+    for _, v in participant:GetItems() do
+        assert(v)
+        participant:TryDropItem(v)
     end
 
     participant._humanoid = nil
@@ -673,6 +681,8 @@ local function DropAmmoBoxForCurrentItem(participant: Types.Participant): ()
 end
 
 function module.new(player: Player, round: Types.Round): Types.Participant
+    remotes.UpdateInventory:FireClient(player, "Reset")
+
     return {
         Kind = "Participant",
 
@@ -756,6 +766,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         GetItemPurchases = GetItemPurchases,
         PurchaseItem = PurchaseItem,
         IsItemSlotOccupied = IsItemSlotOccupied,
+        TryDropItem = TryDropItem,
     }
 end
 

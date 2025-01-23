@@ -467,7 +467,8 @@ export type Participant = {
     DropItem: (Participant, item: AnyItem, throw: boolean?) -> (),
 
     AddItem: (Participant, item: AnyItem) -> (),
-    RemoveItem: (Participant, item: AnyItem) -> (),    
+    RemoveItem: (Participant, item: AnyItem) -> (),
+    TryDropItem: (Participant, item: AnyItem, throw: boolean?) -> (),
 
     IsItemSlotOccupied: (Participant, slot: number) -> boolean,
 
