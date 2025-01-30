@@ -21,7 +21,7 @@ function module.new(definition: Types.AnyItemDefinition, model: BasePart?): Type
             Model = model :: BasePart,
 
             Ammo = definition.AmmoType.Capacity,
-            LastFireTime = 0,
+            LastAttackTime = 0,
 
             IsReloading = false,
 

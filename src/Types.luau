@@ -145,7 +145,7 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
     AimAnimation: string?,
 
     ReloadTime: number,
-    FireTime: number,
+    AttackInterval: number,
 
     FiredSound: string,
     ReloadSound: string,
@@ -315,7 +315,7 @@ export type GunWeapon = {
     Model: BasePart,
 
     Ammo: number,
-    LastFireTime: number,
+    LastAttackTime: number,
 
     IsReloading: boolean,
 
