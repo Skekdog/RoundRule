@@ -159,7 +159,8 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
 
     LaserColor: Color3?,
 
-    Projectile: string?,
+    Projectile: BasePart?,
+    ProjectileSpeed: number?,
     
     BulletsPerShot: number?,
 
@@ -176,7 +177,7 @@ export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
 
     FuseTime: number,
 
-    Projectile: string,
+    Projectile: BasePart,
     ProjectileForce: number,
 
     BeforeHitParticipant: ((GrenadeWeapon, Participant, Participant, DamageParams) -> ())?,
