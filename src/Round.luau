@@ -498,6 +498,14 @@ local function loadAmmoBoxes(round: Types.Round, map: Types.Map): ()
     end
 end
 
+local function loadBounds(round: Types.Round, map: Types.Map): ()
+    for _, v in map.Bounds:GetDescendants() do
+        if v:IsA("BasePart") then
+            v.CollisionGroup = "Bounds"
+        end
+    end
+end
+
 local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
     mapScript = mapScript:Clone()
     local map = Map.fromModuleScript(mapScript)
@@ -554,6 +562,8 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
         local materialVariants = map.MaterialVariants:Clone()
         materialVariants.Name = "MapMaterialVariants"
         materialVariants.Parent = MaterialService
+
+        loadBounds(round, map)
 
         mapScript.Name = "Map"
         mapScript.Parent = workspace

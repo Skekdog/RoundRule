@@ -457,6 +457,14 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
     return "Success"
 end
 
+local function onCharacterPartAdded(part: Instance): ()
+    if not part:IsA("BasePart") then
+        return
+    end
+
+    part.CollisionGroup = "PlayerCharacterParts"
+end
+
 local function SpawnCharacter(participant: Types.Participant): ()
     assert(not participant._isCharacterLoading, "Character is already loading")
 
@@ -472,6 +480,11 @@ local function SpawnCharacter(participant: Types.Participant): ()
                 return
             end
             task.wait()
+        end
+
+        char.DescendantAdded:Connect(onCharacterPartAdded)
+        for _, v in char:GetDescendants() do
+            onCharacterPartAdded(v)
         end
 
         local spawns = participant.Round:GetMap().PlayerSpawns:GetChildren()
