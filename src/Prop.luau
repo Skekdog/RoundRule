@@ -6,6 +6,8 @@ local function destroyProp(prop: Types.Prop, params: Types.DamageParams?): ()
     if onBreak and onBreak:IsA("ModuleScript") then
         ((require)(onBreak) :: Types.OnPropBreak)(prop, params)
     end
+
+    prop.Model:Destroy()
 end
 
 local function GetHealth(prop: Types.Prop): number?
@@ -37,7 +39,7 @@ function module.new(model: Types.DataModelProp): Types.Prop
         Kind = "Prop",
         Model = model,
 
-        _health = health or 0,
+        _health = health,
 
         GetHealth = GetHealth,
         SetHealth = SetHealth,
