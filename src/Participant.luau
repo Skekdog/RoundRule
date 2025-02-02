@@ -659,6 +659,7 @@ local function GetAmmo(participant: Types.Participant, kind: string): number
 end
 
 local function SetAmmo(participant: Types.Participant, kind: string, amount: number): ()
+    remotes.UpdateReserveAmmo:FireClient(participant.Player, "Update", kind, amount)
     participant._ammo[kind] = amount
 end
 
@@ -694,6 +695,7 @@ local function DropAmmoBoxForCurrentItem(participant: Types.Participant): ()
 end
 
 function module.new(player: Player, round: Types.Round): Types.Participant
+    remotes.UpdateReserveAmmo:FireClient(player, "Reset")
     remotes.UpdateInventory:FireClient(player, "Reset")
 
     return {
