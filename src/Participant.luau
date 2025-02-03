@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local AmmoBox = require(script.Parent.AmmoBox)
 local Corpse = require(script.Parent.Corpse)
 local Item = require(script.Parent.Item)
+local MakeRagdoll = require(script.Parent.MakeRagdoll)
 local Types = require(script.Parent.Types)
 
 local SELF_DEFENSE_DURATION = 15
@@ -55,6 +56,14 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
         Kind = "DeathRoundEvent",
         Victim = participant,
     })
+
+    local corpseFolder = workspace:FindFirstChild("Corpses") :: Folder or Instance.new("Folder", workspace)
+    corpseFolder.Name = "Corpses"
+
+    local ragdoll = MakeRagdoll(participant, corpseFolder)
+    if ragdoll then
+        ragdoll:SetAttribute("Unidentified", true)
+    end
 
     if participant.Round:IsInProgress() then
         participant.Round.Gamemode:OnDeath(participant)
