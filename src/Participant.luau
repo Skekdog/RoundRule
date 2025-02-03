@@ -516,6 +516,10 @@ local function SpawnCharacter(participant: Types.Participant): ()
                 Source = "Other"
             })
         end)
+
+        local charsFolder = workspace:FindFirstChild("Characters") :: Folder or Instance.new("Folder", workspace)
+        charsFolder.Name = "Characters"
+        char.Parent = charsFolder
     end)
     
     participant.Player:LoadCharacter()
