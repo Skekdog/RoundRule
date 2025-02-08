@@ -22,6 +22,12 @@ export type ExplosionInfo = {
     IgnoreSelfDefense: boolean?,
     IgnoreKarma: boolean?,
     IgnoreScore: boolean?,
+
+    BeforeHitCorpse: BeforeHitCorpse?,
+    BeforeHitProp: BeforeHitProp?,
+    BeforeHitParticipant: BeforeHitParticipant?,
+
+    OnExplode: ((item: GrenadeWeapon, attacker: Participant, projectile: BasePart) -> ())?,
 }
 
 export type ExplosionParams = {
@@ -168,6 +174,11 @@ export type ItemDefinition = CommonItemDefinition & {
     OnPurchase: ((Item, Participant) -> ())?,
 }
 
+-- todo: when recursive generic types are supported, do that
+export type BeforeHitParticipant = ((item: AnyWeapon, attacker: Participant, target: Participant, willDie: boolean) -> boolean)
+export type BeforeHitProp = ((item: AnyWeapon, attacker: Participant, target: Prop, willDie: boolean) -> boolean)
+export type BeforeHitCorpse = ((item: AnyWeapon, attacker: Participant, target: Model) -> boolean)
+
 export type GunWeaponDefinition = CommonWeaponDefinition & {
     Kind: "Gun",
 
@@ -200,8 +211,9 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
     RecoilX: number,
     RecoilY: number,
 
-    BeforeHitParticipant: ((GunWeapon, Participant, Participant, DamageParams) -> ())?,
-    BeforeHitProp: ((GunWeapon, Participant, Prop, DamageParams) -> ())?,
+    BeforeHitParticipant: BeforeHitParticipant?,
+    BeforeHitProp: BeforeHitProp?,
+    BeforeHitCorpse: BeforeHitCorpse?,
 }
 
 export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
@@ -215,11 +227,6 @@ export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
     ProjectileForce: number,
 
     ExplosionInfo: ExplosionInfo,
-
-    BeforeHitParticipant: ((GrenadeWeapon, Participant, Participant, DamageParams) -> ())?,
-    BeforeHitProp: ((GrenadeWeapon, Participant, Prop, DamageParams) -> ())?,
-
-    OnExplode: ((GrenadeWeapon, Participant, BasePart) -> ())?,
 }
 
 export type MeleeWeaponDefinition = CommonWeaponDefinition & {
@@ -235,8 +242,9 @@ export type MeleeWeaponDefinition = CommonWeaponDefinition & {
 
     MaxDistance: number,
 
-    BeforeHitParticipant: ((MeleeWeapon, Participant, Participant, DamageParams) -> ())?,
-    BeforeHitProp: ((MeleeWeapon, Participant, Prop, DamageParams) -> ())?,
+    BeforeHitParticipant: BeforeHitParticipant?,
+    BeforeHitProp: BeforeHitProp?,
+    BeforeHitCorpse: BeforeHitCorpse?,
 }
 
 export type AmmoDefinition = {
@@ -375,7 +383,8 @@ export type Item = {
     Extras: {[string]: any},
 }
 
-export type AnyItem = Item | GunWeapon | GrenadeWeapon | MeleeWeapon
+export type AnyItem = Item | AnyWeapon
+export type AnyWeapon = GunWeapon | GrenadeWeapon | MeleeWeapon
 
 export type AmmoBox = {
     Kind: "AmmoBox",
