@@ -12,6 +12,43 @@ export type GeneralDamageSource = "Fall" | "Drown" | "Explode" | "Burn" | "Stab"
 export type NamedDamageSource = GeneralDamageSource | string
 export type DamageSource = AnyItem | GeneralDamageSource
 
+export type ExplosionInfo = {
+    Damage: number,
+    FalloffBegin: number,
+    FalloffEnd: number,
+    Pressure: number,
+    VisualRadius: number,
+
+    IgnoreSelfDefense: boolean?,
+    IgnoreKarma: boolean?,
+    IgnoreScore: boolean?,
+}
+
+export type ExplosionParams = {
+    ExplosionInfo: ExplosionInfo,
+    Attacker: Participant?,
+    Position: Vector3,
+}
+
+export type DamageParams = {
+    Amount: number,
+
+    IsHeadshot: boolean?,
+    Source: DamageSource,
+
+    Attacker: Participant?,
+    
+    IgnoreKarma: boolean?,
+    IgnoreSelfDefense: boolean?,
+    IgnoreScore: boolean?,
+}
+
+export type DamageInfo = number | {
+    Head: number,
+    Body: number,
+    Limb: number,
+}
+
 export type RoundPhase = "Waiting" | "Preparing" | "Playing" | "Highlights" | "Intermission"
 
 export type DataModelProp = BasePart
@@ -92,12 +129,6 @@ export type RoleDefinition = {
     HighlightedRoles: {string}?,
 }
 
-export type ItemDamageInfo = number | {
-    Head: number,
-    Body: number,
-    Limb: number,
-}
-
 export type CommonItemDefinition = {
     Name: string,
     DisplayName: string?,
@@ -117,8 +148,6 @@ export type CommonItemDefinition = {
 }
 
 export type CommonWeaponDefinition = CommonItemDefinition & {
-    Damage: ItemDamageInfo,
-
     HoldAnimation: string,
 }
 
@@ -149,6 +178,8 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
 
     AttackSound: string,
     ReloadSound: string,
+
+    Damage: DamageInfo,
 
     AmmoType: AmmoDefinition,
 
@@ -183,6 +214,8 @@ export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
     Projectile: BasePart,
     ProjectileForce: number,
 
+    ExplosionInfo: ExplosionInfo,
+
     BeforeHitParticipant: ((GrenadeWeapon, Participant, Participant, DamageParams) -> ())?,
     BeforeHitProp: ((GrenadeWeapon, Participant, Prop, DamageParams) -> ())?,
 
@@ -197,6 +230,8 @@ export type MeleeWeaponDefinition = CommonWeaponDefinition & {
 
     AttackInterval: number,
     AttackSound: string,
+
+    Damage: DamageInfo,
 
     MaxDistance: number,
 
@@ -294,19 +329,6 @@ export type StartRoundEventData = {
 export type EndRoundEventData = {
     Kind: "EndRoundEvent",
     VictoryText: string,
-}
-
-export type DamageParams = {
-    Amount: number,
-
-    IsHeadshot: boolean?,
-    Source: DamageSource,
-
-    Attacker: Participant?,
-    
-    IgnoreKarma: boolean?,
-    IgnoreSelfDefense: boolean?,
-    IgnoreScore: boolean?,
 }
 
 export type SelfDefenseParams = {
@@ -565,6 +587,8 @@ export type Round = {
     GetParticipantsWithRole: (Round, role: Role) -> {Participant},
 
     SendMessage: (Round, to: {Player} | Player, message: string, kind: MessageKind?) -> (),
+
+    CreateExplosion: (Round, explosionParams: ExplosionParams) -> (),
 }
 
 return nil
