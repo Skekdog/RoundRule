@@ -26,8 +26,6 @@ export type ExplosionInfo = {
     BeforeHitCorpse: BeforeHitCorpse?,
     BeforeHitProp: BeforeHitProp?,
     BeforeHitParticipant: BeforeHitParticipant?,
-
-    OnExplode: ((item: GrenadeWeapon, attacker: Participant, projectile: BasePart) -> ())?,
 }
 
 export type ExplosionParams = {
@@ -228,6 +226,8 @@ export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
     ProjectileForce: number,
 
     ExplosionInfo: ExplosionInfo,
+
+    OnExplode: ((item: GrenadeWeapon, attacker: Participant, projectile: BasePart) -> ())?,
 }
 
 export type MeleeWeaponDefinition = CommonWeaponDefinition & {
