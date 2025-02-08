@@ -31,7 +31,8 @@ export type ExplosionInfo = {
 }
 
 export type ExplosionParams = {
-    ExplosionInfo: ExplosionInfo,
+    Kind: "ExplosionParams",
+    Definition: ExplosionInfo,
     Attacker: Participant?,
     Position: Vector3,
 }
@@ -385,6 +386,7 @@ export type Item = {
 
 export type AnyItem = Item | AnyWeapon
 export type AnyWeapon = GunWeapon | GrenadeWeapon | MeleeWeapon
+export type GunMeleeWeapon = GunWeapon | MeleeWeapon
 
 export type AmmoBox = {
     Kind: "AmmoBox",
@@ -596,8 +598,6 @@ export type Round = {
     GetParticipantsWithRole: (Round, role: Role) -> {Participant},
 
     SendMessage: (Round, to: {Player} | Player, message: string, kind: MessageKind?) -> (),
-
-    CreateExplosion: (Round, explosionParams: ExplosionParams) -> (),
 }
 
 return nil

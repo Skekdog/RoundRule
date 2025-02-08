@@ -456,55 +456,6 @@ local function GetItemDefinition(round: Types.Round, item: string): Types.AnyIte
     return round:GetMap().AvailableItems[item] or round.Gamemode.AvailableItems[item]
 end
 
-local function CreateExplosion(round: Types.Round, params: Types.ExplosionParams): ()
-    local explosion = Instance.new("Explosion")
-
-    local info = params.ExplosionInfo
-
-    explosion.Position = params.Position
-    explosion.BlastRadius = info.VisualRadius
-    explosion.BlastPressure = info.Pressure
-
-    explosion.DestroyJointRadiusPercent = 0
-    explosion.ExplosionType = Enum.ExplosionType.NoCraters
-
-    local folder = workspace:FindFirstChild("Explosions") or Instance.new("Folder")
-    assert(folder:IsA("Folder"), "Explosions is not a folder")
-    folder.Name = "Explosions"
-    folder.Parent = workspace
-
-    explosion.Parent = folder
-
-    for _, v in round:GetParticipants() do
-        assert(v)
-        local humanoid = v:GetHumanoid()
-
-        if not humanoid then
-            continue
-        end
-
-        local rootPart = humanoid.RootPart
-        if not rootPart then
-            continue
-        end
-
-        local distance = (explosion.Position - rootPart.Position).Magnitude
-        if distance > params.ExplosionInfo.FalloffEnd then
-            continue
-        end
-
-        v:TryTakeDamage({
-            Amount = (params.ExplosionInfo.FalloffEnd - distance) / info.FalloffEnd * info.Damage,
-            Source = "Explode",
-            Attacker = params.Attacker,
-
-            IgnoreSelfDefense = info.IgnoreSelfDefense,
-            IgnoreKarma = info.IgnoreKarma,
-            IgnoreScore = info.IgnoreScore,
-        })
-    end
-end
-
 local function loadProps(round: Types.Round, map: Types.Map): ()
     if not map.Props then
         return
@@ -715,8 +666,6 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         LoadProp = LoadProp,
 
         SendMessage = SendMessage,
-
-        CreateExplosion = CreateExplosion,
     }
 
     data:SetAttribute("Phase", round:GetRoundPhase())
