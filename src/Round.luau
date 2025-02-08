@@ -422,8 +422,10 @@ local function LoadAmmoBox(round: Types.Round, map: Types.Map, model: Types.Data
         participant:SetAmmo(model.Name, currentAmmo + maxGain)
 
         if ammoBox.Ammo <= 0 then
-            model:Destroy()
+            return model:Destroy()
         end
+
+        model:SetAttribute("StoredAmmo", ammoBox.Ammo)
     end)
 
     return ammoBox
