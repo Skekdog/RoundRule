@@ -255,6 +255,7 @@ export type AmmoDefinition = {
     Capacity: number,
     ReserveCapacity: number,
     Model: BasePart,
+    CanDrop: boolean,
 }
 
 export type AnyItemDefinition = ItemDefinition | GunWeaponDefinition | GrenadeWeaponDefinition | MeleeWeaponDefinition
