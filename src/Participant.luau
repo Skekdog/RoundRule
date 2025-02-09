@@ -532,6 +532,11 @@ local function SpawnCharacter(participant: Types.Participant): ()
         participant._character = char
     
         tryAssignHumanoidPropertiesForRole(hum, participant:GetRole())
+
+        local healthScript = char:FindFirstChild("Health")
+        if healthScript then
+            healthScript:Destroy()
+        end
     
         participant._isCharacterLoading = false
 
