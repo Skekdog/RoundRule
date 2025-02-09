@@ -384,16 +384,41 @@ local function DropItem(participant: Types.Participant, item: Types.AnyItem, thr
         return
     end
 
-    local targetCFrame = char:GetPivot()
-    if throw then
-        targetCFrame = targetCFrame + targetCFrame.LookVector * 7.5
-    end
-
     item.Model:SetAttribute("AmmoType", if item.Kind == "Gun" then item.Definition.AmmoType.Name else nil)
     item.Model:SetAttribute("StoredAmmo", if item.Kind == "Gun" then item.Ammo else nil)
     
-    item.Model:PivotTo(targetCFrame)
-    item.Model.Parent = participant.Round:GetMap().ItemSpawns
+    local parent = participant.Round:GetMap().ItemSpawns
+
+    if throw then
+        participant:TryThrowAssembly(item.Model, 15, parent)
+    else
+        item.Model:PivotTo(char:GetPivot())
+        item.Model.Parent = parent
+    end
+end
+
+local function TryThrowAssembly(participant: Types.Participant, assemblyRoot: BasePart, force: number, parent: Instance?, position: Vector3?, direction: Vector3?): ()
+    local char = participant:GetCharacter()
+    if not char then
+        return
+    end
+
+    local head = char:FindFirstChild("Head")
+    if not head or not head:IsA("BasePart") then
+        return
+    end
+
+    if parent then
+        assemblyRoot.Parent = parent
+    end
+
+    position = position or head.Position
+    direction = direction or char:GetPivot().LookVector
+
+    assert(position and direction)
+
+    assemblyRoot.CFrame = CFrame.lookAlong(position + (direction * 3) + (head.AssemblyLinearVelocity / 2), direction)
+	assemblyRoot:ApplyImpulse(direction * (assemblyRoot.AssemblyMass * force))
 end
 
 local function TryDropItem(participant: Types.Participant, item: Types.AnyItem, throw: boolean?): ()
@@ -795,6 +820,8 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         PurchaseItem = PurchaseItem,
         IsItemSlotOccupied = IsItemSlotOccupied,
         TryDropItem = TryDropItem,
+
+        TryThrowAssembly = TryThrowAssembly,
     }
 end
 

@@ -529,6 +529,8 @@ export type Participant = {
     TryTakeDamage: (Participant, params: DamageParams) -> (),
     GetHealth: (Participant) -> number,
     SetHealth: (Participant, health: number) -> (),
+
+    TryThrowAssembly: (Participant, assemblyRoot: BasePart, force: number, parent: Instance?, position: Vector3?, direction: Vector3?) -> (),
 }
 
 export type Prop = {
