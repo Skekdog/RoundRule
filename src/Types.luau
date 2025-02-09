@@ -560,7 +560,7 @@ export type Round = {
     _ammoBoxes: {[DataModelItem]: AmmoBox?},
     GetAmmoBoxes: (Round) -> {[DataModelItem]: AmmoBox?},
     GetAmmoBox: (Round, part: DataModelItem) -> AmmoBox?,
-    LoadAmmoBox: (Round, map: Map, part: DataModelItem) -> AmmoBox,
+    LoadAmmoBox: (Round, map: Map, part: DataModelItem, amount: number?) -> AmmoBox,
 
     _props: {[DataModelProp]: Prop?},
     GetProps: (Round) -> {[DataModelProp]: Prop?},

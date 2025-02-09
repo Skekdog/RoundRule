@@ -389,11 +389,11 @@ local function GetAmmoBox(round: Types.Round, model: Types.DataModelItem): Types
     return round._ammoBoxes[model]
 end
 
-local function LoadAmmoBox(round: Types.Round, map: Types.Map, model: Types.DataModelItem): Types.AmmoBox
+local function LoadAmmoBox(round: Types.Round, map: Types.Map, model: Types.DataModelItem, amount: number?): Types.AmmoBox
     assert(not round:GetAmmoBox(model), "AmmoBox already exists")
 
     local definition = round:GetAmmoDefinition(model.Name) or error(`AmmoBox {model.Name} does not exist in map or gamemode`)
-    local ammoBox = AmmoBox.new(definition, model)
+    local ammoBox = AmmoBox.new(definition, model, amount)
     round._ammoBoxes[model] = ammoBox
 
     model:SetAttribute("AmmoType", ammoBox.Definition.Name)
