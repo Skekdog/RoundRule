@@ -162,15 +162,12 @@ export type ItemDefinition = CommonItemDefinition & {
     PrimaryHint: string?,
     AlternateHint: string?,
 
-    PrimaryFireClient: ((Item) -> ())?,
-    AlternateFireClient: ((Item) -> ())?,
-
     HeartbeatClient: ((Item) -> ())?,
 
-    PrimaryFireServer: ((Item, Participant) -> ())?,
-    AlternateFireServer: ((Item, Participant) -> ())?,
+    PrimaryFire: ((item: Item, participant: Participant, direction: Vector3) -> ())?,
+    AlternateFire: ((item: Item, participant: Participant, direction: Vector3) -> ())?,
 
-    OnPurchase: ((Item, Participant) -> ())?,
+    OnPurchase: ((item: Item, participant: Participant) -> ())?,
 }
 
 -- todo: when recursive generic types are supported, do that
