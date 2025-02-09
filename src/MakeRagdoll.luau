@@ -73,7 +73,6 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance): Mo
 	for i, v in jointInfo do
 		local constraint = Instance.new(if v.Kind == "Ball" then "BallSocketConstraint" else "HingeConstraint") :: Constraint
 		local part0 = clone:FindFirstChild(v.Part0)
-		assert(part0)
 		if not part0 then
 			continue
 		end
@@ -82,7 +81,6 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance): Mo
 		(constraint.Attachment0 :: Attachment).Name = i .. "RigAttach"
 
 		local part1 = clone:FindFirstChild(v.Part1)
-		assert(part1)
 		if not part1 then
 			continue
 		end
