@@ -417,7 +417,9 @@ local function TryThrowAssembly(participant: Types.Participant, assemblyRoot: Ba
 
     assert(position and direction)
 
-    assemblyRoot.CFrame = CFrame.lookAlong(position + (direction * 3) + (head.AssemblyLinearVelocity / 2), direction)
+    local velocityModifier = math.abs(head.AssemblyLinearVelocity:Dot(direction) / (16 * 3))
+
+    assemblyRoot.CFrame = CFrame.lookAlong(position + (direction * 3) + (head.AssemblyLinearVelocity * velocityModifier), direction)
 	assemblyRoot:ApplyImpulse(direction * (assemblyRoot.AssemblyMass * force))
 end
 
