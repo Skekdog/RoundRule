@@ -527,7 +527,7 @@ export type Participant = {
     GetHealth: (Participant) -> number,
     SetHealth: (Participant, health: number) -> (),
 
-    TryThrowAssembly: (Participant, assemblyRoot: BasePart, force: number, parent: Instance?, position: Vector3?, direction: Vector3?) -> boolean,
+    TryThrowAssembly: (Participant, assemblyRoot: BasePart, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?) -> boolean,
 }
 
 export type Prop = {
