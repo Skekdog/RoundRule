@@ -399,7 +399,18 @@ local function DropItem(participant: Types.Participant, item: Types.AnyItem, thr
     end
 end
 
-local function TryThrowAssembly(participant: Types.Participant, assemblyRoot: BasePart, force: number, parent: Instance?, position: Vector3?, direction: Vector3?): boolean
+local function isObscured(participant: Types.Participant, origin: Vector3, target: Vector3): boolean
+    local char = assert(participant:GetCharacter())
+
+    local params = RaycastParams.new()
+    params.FilterDescendantsInstances = {char, participant.Round:GetMap().Bounds}
+    params.FilterType = Enum.RaycastFilterType.Exclude
+
+    local result = workspace:Raycast(origin, target - origin, params)
+    return not not result
+end
+
+local function TryThrowAssembly(participant: Types.Participant, assemblyRoot: BasePart, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?): boolean
     local char = participant:GetCharacter()
     if not char then
         return false
@@ -421,7 +432,12 @@ local function TryThrowAssembly(participant: Types.Participant, assemblyRoot: Ba
 
     local velocityModifier = math.abs(head.AssemblyLinearVelocity:Dot(direction) / (16 * 3))
 
-    assemblyRoot.CFrame = CFrame.lookAlong(position + (direction * 3) + (head.AssemblyLinearVelocity * velocityModifier), direction)
+    local startPosition = if noForward then position else position + (direction * 3) + (head.AssemblyLinearVelocity * velocityModifier)
+    if isObscured(participant, startPosition, position) then
+        return false
+    end
+
+    assemblyRoot.CFrame = CFrame.lookAlong(startPosition, direction)
 	assemblyRoot:ApplyImpulse(direction * (assemblyRoot.AssemblyMass * force))
 
     return true
