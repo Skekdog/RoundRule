@@ -18,10 +18,10 @@ local function SetHealth(prop: Types.Prop, health: number): ()
     prop._health = health
 end
 
-local function TryTakeDamage(prop: Types.Prop, params: Types.DamageParams): ()
+local function TryTakeDamage(prop: Types.Prop, params: Types.DamageParams): boolean
     local health = prop:GetHealth()
     if health == nil then
-        return
+        return false
     end
 
     prop:SetHealth(health - params.Amount)
@@ -29,6 +29,8 @@ local function TryTakeDamage(prop: Types.Prop, params: Types.DamageParams): ()
     if health - params.Amount <= 0 then
         destroyProp(prop, params)
     end
+
+    return true
 end
 
 function module.new(model: Types.DataModelProp): Types.Prop

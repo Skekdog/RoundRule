@@ -233,10 +233,10 @@ local function SetFreeKill(participant: Types.Participant, reason: string?): ()
     participant._isFreeKill = not not reason
 end
 
-local function TryTakeDamage(participant: Types.Participant, params: Types.DamageParams): ()
+local function TryTakeDamage(participant: Types.Participant, params: Types.DamageParams): boolean
     local hum = participant:GetHumanoid()
     if not hum then
-        return
+        return false
     end
 
     local damage = params.Amount
@@ -244,7 +244,7 @@ local function TryTakeDamage(participant: Types.Participant, params: Types.Damag
 
     if attacker then
         if not participant.Round.Gamemode.EnableFriendlyFire and participant:IsAlliedWithParticipant(attacker) then
-            return
+            return false
         end
 
         if not params.IgnoreSelfDefense and not attacker:HasSelfDefenseAgainstParticipant(participant) then
@@ -270,6 +270,8 @@ local function TryTakeDamage(participant: Types.Participant, params: Types.Damag
     if health <= damage then
         onDeath(participant, params)
     end
+
+    return true
 end
 
 local function IsAlive(participant: Types.Participant): boolean
@@ -397,15 +399,15 @@ local function DropItem(participant: Types.Participant, item: Types.AnyItem, thr
     end
 end
 
-local function TryThrowAssembly(participant: Types.Participant, assemblyRoot: BasePart, force: number, parent: Instance?, position: Vector3?, direction: Vector3?): ()
+local function TryThrowAssembly(participant: Types.Participant, assemblyRoot: BasePart, force: number, parent: Instance?, position: Vector3?, direction: Vector3?): boolean
     local char = participant:GetCharacter()
     if not char then
-        return
+        return false
     end
 
     local head = char:FindFirstChild("Head")
     if not head or not head:IsA("BasePart") then
-        return
+        return false
     end
 
     if parent then
@@ -421,14 +423,18 @@ local function TryThrowAssembly(participant: Types.Participant, assemblyRoot: Ba
 
     assemblyRoot.CFrame = CFrame.lookAlong(position + (direction * 3) + (head.AssemblyLinearVelocity * velocityModifier), direction)
 	assemblyRoot:ApplyImpulse(direction * (assemblyRoot.AssemblyMass * force))
+
+    return true
 end
 
-local function TryDropItem(participant: Types.Participant, item: Types.AnyItem, throw: boolean?): ()
+local function TryDropItem(participant: Types.Participant, item: Types.AnyItem, throw: boolean?): boolean
     if item.Definition.CanDrop then
         participant:DropItem(item)
-    else
-        participant:RemoveItem(item)
+        return true
     end
+
+    participant:RemoveItem(item)
+    return false
 end
 
 local function AddItem(participant: Types.Participant, item: Types.AnyItem): ()
@@ -589,22 +595,22 @@ local function GetSlayVotes(participant: Types.Participant): {Types.Participant}
     return participant._slayVotes
 end
 
-local function TryAddSlayVote(participant: Types.Participant, other: Types.Participant): ()
+local function TryAddSlayVote(participant: Types.Participant, other: Types.Participant): boolean
     if not participant.Round.Gamemode.RequiredSlayVotes then
-        return
+        return false
     end
 
     if table.find(participant:GetSlayVotes(), other) then
-        return
+        return false
     end
 
     if not table.find(participant:GetKillList(), other) then
-        return
+        return false
     end
 
     local corpse = other:GetCorpse()
     if not corpse or corpse.WasCorrectKill ~= false then
-        return
+        return false
     end
 
     table.insert(participant._slayVotes, other)
@@ -615,26 +621,28 @@ local function TryAddSlayVote(participant: Types.Participant, other: Types.Parti
             Source = "Other"
         })
     end
+
+    return true
 end
 
-local function TryViewOtherParticipantCorpse(participant: Types.Participant, other: Types.Participant, covert: boolean?): ()
+local function TryViewOtherParticipantCorpse(participant: Types.Participant, other: Types.Participant, covert: boolean?): boolean
     local corpse = other:GetCorpse()
     if not corpse then
-        return
+        return false
     end
 
     if table.find(corpse:GetSearchedBy(), participant) then
-        return
+        return false
     end
 
     local ownChar = participant:GetCharacter()
     if not ownChar or not ownChar.PrimaryPart then
-        return
+        return false
     end
 
     local otherChar = other:GetCharacter()
     if not otherChar or not otherChar.PrimaryPart then
-        return
+        return false
     end
 
     local otherCredits: number?
@@ -693,6 +701,8 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
     if not participant:IsAlive() or (participant:IsAlive() and (otherChar.PrimaryPart.Position - ownChar.PrimaryPart.Position).Magnitude < 10) then
         remotes.UpdatePlayerCorpse:FireClient(participant.Player, other.Player.Name, corpse)
     end
+
+    return true
 end
 
 local function GetAllAmmo(participant: Types.Participant): {[string]: number}

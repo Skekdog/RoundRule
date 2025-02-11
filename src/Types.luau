@@ -436,7 +436,7 @@ export type Participant = {
 
     _slayVotes: {Participant},
     GetSlayVotes: (Participant) -> {Participant},
-    TryAddSlayVote: (Participant, participant: Participant) -> (),
+    TryAddSlayVote: (Participant, participant: Participant) -> boolean,
 
     _karma: number,
     GetKarma: (Participant) -> number,
@@ -460,7 +460,7 @@ export type Participant = {
     _corpse: Corpse?,
     GetCorpse: (Participant) -> Corpse?,
 
-    TryViewOtherParticipantCorpse: (Participant, other: Participant, covert: boolean?) -> (),
+    TryViewOtherParticipantCorpse: (Participant, other: Participant, covert: boolean?) -> boolean,
 
     _isCharacterLoading: boolean,
     _character: Model?,
@@ -504,7 +504,7 @@ export type Participant = {
 
     AddItem: (Participant, item: AnyItem) -> (),
     RemoveItem: (Participant, item: AnyItem) -> (),
-    TryDropItem: (Participant, item: AnyItem, throw: boolean?) -> (),
+    TryDropItem: (Participant, item: AnyItem, throw: boolean?) -> boolean,
 
     IsItemSlotOccupied: (Participant, slot: number) -> boolean,
 
@@ -523,11 +523,11 @@ export type Participant = {
 
     _wasDeathProcessed: boolean?,
     IsAlive: (Participant) -> boolean,
-    TryTakeDamage: (Participant, params: DamageParams) -> (),
+    TryTakeDamage: (Participant, params: DamageParams) -> boolean,
     GetHealth: (Participant) -> number,
     SetHealth: (Participant, health: number) -> (),
 
-    TryThrowAssembly: (Participant, assemblyRoot: BasePart, force: number, parent: Instance?, position: Vector3?, direction: Vector3?) -> (),
+    TryThrowAssembly: (Participant, assemblyRoot: BasePart, force: number, parent: Instance?, position: Vector3?, direction: Vector3?) -> boolean,
 }
 
 export type Prop = {
@@ -538,7 +538,7 @@ export type Prop = {
     GetHealth: (Prop) -> number?,
     SetHealth: (Prop, health: number) -> (),
 
-    TryTakeDamage: (Prop, params: DamageParams) -> (),
+    TryTakeDamage: (Prop, params: DamageParams) -> boolean,
 }
 
 export type Round = {
