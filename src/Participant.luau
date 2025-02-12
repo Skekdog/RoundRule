@@ -374,29 +374,31 @@ local function GiveItemFromItemDefinition(participant: Types.Participant, itemDe
     return item
 end
 
-local function DropItem(participant: Types.Participant, item: Types.AnyItem, throw: boolean?): ()
+local function DropItem(participant: Types.Participant, item: Types.AnyItem, throwDirection: Vector3?): ()
     if not item.Definition.CanDrop then
         return
     end
     
     local char = participant:GetCharacter()
 
-    participant:RemoveItem(item)
     if not char or not item.Model then
         return
     end
 
     item.Model:SetAttribute("AmmoType", if item.Kind == "Gun" then item.Definition.AmmoType.Name else nil)
     item.Model:SetAttribute("StoredAmmo", if item.Kind == "Gun" then item.Ammo else nil)
-    
-    local parent = participant.Round:GetMap().ItemSpawns
 
-    if throw then
-        participant:TryThrowAssembly(item.Model, 15, parent)
-    else
-        item.Model:PivotTo(char:GetPivot())
-        item.Model.Parent = parent
+    local parent = participant.Round:GetMap().ItemSpawns
+    if throwDirection then
+        if participant:TryThrowAssembly(item.Model, 15, parent, nil, throwDirection) then
+            participant:RemoveItem(item)
+        end
+        return
     end
+
+    participant:RemoveItem(item)
+    item.Model:PivotTo(char:GetPivot())
+    item.Model.Parent = parent
 end
 
 local function isObscured(participant: Types.Participant, origin: Vector3, target: Vector3): boolean
@@ -421,20 +423,20 @@ local function TryThrowAssembly(participant: Types.Participant, assemblyRoot: Ba
         return false
     end
 
-    if parent then
-        assemblyRoot.Parent = parent
-    end
-
     position = position or head.Position
     direction = direction or char:GetPivot().LookVector
 
     assert(position and direction)
 
-    local velocityModifier = math.abs(head.AssemblyLinearVelocity:Dot(direction) / (16 * 3))
+    local velocityModifier = head.AssemblyLinearVelocity:Dot(direction) / (16 * 3)
 
     local startPosition = if noForward then position else position + (direction * 3) + (head.AssemblyLinearVelocity * velocityModifier)
     if isObscured(participant, startPosition, position) then
         return false
+    end
+
+    if parent then
+        assemblyRoot.Parent = parent
     end
 
     assemblyRoot.CFrame = CFrame.lookAlong(startPosition, direction)

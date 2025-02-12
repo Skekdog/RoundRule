@@ -500,7 +500,7 @@ export type Participant = {
 
     GetItems: (Participant) -> {[string]: AnyItem?},
     GiveItemFromItemDefinition: (Participant, itemDefinition: AnyItemDefinition) -> AnyItem,
-    DropItem: (Participant, item: AnyItem, throw: boolean?) -> (),
+    DropItem: (Participant, item: AnyItem, throwDirection: Vector3?) -> (),
 
     AddItem: (Participant, item: AnyItem) -> (),
     RemoveItem: (Participant, item: AnyItem) -> (),
