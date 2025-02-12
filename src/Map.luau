@@ -14,6 +14,9 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
     local playerSpawns = waitForFolder(mapScript, "PlayerSpawns")
     local staticMap = waitForFolder(mapScript, "StaticMap")
 
+    local lightingModifiers = waitForFolder(mapScript, "LightingModifiers")
+    local futureLightingModifiers = waitForFolder(mapScript, "FutureLightingModifiers")
+
     local bounds = waitForFolder(mapScript, "Bounds")
 
     local dynamicMap = waitForFolder(mapScript, "DynamicMap")
@@ -39,6 +42,9 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
 
         LightingSettings = definition.LightingSettings,
         FutureLightingSettings = definition.FutureLightingSettings,
+
+        LightingModifiers = lightingModifiers,
+        FutureLightingModifiers = futureLightingModifiers,
 
         TerrainColors = definition.TerrainColors,
         WaterSettings = definition.WaterSettings,
