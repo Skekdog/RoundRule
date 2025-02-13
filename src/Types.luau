@@ -287,7 +287,7 @@ export type MapDefinition = {
 export type Map = MapDefinition & {
     PlayerSpawns: Folder,
 
-    TerrainRegion: TerrainRegion?,
+    TerrainRegion: TerrainRegion,
     StaticMap: Folder,
     Bounds: Folder,
 

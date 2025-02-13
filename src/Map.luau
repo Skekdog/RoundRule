@@ -2,10 +2,15 @@ local Types = require(script.Parent.Types)
 local module = {}
 
 -- We always want to use WaitForChild, because if a client is using this script, not all children may be replicated immediately.
+
+local function waitForClass(parent: Instance, name: string, class: string): Instance
+    local Instance = assert(parent:WaitForChild(name), "Instance not found")
+    assert(Instance:IsA(class), "Instance is not a " .. class)
+    return Instance
+end
+
 local function waitForFolder(parent: Instance, name: string): Folder
-    local folder = assert(parent:WaitForChild(name), "Instance not found")
-    assert(folder:IsA("Folder"), "Instance is not a folder")
-    return folder
+    return waitForClass(parent, name, "Folder") :: Folder
 end
 
 function module.fromModuleScript(mapScript: ModuleScript): Types.Map
@@ -26,6 +31,8 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
     local ammoSpawns = waitForFolder(mapScript, "AmmoSpawns")
 
     local materialVariants = waitForFolder(mapScript, "MaterialVariants")
+
+    local terrainRegion = waitForClass(mapScript, "TerrainRegion", "TerrainRegion") :: TerrainRegion
 
     return {
         Name = definition.Name,
@@ -51,6 +58,7 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
 
         PlayerSpawns = playerSpawns,
 
+        TerrainRegion = terrainRegion,
         StaticMap = staticMap,
         Bounds = bounds,
 
