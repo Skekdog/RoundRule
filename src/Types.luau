@@ -12,6 +12,9 @@ export type GeneralDamageSource = "Fall" | "Drown" | "Explode" | "Burn" | "Stab"
 export type NamedDamageSource = GeneralDamageSource | string
 export type DamageSource = AnyItem | GeneralDamageSource
 
+export type Bound = BasePart
+export type InteractionCallback = (object: Bound, participant: Participant) -> ()
+
 export type ExplosionInfo = {
     Damage: number,
     FalloffBegin: number,

@@ -431,6 +431,30 @@ local function LoadAmmoBox(round: Types.Round, map: Types.Map, model: Types.Data
     return ammoBox
 end
 
+local function loadBound(round: Types.Round, bound: Types.Bound): ()
+    bound.CollisionGroup = "Bounds"
+    
+    local onTouch = bound:FindFirstChild("OnTouch")
+    if onTouch then
+        assert(onTouch:IsA("ModuleScript"), "Invalid OnTouch in Bound")
+        
+        bound.Touched:Connect(function(touchPart)
+            local touchModel = touchPart:FindFirstAncestorOfClass("Model")
+
+            if not touchModel then
+                return
+            end
+    
+            local participant = round:GetParticipant(touchModel.Name)
+            if not participant or not participant:IsAlive() then
+                return
+            end
+
+            (require)(onTouch)(bound, participant)
+        end)
+    end
+end
+
 local function GetRoleFromRoleName(round: Types.Round, name: string): Types.Role
     return round._roles[name] or error("Unknown role: " .. name)
 end
@@ -503,7 +527,7 @@ end
 local function loadBounds(round: Types.Round, map: Types.Map): ()
     for _, v in map.Bounds:GetDescendants() do
         if v:IsA("BasePart") then
-            v.CollisionGroup = "Bounds"
+            loadBound(round, v)
         end
     end
 end
