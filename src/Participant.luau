@@ -155,18 +155,20 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
             end
         end
 
-        local otherRole = v:GetRole()
-        if otherRole then
-            if otherRole.Definition.RevealedRoles and table.find(otherRole.Definition.RevealedRoles, role.Name) then
-                remotes.UpdatePlayerRole:FireClient(v.Player, participant.Player.Name, role.Name)
-            else
-                remotes.UpdatePlayerRole:FireClient(v.Player, participant.Player.Name, nil)
-            end
+        if v ~= participant then
+            local otherRole = v:GetRole()
+            if otherRole then
+                if otherRole.Definition.RevealedRoles and table.find(otherRole.Definition.RevealedRoles, role.Name) then
+                    remotes.UpdatePlayerRole:FireClient(v.Player, participant.Player.Name, role.Name)
+                else
+                    remotes.UpdatePlayerRole:FireClient(v.Player, participant.Player.Name, nil)
+                end
 
-            if role.RevealedRoles and table.find(role.RevealedRoles, otherRole.Definition.Name) then
-                remotes.UpdatePlayerRole:FireClient(participant.Player, v.Player.Name, otherRole.Definition.Name)
-            else
-                remotes.UpdatePlayerRole:FireClient(participant.Player, v.Player.Name, nil)
+                if role.RevealedRoles and table.find(role.RevealedRoles, otherRole.Definition.Name) then
+                    remotes.UpdatePlayerRole:FireClient(participant.Player, v.Player.Name, otherRole.Definition.Name)
+                else
+                    remotes.UpdatePlayerRole:FireClient(participant.Player, v.Player.Name, nil)
+                end
             end
         end
     end
