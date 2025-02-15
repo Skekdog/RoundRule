@@ -357,6 +357,7 @@ local function LoadItem(round: Types.Round, map: Types.Map, model: Types.DataMod
     
     model:SetAttribute("AmmoType", if item.Kind == "Gun" then item.Definition.AmmoType.Name else nil)
     model:SetAttribute("StoredAmmo", if item.Kind == "Gun" then item.Ammo else nil)
+    model.CollisionGroup = "DroppedItems"
 
     model.Touched:Connect(function(touchPart)
         local touchModel = touchPart:FindFirstAncestorOfClass("Model")
@@ -398,6 +399,7 @@ local function LoadAmmoBox(round: Types.Round, map: Types.Map, model: Types.Data
 
     model:SetAttribute("AmmoType", ammoBox.Definition.Name)
     model:SetAttribute("StoredAmmo", ammoBox.Ammo)
+    model.CollisionGroup = "DroppedItems"
 
     model.Touched:Connect(function(touchPart)
         local touchModel = touchPart:FindFirstAncestorOfClass("Model")
