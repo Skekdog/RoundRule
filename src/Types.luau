@@ -137,6 +137,26 @@ export type RoleDefinition = {
     HighlightedRoles: {string}?,
 }
 
+export type InteractableObjectDefinition = {
+    Name: string,
+    Description: string,
+
+    Model: BasePart,
+
+    IsContinuousInteraction: boolean,
+    InteractionRange: number,
+
+    OnInteractClient: (object: InteractableObject) -> (),
+    OnInteractServer: (object: InteractableObject, participant: Participant) -> (),
+}
+
+export type InteractableObject = {
+    Definition: InteractableObjectDefinition,
+    Object: BasePart,
+
+    Extras: {[string]: any},
+}
+
 export type CommonItemDefinition = {
     Name: string,
     DisplayName: string?,
@@ -299,6 +319,7 @@ export type Map = MapDefinition & {
     Windows: Folder,
     ItemSpawns: Folder,
     AmmoSpawns: Folder,
+    InteractableObjects: Folder,
 
     MaterialVariants: Folder,
 }
