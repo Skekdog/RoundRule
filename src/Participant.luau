@@ -527,6 +527,20 @@ local function onCharacterPartAdded(part: Instance): ()
     part.CollisionGroup = "PlayerCharacterParts"
 end
 
+local function MoveToSpawn(participant: Types.Participant): ()
+    local char = participant:GetCharacter()
+    if not char then
+        return
+    end
+
+    local spawns = participant.Round:GetMap().PlayerSpawns:GetChildren()
+    local chosenSpawn = spawns[math.random(#spawns)]
+
+    assert(chosenSpawn, "No spawn found")
+    assert(chosenSpawn:IsA("BasePart"), "Spawn must be a BasePart")
+    char:PivotTo(chosenSpawn:GetPivot())
+end
+
 local function SpawnCharacter(participant: Types.Participant): ()
     assert(not participant._isCharacterLoading, "Character is already loading")
 
@@ -548,16 +562,11 @@ local function SpawnCharacter(participant: Types.Participant): ()
         for _, v in char:GetDescendants() do
             onCharacterPartAdded(v)
         end
-
-        local spawns = participant.Round:GetMap().PlayerSpawns:GetChildren()
-        local chosenSpawn = spawns[math.random(#spawns)]
-
-        assert(chosenSpawn, "No spawn found")
-        assert(chosenSpawn:IsA("BasePart"), "Spawn must be a BasePart")
-        char:PivotTo(chosenSpawn:GetPivot())
     
         participant._humanoid = hum
         participant._character = char
+
+        participant:MoveToSpawn()
     
         tryAssignHumanoidPropertiesForRole(hum, participant:GetRole())
 
@@ -859,6 +868,8 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         TryDropItem = TryDropItem,
 
         TryThrowAssembly = TryThrowAssembly,
+
+        MoveToSpawn = MoveToSpawn,
     }
 end
 

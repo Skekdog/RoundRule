@@ -615,6 +615,11 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
     loadItems(round, map)
     loadAmmoBoxes(round, map)
 
+    for _, v in round:GetParticipants() do
+        assert(v)
+        v:MoveToSpawn()
+    end
+
     currentMap = map
     assert(currentMap)
 end
