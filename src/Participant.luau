@@ -366,7 +366,7 @@ local function GiveItemFromItemDefinition(participant: Types.Participant, itemDe
     local item: Types.AnyItem
     if itemDefinition.Model then
         assert(typeof(itemDefinition.Model) == "Instance" and itemDefinition.Model:IsA("BasePart"))
-        item = participant.Round:LoadItem(participant.Round:GetMap(), itemDefinition.Model)
+        item = participant.Round:LoadItem(participant.Round:GetMap(), itemDefinition.Model:Clone())
     else
         item = Item.new(itemDefinition)
     end
