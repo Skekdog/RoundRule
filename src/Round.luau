@@ -294,7 +294,7 @@ local function EndRound(round: Types.Round, victor: Types.Victor, isTimeout: boo
         
         for reason, score in v:GetScores() do
             assert(score)
-            value:SetAttribute(reason, score)
+            value:SetAttribute(reason:gsub(" ", "_"), score)
         end
 
         value.Parent = data.Scores
