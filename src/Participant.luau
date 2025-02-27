@@ -212,6 +212,42 @@ local function GetEquippedItem(participant: Types.Participant): Types.AnyItem?
 end
 
 local function SetEquippedItem(participant: Types.Participant, item: Types.AnyItem?): ()
+    participant:TryStopAnimation("HoldItem")
+
+    local char = participant:GetCharacter()
+    if char then
+        local lastModel = char:FindFirstChild("Item")
+        if lastModel then
+            lastModel:Destroy()
+        end
+    end
+
+    if item and item.Definition.HoldAnimation then
+        local id = assert(tonumber((item.Definition.HoldAnimation :: string):split("://")[2]), "Invalid hold animation: " .. tostring(item.Definition.HoldAnimation))
+        participant:TryPlayAnimation(id, "HoldItem")
+    end
+
+    if item and item.Model and char then
+        local model = item.Model:Clone()
+        model.Name = "Item"
+
+        local motor = Instance.new("Motor6D")
+        motor.Part0 = char:FindFirstChild("RightHand") :: BasePart?
+        motor.Part1 = model
+
+        local c1 = model:GetAttribute("AnimC1")
+        if typeof(c1) == "CFrame" then
+            motor.C1 = c1
+        end
+
+        motor.Parent = model
+
+        model.CanCollide = false
+        model.CanTouch = false
+        model.CanQuery = false
+        model.Parent = char
+    end
+
     participant._equippedItem = item
 end
 
