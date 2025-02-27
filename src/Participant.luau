@@ -778,6 +778,43 @@ local function DropAmmoBoxForCurrentItem(participant: Types.Participant): ()
     ammoBox.Model.Parent = participant.Round:GetMap().AmmoSpawns
 end
 
+local function tryGetAnimator(participant: Types.Participant): Animator?
+    local hum = participant:GetHumanoid()
+    if not hum then
+        return nil
+    end
+
+    return hum:FindFirstChildOfClass("Animator")
+end
+
+local function TryPlayAnimation(participant: Types.Participant, id: number, name: string): ()
+    local animator = tryGetAnimator(participant)
+    if not animator then
+        return
+    end
+
+    local animation = Instance.new("Animation")
+    animation.AnimationId = "rbxassetid://" .. tostring(id)
+
+    local track = animator:LoadAnimation(animation)
+    track.Name = name
+
+    track:Play()
+end
+
+local function TryStopAnimation(participant: Types.Participant, name: string): ()
+    local animator = tryGetAnimator(participant)
+    if not animator then
+        return
+    end
+
+    for _, v in animator:GetPlayingAnimationTracks() do
+        if v.Name == name and v.IsPlaying then
+            v:Stop()
+        end
+    end
+end
+
 function module.new(player: Player, round: Types.Round): Types.Participant
     remotes.UpdateReserveAmmo:FireClient(player, "Reset")
     remotes.UpdateInventory:FireClient(player, "Reset")
@@ -789,6 +826,9 @@ function module.new(player: Player, round: Types.Round): Types.Participant
 
         Player = player,
         Round = round,
+
+        TryPlayAnimation = TryPlayAnimation,
+        TryStopAnimation = TryStopAnimation,
 
         _slayVotes = {},
         GetSlayVotes = GetSlayVotes,

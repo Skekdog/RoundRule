@@ -465,6 +465,9 @@ export type Participant = {
     GetSlayVotes: (Participant) -> {Participant},
     TryAddSlayVote: (Participant, participant: Participant) -> boolean,
 
+    TryPlayAnimation: (Participant, id: number, name: string) -> (),
+    TryStopAnimation: (Participant, name: string) -> (),
+
     _karma: number,
     GetKarma: (Participant) -> number,
     SetKarma: (Participant, karma: number) -> (),
