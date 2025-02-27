@@ -740,7 +740,7 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
                     assert(v)
                     corpse:AddSearchedBy(v)
                 end
-                remotes.UpdatePlayerCorpse:FireAllClients(other.Player.Name, corpse)
+                remotes.UpdatePlayerCorpse:FireAllClients(other.Player.Name, corpse.CorpseView)
             end
         end
 
@@ -764,7 +764,7 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
     corpse:AddSearchedBy(participant)
 
     if not participant:IsAlive() or (participant:IsAlive() and (otherChar.PrimaryPart.Position - ownChar.PrimaryPart.Position).Magnitude < 10) then
-        remotes.UpdatePlayerCorpse:FireClient(participant.Player, other.Player.Name, corpse)
+        remotes.UpdatePlayerCorpse:FireClient(participant.Player, other.Player.Name, corpse.CorpseView)
     end
 
     return true
