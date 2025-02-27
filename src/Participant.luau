@@ -747,7 +747,7 @@ local function TryViewOtherParticipantCorpse(participant: Types.Participant, oth
         local msg = `{participant:GetFormattedName()} found the body of {other:GetFormattedName()}.`
         local otherRole = other:GetRole()
         if otherRole then
-            msg ..= ` They were a {otherRole:GetExclamatoryString()}{otherRole:GetExclamatoryString()}`
+            msg ..= ` They were a {otherRole:GetFormattedName()}{otherRole:GetExclamatoryString()}`
         end
 
         round:SendMessage(Players:GetPlayers(), msg)
