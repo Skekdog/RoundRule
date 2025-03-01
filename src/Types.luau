@@ -429,6 +429,8 @@ export type AmmoBox = {
     Definition: AmmoDefinition,
     Model: BasePart,
     Ammo: number,
+
+    SetAmmo: (AmmoBox, amount: number) -> (),
 }
 
 export type SelfDefenseEntry = {

@@ -374,9 +374,9 @@ local function loadItem(round: Types.Round, model: Types.DataModelItem): Types.I
     }
 end
 
-local function loadAmmoBox(round: Types.Round, model: Types.DataModelAmmo, amount: number?): Types.AmmoProp
+local function loadAmmoBox(round: Types.Round, model: Types.DataModelAmmo): Types.AmmoProp
     local definition = round:GetAmmoDefinition(model.Name) or error(`AmmoBox {model.Name} does not exist in map or gamemode`)
-    local ammoBox = AmmoBox.new(definition, model, amount)
+    local ammoBox = AmmoBox.new(definition, model)
     round._ammoBoxes[model] = ammoBox
 
     model:SetAttribute("AmmoType", ammoBox.Definition.Name)
