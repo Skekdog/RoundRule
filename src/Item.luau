@@ -7,7 +7,7 @@ local function RunBeforeHit(item: Types.AnyWeapon, round: Types.Round, hitPart: 
         beforeHitAnything(item, hitPart, params)
     end
 
-    local hitThing: Types.Participant | Types.Prop | Model | BasePart
+    local hitThing: Types.Participant | Types.Prop?
 
     if hitPart:IsDescendantOf(workspace.Characters) then
         local model = hitPart:FindFirstAncestorOfClass("Model")
@@ -21,55 +21,36 @@ local function RunBeforeHit(item: Types.AnyWeapon, round: Types.Round, hitPart: 
         end
 
         hitThing = participant
-    elseif hitPart:IsDescendantOf(workspace.Corpses) then
-        local model = hitPart:FindFirstAncestorOfClass("Model")
-        if not model then
-            return false
-        end
-
-        hitThing = model
-    elseif hitPart:IsDescendantOf(round:GetMap().Props) then
+    else
         local prop = round:GetProp(hitPart)
-
         if not prop then
             return false
         end
 
         hitThing = prop
-    else
-        hitThing = hitPart
     end
 
-    if typeof(hitThing) == "table" then
-        if hitThing.Kind == "Participant" then
-            local beforeHitParticipant = if item.Kind == "Grenade" then item.Definition.ExplosionInfo.BeforeHitParticipant else item.Definition.BeforeHitParticipant
-            if not beforeHitParticipant then
-                return true
-            end
+    if not hitThing then
+        return false
+    end
 
-            return beforeHitParticipant(item, hitThing, params)
-        elseif hitThing.Kind == "Prop" then
-            local beforeHitProp = if item.Kind == "Grenade" then item.Definition.ExplosionInfo.BeforeHitProp else item.Definition.BeforeHitProp
-            if not beforeHitProp then
-                return true
-            end
-
-            return beforeHitProp(item, hitThing, params)
-        end
-    elseif typeof(hitThing) == "Instance" then
-        if hitThing:IsA("Model") then
-            local beforeHitCorpse = if item.Kind == "Grenade" then item.Definition.ExplosionInfo.BeforeHitCorpse else item.Definition.BeforeHitCorpse
-            if not beforeHitCorpse then
-                return true
-            end
-
-            return beforeHitCorpse(item, hitThing, params)
-        elseif hitThing:IsA("BasePart") then
+    if hitThing.Kind == "Participant" then
+        local beforeHitParticipant = if item.Kind == "Grenade" then item.Definition.ExplosionInfo.BeforeHitParticipant else item.Definition.BeforeHitParticipant
+        if not beforeHitParticipant then
             return true
         end
+
+        return beforeHitParticipant(item, hitThing, params)
+    elseif hitThing.Kind == "MapProp" or hitThing.Kind == "ItemProp" or hitThing.Kind == "CorpseProp" then
+        local beforeHitProp = if item.Kind == "Grenade" then item.Definition.ExplosionInfo.BeforeHitProp else item.Definition.BeforeHitProp
+        if not beforeHitProp then
+            return true
+        end
+
+        return beforeHitProp(item, hitThing, params)
     end
 
-    return true
+    error("Unknown hit thing kind: " .. hitThing.Kind)
 end
 
 function module.new(definition: Types.AnyItemDefinition, model: BasePart?): Types.AnyItem

@@ -27,7 +27,6 @@ export type ExplosionInfo = {
     IgnoreScore: boolean?,
 
     BeforeHitAnything: BeforeHitAnything?,
-    BeforeHitCorpse: BeforeHitCorpse?,
     BeforeHitProp: BeforeHitProp?,
     BeforeHitParticipant: BeforeHitParticipant?,
 }
@@ -62,6 +61,7 @@ export type RoundPhase = "Waiting" | "Preparing" | "Playing" | "Highlights" | "I
 
 export type DataModelProp = BasePart
 export type DataModelItem = BasePart
+export type DataModelCorpse = Model
 
 export type MessageKind = "Chat" | "Team" | "All"
 
@@ -198,7 +198,6 @@ export type ItemDefinition = CommonItemDefinition & {
 export type BeforeHitAnything = (item: AnyWeapon, hitPart: BasePart, params: DamageParams) -> ()
 export type BeforeHitParticipant = (item: AnyWeapon, hitParticipant: Participant, params: DamageParams) -> boolean
 export type BeforeHitProp = (item: AnyWeapon, hitProp: Prop, params: DamageParams) -> boolean
-export type BeforeHitCorpse = (item: AnyWeapon, hitCorpse: Model, params: DamageParams) -> boolean
 
 export type GunWeaponDefinition = CommonWeaponDefinition & {
     Kind: "Gun",
@@ -235,7 +234,6 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
     BeforeHitAnything: BeforeHitAnything?,
     BeforeHitParticipant: BeforeHitParticipant?,
     BeforeHitProp: BeforeHitProp?,
-    BeforeHitCorpse: BeforeHitCorpse?,
 }
 
 export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
@@ -269,7 +267,6 @@ export type MeleeWeaponDefinition = CommonWeaponDefinition & {
     BeforeHitAnything: BeforeHitAnything?,
     BeforeHitParticipant: BeforeHitParticipant?,
     BeforeHitProp: BeforeHitProp?,
-    BeforeHitCorpse: BeforeHitCorpse?,
 }
 
 export type AmmoDefinition = {
@@ -572,16 +569,28 @@ export type Participant = {
     TryThrowAssembly: (Participant, assemblyRoot: BasePart, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?) -> boolean,
 }
 
-export type Prop = {
-    Kind: "Prop",
+export type CorpseProp = {
+    Kind: "CorpseProp",
+    Model: DataModelCorpse,
+}
+
+export type ItemProp = {
+    Kind: "ItemProp",
+    Model: DataModelItem,
+}
+
+export type MapProp = {
+    Kind: "MapProp",
     Model: DataModelProp,
 
     _health: number?,
-    GetHealth: (Prop) -> number?,
-    SetHealth: (Prop, health: number) -> (),
+    GetHealth: (MapProp) -> number?,
+    SetHealth: (MapProp, health: number) -> (),
 
-    TryTakeDamage: (Prop, params: DamageParams) -> boolean,
+    TryTakeDamage: (MapProp, params: DamageParams) -> boolean,
 }
+
+export type Prop = CorpseProp | ItemProp | MapProp
 
 export type Round = {
     Gamemode: Gamemode,
