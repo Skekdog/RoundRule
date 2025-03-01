@@ -7,6 +7,7 @@ export type SoundProperties = {
 	Volume: number?,
 	RollOffMinDistance: number?,
 	RollOffMaxDistance: number?,
+	SoundGroup: SoundGroup?,
 }
 
 local function PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent: Instance?, props: SoundProperties?): Sound
@@ -40,6 +41,7 @@ local function PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent:
 	soundObject.RollOffMinDistance = props.RollOffMinDistance or 5
 	soundObject.RollOffMaxDistance = props.RollOffMaxDistance or 15
 	soundObject.RollOffMode = Enum.RollOffMode.Linear
+	soundObject.SoundGroup = props.SoundGroup
 
 	if parent then
 		soundObject.Parent = parent
