@@ -43,6 +43,8 @@ local function PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent:
 	soundObject.RollOffMode = Enum.RollOffMode.Linear
 	soundObject.SoundGroup = props.SoundGroup
 
+	soundObject.PlayOnRemove = false
+
 	if parent then
 		soundObject.Parent = parent
 
