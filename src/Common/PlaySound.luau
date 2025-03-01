@@ -1,0 +1,71 @@
+local SoundService = game:GetService("SoundService")
+local CreateEmptyPart = require(script.Parent.CreateEmptyPart)
+
+export type SoundId = number | Sound | string
+
+export type SoundProperties = {
+	Volume: number?,
+	RollOffMinDistance: number?,
+	RollOffMaxDistance: number?,
+}
+
+local function PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent: Instance?, props: SoundProperties?): Sound
+	assert(not parent or not position, "Position and parent are mutually exclusive")
+
+	props = props or {}
+	assert(props)
+
+	local soundObject: Sound
+
+	if typeof(sound) == "table" then
+		assert(#sound > 0, "Sound table must not be empty")
+		sound = sound[math.random(#sound)]
+	end
+
+    if typeof(sound) == "Instance" then
+        soundObject = sound:Clone()
+    else
+        local soundId: string
+        if typeof(sound) == "number" then
+            soundId = "rbxassetid://" .. sound
+        elseif typeof(sound) == "string" then
+            soundId = sound
+        end
+
+        soundObject = Instance.new("Sound")
+        soundObject.SoundId = soundId
+    end
+
+	soundObject.Volume = props.Volume or 0.5
+	soundObject.RollOffMinDistance = props.RollOffMinDistance or 5
+	soundObject.RollOffMaxDistance = props.RollOffMaxDistance or 15
+	soundObject.RollOffMode = Enum.RollOffMode.Linear
+
+	if parent then
+		soundObject.Parent = parent
+
+		soundObject.Ended:Once(function()
+			soundObject:Destroy()
+		end)
+	elseif position then
+		local part = CreateEmptyPart(CFrame.new(position), {soundObject :: Instance})
+
+		soundObject.Parent = part
+
+		soundObject.Ended:Once(function()
+			part:Destroy()
+		end)
+	else
+		soundObject.Parent = SoundService
+
+		soundObject.Ended:Once(function()
+			soundObject:Destroy()
+		end)
+	end
+
+	soundObject:Play()
+
+	return soundObject
+end
+
+return PlaySound
