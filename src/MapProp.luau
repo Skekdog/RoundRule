@@ -33,7 +33,7 @@ local function TryTakeDamage(prop: Types.MapProp, params: Types.DamageParams): b
     return true
 end
 
-function module.new(model: Types.DataModelProp): Types.MapProp
+function module.new(model: Types.DataModelMapProp): Types.MapProp
     local health = model:GetAttribute("Health")
     assert((typeof(health) == "number") or typeof(health) == "nil")
 

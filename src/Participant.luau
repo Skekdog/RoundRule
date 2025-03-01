@@ -62,6 +62,7 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
 
     local ragdoll = MakeRagdoll(participant, corpseFolder)
     if ragdoll then
+        participant.Round:LoadProp(ragdoll, "CorpseProp")
         ragdoll:SetAttribute("Unidentified", true)
     end
 
@@ -402,7 +403,9 @@ local function GiveItemFromItemDefinition(participant: Types.Participant, itemDe
     local item: Types.AnyItem
     if itemDefinition.Model then
         assert(typeof(itemDefinition.Model) == "Instance" and itemDefinition.Model:IsA("BasePart"))
-        item = participant.Round:LoadItem(participant.Round:GetMap(), itemDefinition.Model:Clone())
+        local prop = participant.Round:LoadProp(itemDefinition.Model:Clone(), "ItemProp")
+        assert(prop.Kind == "ItemProp")
+        item = prop.Item
     else
         item = Item.new(itemDefinition)
     end

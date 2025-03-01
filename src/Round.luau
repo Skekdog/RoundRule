@@ -332,24 +332,12 @@ local function GetProp(round: Types.Round, model: Types.DataModelProp): Types.Pr
     return round._props[model]
 end
 
-local function LoadProp(round: Types.Round, model: Types.DataModelProp): Types.Prop
-    assert(not round:GetProp(model), "Prop already exists")
+local function loadMapProp(round: Types.Round, model: Types.DataModelMapProp): Types.MapProp
     local prop = Prop.new(model)
-    round._props[model] = prop
     return prop
 end
 
-local function GetItems(round: Types.Round): {[Types.DataModelItem]: Types.AnyItem?}
-    return round._items
-end
-
-local function GetItem(round: Types.Round, model: Types.DataModelItem): Types.AnyItem?
-    return round._items[model]
-end
-
-local function LoadItem(round: Types.Round, map: Types.Map, model: Types.DataModelItem): Types.AnyItem
-    assert(not round:GetItem(model), "Item already exists")
-
+local function loadItem(round: Types.Round, model: Types.DataModelItem): Types.ItemProp
     local itemDefinition = round:GetItemDefinition(model.Name) or error(`Item {model.Name} does not exist in map or gamemode`)
 
     local item = Item.new(itemDefinition, model)
@@ -379,20 +367,14 @@ local function LoadItem(round: Types.Round, map: Types.Map, model: Types.DataMod
         participant:AddItem(item)
     end)
 
-    return item
+    return {
+        Kind = "ItemProp",
+        Model = model,
+        Item = item,
+    }
 end
 
-local function GetAmmoBoxes(round: Types.Round): {[Types.DataModelItem]: Types.AmmoBox?}
-    return round._ammoBoxes
-end
-
-local function GetAmmoBox(round: Types.Round, model: Types.DataModelItem): Types.AmmoBox?
-    return round._ammoBoxes[model]
-end
-
-local function LoadAmmoBox(round: Types.Round, map: Types.Map, model: Types.DataModelItem, amount: number?): Types.AmmoBox
-    assert(not round:GetAmmoBox(model), "AmmoBox already exists")
-
+local function loadAmmoBox(round: Types.Round, model: Types.DataModelAmmo, amount: number?): Types.AmmoProp
     local definition = round:GetAmmoDefinition(model.Name) or error(`AmmoBox {model.Name} does not exist in map or gamemode`)
     local ammoBox = AmmoBox.new(definition, model, amount)
     round._ammoBoxes[model] = ammoBox
@@ -430,7 +412,62 @@ local function LoadAmmoBox(round: Types.Round, map: Types.Map, model: Types.Data
         model:SetAttribute("StoredAmmo", ammoBox.Ammo)
     end)
 
-    return ammoBox
+    return {
+        Kind = "AmmoProp",
+        Model = model,
+        AmmoBox = ammoBox,
+    }
+end
+
+local function loadCorpse(round: Types.Round, model: Types.DataModelCorpse): Types.CorpseProp
+    local participant = round:GetParticipant(model.Name)
+    assert(participant, "Participant does not exist")
+
+    return {
+        Kind = "CorpseProp",
+        Model = model,
+        Participant = participant,
+    }
+end
+
+local function LoadProp(round: Types.Round, model: Types.DataModelProp, kind: "MapProp" | "CorpseProp" | "ItemProp" | "AmmoProp"): Types.Prop
+    assert(not round:GetProp(model), "Prop already exists")
+
+    local prop: Types.Prop?
+    if kind == "MapProp" then
+        assert(model:IsA("BasePart"), "MapProp must be a BasePart")
+        prop = loadMapProp(round, model)
+    elseif kind == "CorpseProp" then
+        assert(model:IsA("Model"), "CorpseProp must be a Model")
+        prop = loadCorpse(round, model)
+    elseif kind == "ItemProp" then
+        assert(model:IsA("BasePart"), "ItemProp must be a BasePart")
+        prop = loadItem(round, model)
+    elseif kind == "AmmoProp" then
+        assert(model:IsA("BasePart"), "AmmoProp must be a BasePart")
+        prop = loadAmmoBox(round, model)
+    end
+
+    assert(prop, "Invalid prop type")
+
+    round._props[model] = prop
+    return prop
+end
+
+local function GetItems(round: Types.Round): {[Types.DataModelItem]: Types.AnyItem?}
+    return round._items
+end
+
+local function GetItem(round: Types.Round, model: Types.DataModelItem): Types.AnyItem?
+    return round._items[model]
+end
+
+local function GetAmmoBoxes(round: Types.Round): {[Types.DataModelItem]: Types.AmmoBox?}
+    return round._ammoBoxes
+end
+
+local function GetAmmoBox(round: Types.Round, model: Types.DataModelItem): Types.AmmoBox?
+    return round._ammoBoxes[model]
 end
 
 local function loadBound(round: Types.Round, bound: Types.Bound): ()
@@ -491,7 +528,7 @@ local function loadProps(round: Types.Round, map: Types.Map): ()
 
     for _, v in map.Props:GetChildren() do
         if v:IsA("BasePart") then
-            round:LoadProp(v)
+            round:LoadProp(v, "MapProp")
         elseif v:IsA("Folder") then
             loadProps(round, map)
         end
@@ -505,7 +542,7 @@ local function loadItems(round: Types.Round, map: Types.Map): ()
 
     for _, v in map.ItemSpawns:GetChildren() do
         if v:IsA("BasePart") then
-            round:LoadItem(map, v)
+            round:LoadProp(v, "ItemProp")
         elseif v:IsA("Folder") then
             loadItems(round, map)
         end
@@ -519,7 +556,7 @@ local function loadAmmoBoxes(round: Types.Round, map: Types.Map): ()
 
     for _, v in map.AmmoSpawns:GetChildren() do
         if v:IsA("BasePart") then
-            round:LoadAmmoBox(map, v)
+            round:LoadProp(v, "AmmoProp")
         elseif v:IsA("Folder") then
             loadAmmoBoxes(round, map)
         end
@@ -662,7 +699,6 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         _items = {},
         GetItems = GetItems,
         GetItem = GetItem,
-        LoadItem = LoadItem,
 
         GetAmmoDefinition = GetAmmoDefinition,
         GetItemDefinition = GetItemDefinition,
@@ -674,7 +710,6 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         _ammoBoxes = {},
         GetAmmoBoxes = GetAmmoBoxes,
         GetAmmoBox = GetAmmoBox,
-        LoadAmmoBox = LoadAmmoBox,
 
         AddEvent = AddEvent,
         GetEventLog = GetEventLog,

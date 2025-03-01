@@ -59,9 +59,11 @@ export type DamageInfo = number | {
 
 export type RoundPhase = "Waiting" | "Preparing" | "Playing" | "Highlights" | "Intermission"
 
-export type DataModelProp = BasePart
+export type DataModelMapProp = BasePart
 export type DataModelItem = BasePart
 export type DataModelCorpse = Model
+export type DataModelAmmo = BasePart
+export type DataModelProp = DataModelMapProp | DataModelItem | DataModelCorpse | DataModelAmmo
 
 export type MessageKind = "Chat" | "Team" | "All"
 
@@ -572,16 +574,24 @@ export type Participant = {
 export type CorpseProp = {
     Kind: "CorpseProp",
     Model: DataModelCorpse,
+    Participant: Participant,
 }
 
 export type ItemProp = {
     Kind: "ItemProp",
     Model: DataModelItem,
+    Item: AnyItem,
+}
+
+export type AmmoProp = {
+    Kind: "AmmoProp",
+    Model: DataModelAmmo,
+    AmmoBox: AmmoBox,
 }
 
 export type MapProp = {
     Kind: "MapProp",
-    Model: DataModelProp,
+    Model: DataModelMapProp,
 
     _health: number?,
     GetHealth: (MapProp) -> number?,
@@ -590,7 +600,7 @@ export type MapProp = {
     TryTakeDamage: (MapProp, params: DamageParams) -> boolean,
 }
 
-export type Prop = CorpseProp | ItemProp | MapProp
+export type Prop = CorpseProp | ItemProp | MapProp | AmmoProp
 
 export type Round = {
     Gamemode: Gamemode,
@@ -605,17 +615,15 @@ export type Round = {
     _items: {[DataModelItem]: AnyItem?},
     GetItems: (Round) -> {[DataModelItem]: AnyItem?},
     GetItem: (Round, part: DataModelItem) -> AnyItem?,
-    LoadItem: (Round, map: Map, part: DataModelItem) -> AnyItem,
 
     _ammoBoxes: {[DataModelItem]: AmmoBox?},
     GetAmmoBoxes: (Round) -> {[DataModelItem]: AmmoBox?},
     GetAmmoBox: (Round, part: DataModelItem) -> AmmoBox?,
-    LoadAmmoBox: (Round, map: Map, part: DataModelItem, amount: number?) -> AmmoBox,
 
     _props: {[DataModelProp]: Prop?},
     GetProps: (Round) -> {[DataModelProp]: Prop?},
     GetProp: (Round, model: DataModelProp) -> Prop?,
-    LoadProp: (Round, model: DataModelProp) -> Prop,
+    LoadProp: (Round, model: DataModelProp, kind: "MapProp" | "CorpseProp" | "ItemProp" | "AmmoProp") -> Prop,
 
     _participants: {[string]: Participant?},
     GetParticipant: (Round, name: string) -> Participant?,
