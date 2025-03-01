@@ -26,6 +26,7 @@ export type ExplosionInfo = {
     IgnoreKarma: boolean?,
     IgnoreScore: boolean?,
 
+    BeforeHitAnything: BeforeHitAnything?,
     BeforeHitCorpse: BeforeHitCorpse?,
     BeforeHitProp: BeforeHitProp?,
     BeforeHitParticipant: BeforeHitParticipant?,
@@ -194,9 +195,10 @@ export type ItemDefinition = CommonItemDefinition & {
 }
 
 -- todo: when recursive generic types are supported, do that
-export type BeforeHitParticipant = ((item: AnyWeapon, attacker: Participant, target: Participant, willDie: boolean) -> boolean)
-export type BeforeHitProp = ((item: AnyWeapon, attacker: Participant, target: Prop, willDie: boolean) -> boolean)
-export type BeforeHitCorpse = ((item: AnyWeapon, attacker: Participant, target: Model) -> boolean)
+export type BeforeHitAnything = (item: AnyWeapon, hitPart: BasePart, params: DamageParams) -> ()
+export type BeforeHitParticipant = (item: AnyWeapon, hitParticipant: Participant, params: DamageParams) -> boolean
+export type BeforeHitProp = (item: AnyWeapon, hitProp: Prop, params: DamageParams) -> boolean
+export type BeforeHitCorpse = (item: AnyWeapon, hitCorpse: Model, params: DamageParams) -> boolean
 
 export type GunWeaponDefinition = CommonWeaponDefinition & {
     Kind: "Gun",
@@ -230,6 +232,7 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
     RecoilX: number,
     RecoilY: number,
 
+    BeforeHitAnything: BeforeHitAnything?,
     BeforeHitParticipant: BeforeHitParticipant?,
     BeforeHitProp: BeforeHitProp?,
     BeforeHitCorpse: BeforeHitCorpse?,
@@ -263,6 +266,7 @@ export type MeleeWeaponDefinition = CommonWeaponDefinition & {
 
     MaxDistance: number,
 
+    BeforeHitAnything: BeforeHitAnything?,
     BeforeHitParticipant: BeforeHitParticipant?,
     BeforeHitProp: BeforeHitProp?,
     BeforeHitCorpse: BeforeHitCorpse?,
@@ -380,6 +384,8 @@ export type GunWeapon = {
 
     IsReloading: boolean,
 
+    RunBeforeHit: (item: GunWeapon, round: Round, hitPart: BasePart, params: DamageParams) -> boolean,
+
     Extras: {[string]: any},
 }
 
@@ -387,6 +393,8 @@ export type GrenadeWeapon = {
     Kind: "Grenade",
     Definition: GrenadeWeaponDefinition,
     Model: BasePart,
+
+    RunBeforeHit: (item: GrenadeWeapon, round: Round, hitPart: BasePart, params: DamageParams) -> boolean,
 
     Extras: {[string]: any},
 }
@@ -397,6 +405,8 @@ export type MeleeWeapon = {
     Model: BasePart,
 
     LastAttackTime: number,
+
+    RunBeforeHit: (item: MeleeWeapon, round: Round, hitPart: BasePart, params: DamageParams) -> boolean,
 
     Extras: {[string]: any},
 }
