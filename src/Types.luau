@@ -201,6 +201,8 @@ export type BeforeHitAnything = (item: AnyWeapon, hitPart: BasePart, params: Dam
 export type BeforeHitParticipant = (item: AnyWeapon, hitParticipant: Participant, params: DamageParams) -> boolean
 export type BeforeHitProp = (item: AnyWeapon, hitProp: Prop, params: DamageParams) -> boolean
 
+export type RunBeforeHit = (item: AnyWeapon, round: Round, hitPart: BasePart, params: DamageParams) -> boolean
+
 export type GunWeaponDefinition = CommonWeaponDefinition & {
     Kind: "Gun",
 
@@ -383,7 +385,7 @@ export type GunWeapon = {
 
     IsReloading: boolean,
 
-    RunBeforeHit: (item: GunWeapon, round: Round, hitPart: BasePart, params: DamageParams) -> boolean,
+    RunBeforeHit: RunBeforeHit,
 
     Extras: {[string]: any},
 }
@@ -393,7 +395,7 @@ export type GrenadeWeapon = {
     Definition: GrenadeWeaponDefinition,
     Model: BasePart,
 
-    RunBeforeHit: (item: GrenadeWeapon, round: Round, hitPart: BasePart, params: DamageParams) -> boolean,
+    RunBeforeHit: RunBeforeHit,
 
     Extras: {[string]: any},
 }
@@ -405,7 +407,7 @@ export type MeleeWeapon = {
 
     LastAttackTime: number,
 
-    RunBeforeHit: (item: MeleeWeapon, round: Round, hitPart: BasePart, params: DamageParams) -> boolean,
+    RunBeforeHit: RunBeforeHit,
 
     Extras: {[string]: any},
 }
