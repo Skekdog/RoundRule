@@ -10,15 +10,15 @@ local function destroyProp(prop: Types.Prop, params: Types.DamageParams?): ()
     prop.Model:Destroy()
 end
 
-local function GetHealth(prop: Types.Prop): number?
+local function GetHealth(prop: Types.MapProp): number?
     return prop._health
 end
 
-local function SetHealth(prop: Types.Prop, health: number): ()
+local function SetHealth(prop: Types.MapProp, health: number): ()
     prop._health = health
 end
 
-local function TryTakeDamage(prop: Types.Prop, params: Types.DamageParams): boolean
+local function TryTakeDamage(prop: Types.MapProp, params: Types.DamageParams): boolean
     local health = prop:GetHealth()
     if health == nil then
         return false
@@ -33,12 +33,12 @@ local function TryTakeDamage(prop: Types.Prop, params: Types.DamageParams): bool
     return true
 end
 
-function module.new(model: Types.DataModelProp): Types.Prop
+function module.new(model: Types.DataModelProp): Types.MapProp
     local health = model:GetAttribute("Health")
     assert((typeof(health) == "number") or typeof(health) == "nil")
 
     return {
-        Kind = "Prop",
+        Kind = "MapProp",
         Model = model,
 
         _health = health,
