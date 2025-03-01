@@ -49,8 +49,7 @@ local function PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent:
 		end)
 	elseif position then
 		local part = CreateEmptyPart(CFrame.new(position), {soundObject :: Instance})
-
-		soundObject.Parent = part
+		part.Parent = workspace.Projectiles
 
 		soundObject.Ended:Once(function()
 			part:Destroy()
