@@ -1,4 +1,4 @@
-local GetDisplayName = require(script.Parent.GetDisplayName)
+local GetDisplayName = require(script.Parent.Common.GetDisplayName)
 local Types = require(script.Parent.Types)
 local module = {}
 
