@@ -22,7 +22,20 @@ local function RunBeforeHit(item: Types.AnyWeapon, round: Types.Round, hitPart: 
 
         hitThing = participant
     else
-        local prop = round:GetProp(hitPart)
+        local prop: Types.Prop?
+        if hitPart:IsDescendantOf(workspace.Corpses) then
+            local model = hitPart:FindFirstAncestorOfClass("Model")
+            if not model then
+                return false
+            end
+
+            prop = round:GetProp(model)
+        end
+
+        if not prop then
+            prop = round:GetProp(hitPart)
+        end
+        
         if not prop then
             return false
         end

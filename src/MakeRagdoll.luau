@@ -109,6 +109,10 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance): Mo
 		constraint.Parent = clone:FindFirstChild(v.Part1)
 	end
 
+	local upperTorso = clone:FindFirstChild("UpperTorso")
+	assert(not upperTorso or upperTorso:IsA("BasePart"))
+	clone.PrimaryPart = upperTorso
+
 	clone.Parent = parent
 	for _, v in clone:GetDescendants() do
 		if v:IsA("Motor6D") or v:IsA("BaseScript") or v:IsA("Fire") then
