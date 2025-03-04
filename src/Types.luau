@@ -447,6 +447,8 @@ export type CorpseView = {
 }
 
 export type Corpse = {
+    Participant: Participant,
+
     CorpseView: CorpseView,
     WasCorrectKill: boolean?, -- Not in CorpseView, as we don't want clients to see this
 
@@ -454,7 +456,8 @@ export type Corpse = {
 
     _searchedBy: {Participant},
     GetSearchedBy: (Corpse) -> {Participant},
-    AddSearchedBy: (Corpse, participant: Participant) -> (),
+
+    Search: (Corpse, searcher: Participant, covert: boolean) -> boolean,
 
     Killer: Participant?,
 }
@@ -495,8 +498,6 @@ export type Participant = {
 
     _corpse: Corpse?,
     GetCorpse: (Participant) -> Corpse?,
-
-    TryViewOtherParticipantCorpse: (Participant, other: Participant, covert: boolean?) -> boolean,
 
     _isCharacterLoading: boolean,
     _character: Model?,

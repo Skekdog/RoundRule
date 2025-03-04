@@ -698,86 +698,6 @@ local function TryAddSlayVote(participant: Types.Participant, other: Types.Parti
     return true
 end
 
-local function TryViewOtherParticipantCorpse(participant: Types.Participant, other: Types.Participant, covert: boolean?): boolean
-    local corpse = other:GetCorpse()
-    if not corpse then
-        return false
-    end
-
-    if table.find(corpse:GetSearchedBy(), participant) then
-        return false
-    end
-
-    local ownChar = participant:GetCharacter()
-    if not ownChar or not ownChar.PrimaryPart then
-        return false
-    end
-
-    local otherChar = other:GetCharacter()
-    if not otherChar or not otherChar.PrimaryPart then
-        return false
-    end
-
-    local otherCredits: number?
-    local ownRole = participant:GetRole()
-    if ownRole and ownRole.Definition.CanStealCreditsFromCorpses then
-        otherCredits = math.max(other:GetCredits(), 0)
-        participant:AddCredits(otherCredits :: number)
-        other:SetCredits(0)
-
-        participant.Round:AddEvent({
-            Kind = "CorpseSearchedRoundEvent",
-            SearchedBy = participant,
-            Victim = other,
-            FoundCredits = otherCredits,
-        })
-
-        participant.Round:SendMessage(participant.Player, `You found {otherCredits} {if otherCredits == 1 then "credit" else "credits"} on the corpse.`, "Team")
-    end
-
-    if other:GetStatus() == "Missing" and not covert then
-        other:_setStatus("Dead")
-
-        local round = participant.Round
-
-        if ownRole then
-            participant:AddScore("Bodies Found", ownRole.Definition.ScoreForFindingBodies or 0)
-
-            if ownRole.Definition.CorpseSearchResultsPublicised then
-                for _, v in round:GetParticipants() do
-                    assert(v)
-                    corpse:AddSearchedBy(v)
-                end
-                remotes.UpdatePlayerCorpse:FireAllClients(other.Player.Name, corpse.CorpseView)
-            end
-        end
-
-        local msg = `{participant:GetFormattedName()} found the body of {other:GetFormattedName()}.`
-        local otherRole = other:GetRole()
-        if otherRole then
-            msg ..= ` They were a {otherRole:GetFormattedName()}{otherRole:GetExclamatoryString()}`
-        end
-
-        round:SendMessage(Players:GetPlayers(), msg)
-
-        if not otherCredits then
-            participant.Round:AddEvent({
-                Kind = "CorpseSearchedRoundEvent",
-                SearchedBy = participant,
-                Victim = participant,
-            })
-        end
-    end
-
-    corpse:AddSearchedBy(participant)
-
-    if not participant:IsAlive() or (participant:IsAlive() and (otherChar.PrimaryPart.Position - ownChar.PrimaryPart.Position).Magnitude < 10) then
-        remotes.UpdatePlayerCorpse:FireClient(participant.Player, other.Player.Name, corpse.CorpseView)
-    end
-
-    return true
-end
-
 local function GetAllAmmo(participant: Types.Participant): {[string]: number}
     return participant._ammo :: {[string]: number}
 end
@@ -910,8 +830,6 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         SetRole = SetRole,
 
         GetCorpse = GetCorpse,
-
-        TryViewOtherParticipantCorpse = TryViewOtherParticipantCorpse,
 
         IsFreeKill = IsFreeKill,
         SetFreeKill = SetFreeKill,
