@@ -44,6 +44,12 @@ end
 
 local function updateCorpseForPlayer(corpse: Types.Corpse, participant: Types.Participant): ()
     addSearchedBy(corpse, participant)
+
+    local role = corpse.Participant:GetRole()
+    if role then
+        remotes.UpdatePlayerRole:FireClient(participant.Player, corpse.Participant.Player.Name, role.Definition.Name)
+    end
+    
     remotes.UpdatePlayerCorpse:FireClient(participant.Player, corpse.Participant.Player.Name, corpse.CorpseView)
 end
 
@@ -51,7 +57,7 @@ local function notifyCorpseFound(corpse: Types.Corpse, searcher: Types.Participa
     local msg = `{searcher} found the body of {corpse.Participant:GetFormattedName()}.`
     local otherRole = corpse.Participant:GetRole()
     if otherRole then
-        msg ..= ` They were a {otherRole:GetFormattedName()}{otherRole:GetExclamatoryString()}`
+        msg ..= ` They were a {otherRole:GetFormattedRoleName()}{otherRole:GetExclamatoryString()}`
     end
 
     searcher.Round:SendMessage(searcher.Player, msg)

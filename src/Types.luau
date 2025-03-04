@@ -333,7 +333,8 @@ export type Role = {
     Definition: RoleDefinition,
     
     IsAlliedWith: (Role, other: Role) -> boolean,
-    GetFormattedName: (Role) -> string,
+    GetFormattedRoleName: (Role) -> string,
+    GetFormattedPlayerName: (Role, name: string) -> string,
     GetExclamatoryString: (Role) -> string,
 }
 

@@ -101,7 +101,7 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
 
     local role = participant:GetRole()
     if role and role.Definition.ShouldAnnounceDisconnect then
-        round:SendMessage(Players:GetPlayers(), `{participant:GetFormattedName()} has disconnected. They were a {role:GetFormattedName()}{role:GetExclamatoryString()}`)
+        round:SendMessage(Players:GetPlayers(), `{participant:GetFormattedName()} has disconnected. They were a {role:GetFormattedRoleName()}{role:GetExclamatoryString()}`)
     end
 
     local count = 0
@@ -320,7 +320,7 @@ local function EndRound(round: Types.Round, victor: Types.Victor, isTimeout: boo
     end
 
     data:SetAttribute("WinnerKind", victor.Kind)
-    data:SetAttribute("Winner", if victor.Kind == "Role" then victor:GetFormattedName() else victor:GetFormattedName())
+    data:SetAttribute("Winner", if victor.Kind == "Role" then victor:GetFormattedRoleName() else victor:GetFormattedName())
     round:SetRoundPhase("Highlights", HIGHLIGHTS_TIME)
 end
 
