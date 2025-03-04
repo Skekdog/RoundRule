@@ -46,7 +46,7 @@ local function updateCorpseForPlayer(corpse: Types.Corpse, participant: Types.Pa
     addSearchedBy(corpse, participant)
 
     local role = corpse.Participant:GetRole()
-    if role then
+    if participant ~= corpse.Participant and role then
         remotes.UpdatePlayerRole:FireClient(participant.Player, corpse.Participant.Player.Name, role.Definition.Name)
     end
     
