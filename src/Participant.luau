@@ -110,7 +110,7 @@ local function GetFormattedName(participant: Types.Participant): string
         return participant.Player.Name
     end
 
-    return `<font color='#{role.Definition.Color:ToHex()}'>{participant.Player.Name}</font>`
+    return role:GetFormattedPlayerName(participant.Player.Name)
 end
 
 local function GetCharacter(participant: Types.Participant): Model?
