@@ -337,7 +337,7 @@ export type Role = {
     GetExclamatoryString: (Role) -> string,
 }
 
-export type OnPropBreak = (Prop, params: DamageParams?) -> () 
+export type OnMapPropBreak = (prop: MapProp, params: DamageParams?) -> () 
 
 export type RoundEvent = {
     Timestamp: number,
@@ -589,6 +589,8 @@ export type AmmoProp = {
 export type MapProp = {
     Kind: "MapProp",
     Model: DataModelMapProp,
+
+    Round: Round,
 
     _health: number?,
     GetHealth: (MapProp) -> number?,

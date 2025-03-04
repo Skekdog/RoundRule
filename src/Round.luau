@@ -333,7 +333,7 @@ local function GetProp(round: Types.Round, model: Types.DataModelProp): Types.Pr
 end
 
 local function loadMapProp(round: Types.Round, model: Types.DataModelMapProp): Types.MapProp
-    local prop = Prop.new(model)
+    local prop = Prop.new(model, round)
     return prop
 end
 
