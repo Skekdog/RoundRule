@@ -6,7 +6,7 @@ local function GetFormattedName(role: Types.Role): string
 end
 
 local function GetExclamatoryString(role: Types.Role): string
-    return if role.Definition.IsExclamatory then "!" else ""
+    return if role.Definition.IsExclamatory then "!" else "."
 end
 
 local function IsAlliedWith(role: Types.Role, otherRole: Types.Role): boolean
