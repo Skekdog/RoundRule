@@ -99,6 +99,11 @@ local function tryAssignHumanoidPropertiesForRole(humanoid: Humanoid?, role: Typ
     end
 end
 
+local function replicateParticipantRole(roleOf: Types.Participant, replicateTo: Types.Participant, reveal: boolean): ()
+    local role = if reveal then assert(roleOf:GetRole()).Definition.Name else nil
+    remotes.UpdatePlayerRole:FireClient(replicateTo.Player, roleOf.Player.Name, role)
+end
+
 local function GetFormattedName(participant: Types.Participant): string
     local role = participant:GetRole()
     if not role then
@@ -145,7 +150,7 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
         assert(v)
 
         if v == participant then
-            remotes.UpdatePlayerRole:FireClient(v.Player, participant.Player.Name, role.Name)
+            replicateParticipantRole(participant, participant, true)
         end
 
         if v:GetStatus() == "Missing" then
@@ -160,15 +165,15 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
             local otherRole = v:GetRole()
             if otherRole then
                 if otherRole.Definition.RevealedRoles and table.find(otherRole.Definition.RevealedRoles, role.Name) then
-                    remotes.UpdatePlayerRole:FireClient(v.Player, participant.Player.Name, role.Name)
+                    replicateParticipantRole(participant, v, true)
                 else
-                    remotes.UpdatePlayerRole:FireClient(v.Player, participant.Player.Name, nil)
+                    replicateParticipantRole(participant, v, false)
                 end
 
                 if role.RevealedRoles and table.find(role.RevealedRoles, otherRole.Definition.Name) then
-                    remotes.UpdatePlayerRole:FireClient(participant.Player, v.Player.Name, otherRole.Definition.Name)
+                    replicateParticipantRole(v, participant, true)
                 else
-                    remotes.UpdatePlayerRole:FireClient(participant.Player, v.Player.Name, nil)
+                    replicateParticipantRole(v, participant, false)
                 end
             end
         end
