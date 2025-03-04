@@ -166,6 +166,8 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
 
     local corpseView: Types.CorpseView = {
         Name = participant.Player.Name,
+        UserId = participant.Player.UserId,
+
         WasFreeKill = participant:IsFreeKill(), 
         WasHeadshot = params.IsHeadshot,
         WasSelfDefense = selfDefense,

@@ -434,6 +434,8 @@ export type SelfDefenseEntry = {
 
 export type CorpseView = {
     Name: string,
+    UserId: number,
+
     WasFreeKill: boolean?,
     WasHeadshot: boolean?,
     WasSelfDefense: boolean?,
