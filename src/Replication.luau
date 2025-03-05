@@ -47,4 +47,8 @@ function module.SlayVote(to: Types.Participant, against: Types.Participant): ()
 	remotes.SlayVote:FireClient(to.Player, against.Player.Name)
 end
 
+function module.SendMessage(player: Player, message: string, kind: Types.MessageKind?): ()
+	remotes.SendMessage:FireClient(player, message, kind or "All")
+end
+
 return module

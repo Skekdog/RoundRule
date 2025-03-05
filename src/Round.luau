@@ -8,6 +8,7 @@ local Item = require(script.Parent.Item)
 local Map = require(script.Parent.Map)
 local Participant = require(script.Parent.Participant)
 local Prop = require(script.Parent.MapProp)
+local Replication = require(script.Parent.Replication)
 local Role = require(script.Parent.Role)
 local Types = require(script.Parent.Types)
 local module = {}
@@ -17,7 +18,6 @@ local knownWaterSettings: {string} = {}
 local knownTerrainColours: {[Enum.Material]: Color3} = {}
 
 local data = script.Parent.ReplicatedData
-local remotes = script.Parent.Remotes
 
 local HIGHLIGHTS_TIME = 5
 local PREPARING_TIME = 5
@@ -671,7 +671,7 @@ local function SendMessage(round: Types.Round, to: {Player} | Player, message: s
     end
 
     for _, v in to :: {Player} do
-        remotes.SendMessage:FireClient(v, message, kind or "All")
+        Replication.SendMessage(v, message, kind)
     end
 end
 
