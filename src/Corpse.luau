@@ -160,6 +160,12 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
 
     local equipmentList: {string} = {}
     for i in participant:GetItemPurchases() do
+        local definition = participant.Round:GetItemDefinition(i)
+        assert(definition)
+
+        if definition.Model then
+            continue
+        end
         table.insert(equipmentList, i)
     end
 
