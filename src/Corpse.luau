@@ -4,8 +4,6 @@ local Types = require(script.Parent.Types)
 
 local module = {}
 
-local remotes = script.Parent.Remotes
-
 local function GetSearchedBy(corpse: Types.Corpse): {Types.Participant}
     return corpse._searchedBy
 end
@@ -51,7 +49,7 @@ local function updateCorpseForPlayer(corpse: Types.Corpse, participant: Types.Pa
         Replication.ReplicateRole(participant, corpse.Participant, false)
     end
     
-    remotes.UpdatePlayerCorpse:FireClient(participant.Player, corpse.Participant.Player.Name, corpse.CorpseView)
+    Replication.ReplicateCorpse(participant, corpse)
 end
 
 local function notifyCorpseFound(corpse: Types.Corpse, searcher: Types.Participant): ()

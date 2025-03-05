@@ -18,6 +18,10 @@ function module.ReplicateCredits(to: Types.Participant): ()
 	remotes.UpdateCredits:FireClient(to.Player, to:GetCredits())
 end
 
+function module.ReplicateCorpse(to: Types.Participant, corpse: Types.Corpse): ()
+	remotes.UpdatePlayerCorpse:FireClient(to.Player, corpse.CorpseView)
+end
+
 function module.UpdateInventory(player: Player, mode: "Add" | "Remove" | "Reset", item: string | Types.AnyItem?): ()
 	if mode == "Add" or mode == "Remove" then
 		assert(item, "Item must not be nil")
