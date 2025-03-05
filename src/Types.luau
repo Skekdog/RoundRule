@@ -517,7 +517,7 @@ export type Participant = {
     HasSelfDefenseAgainstParticipant: (Participant, against: Participant) -> boolean,
 
     _killList: {Participant},
-    _addToKillList: (Participant) -> (),
+    _addToKillList: (Participant, toAdd: Participant) -> (),
     GetKillList: (Participant) -> {Participant},
 
     _scores: ScoreTable,

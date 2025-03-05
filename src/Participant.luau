@@ -27,6 +27,10 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
     end
 
     local attacker = params.Attacker
+    if attacker then
+        attacker:_addToKillList(participant)
+    end
+
     if attacker and not params.IgnoreKarma and not attacker:IsDamageJustifiedAgainstParticipant(participant) then
         attacker:SetFreeKill("Killed Teammate")
         Replication.SlayVote(participant, attacker)
@@ -346,9 +350,9 @@ local function GetKillList(participant: Types.Participant): {Types.Participant}
     return participant._killList
 end
 
-local function _addToKillList(participant: Types.Participant): ()
-    assert(not table.find(participant._killList, participant), "Participant already on kill list")
-    table.insert(participant._killList, participant)
+local function _addToKillList(participant: Types.Participant, toAdd: Types.Participant): ()
+    assert(not table.find(participant._killList, toAdd), "Participant already on kill list")
+    table.insert(participant._killList, toAdd)
 end
 
 local function GetScores(participant: Types.Participant): Types.ScoreTable
