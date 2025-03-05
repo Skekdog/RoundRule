@@ -1,8 +1,10 @@
+local EventStrings = require(script.Parent.EventStrings)
 local Types = require(script.Parent.Types)
 
 local module = {}
 
 local remotes = script.Parent.Remotes
+local replicatedData = script.Parent.ReplicatedData
 
 function module.ReplicateRole(to: Types.Participant, roleOf: Types.Participant, replicateNil: boolean): ()
 	local role = roleOf:GetRole()
@@ -49,6 +51,72 @@ end
 
 function module.SendMessage(player: Player, message: string, kind: Types.MessageKind?): ()
 	remotes.SendMessage:FireClient(player, message, kind or "All")
+end
+
+function module.ReplicateAdvanceTime(target: number?): ()
+	replicatedData:SetAttribute("AdvanceTime", target)
+end
+
+function module.ReplicateRoundPhase(target: Types.RoundPhase): ()
+	replicatedData:SetAttribute("Phase", target)
+end
+
+function module.ReplicateRoundPause(target: boolean): ()
+	replicatedData:SetAttribute("Paused", target)
+end
+
+function module.ReplicateStartTime(target: number?): ()
+	replicatedData:SetAttribute("StartTime", target)
+end
+
+function module.ReplicateWinner(victor: Types.Victor?): ()
+	replicatedData:SetAttribute("WinnerKind", if victor then victor.Kind else nil)
+	replicatedData:SetAttribute("Winner", if victor then if victor.Kind == "Role" then victor:GetFormattedRoleName() else victor:GetFormattedName() else nil)
+end
+
+function module.ReplicateGamemode(gamemode: Types.Gamemode): ()
+	replicatedData:SetAttribute("Gamemode", gamemode.Name)
+end
+
+function module.AddEvent(event: Types.RoundEvent): ()
+	local value = Instance.new("StringValue")
+	value.Name = tostring(event.Timestamp)
+	value.Value = EventStrings(event)
+
+	if event.Data.Kind == "DeathRoundEvent" then
+		local corpse = event.Data.Victim:GetCorpse()
+		assert(corpse, "Victim has no corpse")
+
+		value:SetAttribute("WasSelfDefense", corpse.CorpseView.WasSelfDefense)
+		value:SetAttribute("WasFreeKill", corpse.CorpseView.WasFreeKill)
+		value:SetAttribute("WasCorrectKill", corpse.WasCorrectKill)
+	end
+
+	value.Parent = replicatedData.Events
+end
+
+function module.AddScore(participant: Types.Participant): ()
+	local value = Instance.new("StringValue")
+	value.Name = participant.Player.Name
+	
+	for reason, score in participant:GetScores() do
+		assert(score)
+		value:SetAttribute(reason:gsub(" ", "_"), score)
+	end
+
+	value.Parent = replicatedData.Scores
+end
+
+function module.ClearEvents(): ()
+	replicatedData.Events:ClearAllChildren()
+end
+
+function module.ClearHighlights(): ()
+	replicatedData.Highlights:ClearAllChildren()
+end
+
+function module.ClearScores(): ()
+	replicatedData.Scores:ClearAllChildren()
 end
 
 return module

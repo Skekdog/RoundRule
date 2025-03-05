@@ -3,7 +3,6 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 local AmmoBox = require(script.Parent.AmmoBox)
-local EventStrings = require(script.Parent.EventStrings)
 local Item = require(script.Parent.Item)
 local Map = require(script.Parent.Map)
 local Participant = require(script.Parent.Participant)
@@ -16,8 +15,6 @@ local module = {}
 -- We can get away with this, because if a property is not known, that means no map has overriden it, meaning it's still the default.
 local knownWaterSettings: {string} = {}
 local knownTerrainColours: {[Enum.Material]: Color3} = {}
-
-local data = script.Parent.ReplicatedData
 
 local HIGHLIGHTS_TIME = 5
 local PREPARING_TIME = 5
@@ -136,7 +133,7 @@ local function destroyRound(round: Types.Round): ()
 end
 
 local function setAdvanceTime(round: Types.Round, duration: number, callback: () -> ()): ()
-    data:SetAttribute("AdvanceTime", duration + workspace:GetServerTimeNow())
+    Replication.ReplicateAdvanceTime(duration + workspace:GetServerTimeNow())
 
     if round._heartbeat then
         round._heartbeat:Disconnect()
@@ -153,7 +150,7 @@ local function setAdvanceTime(round: Types.Round, duration: number, callback: ()
         
         if wasPaused then
             wasPaused = false
-            data:SetAttribute("AdvanceTime", (duration - elapsedTime) + workspace:GetServerTimeNow())
+            Replication.ReplicateAdvanceTime((duration - elapsedTime) + workspace:GetServerTimeNow())
         end
 
         elapsedTime += dt
@@ -189,7 +186,7 @@ local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase, durati
         callback = false
     end
 
-    data:SetAttribute("Phase", phase)
+    Replication.ReplicateRoundPhase(phase)
 
     setAdvanceTime(round, duration, callback or function() end)
 end
@@ -211,7 +208,7 @@ end
 
 local function PauseRound(round: Types.Round, paused: boolean): ()
     round._isPaused = paused
-    data:SetAttribute("Paused", paused)
+    Replication.ReplicateRoundPause(paused)
 end
 
 local function StartRound(round: Types.Round): ()
@@ -236,7 +233,7 @@ local function StartRound(round: Types.Round): ()
         Kind = "StartRoundEvent",
     })
 
-    data:SetAttribute("StartTime", workspace:GetServerTimeNow())
+    Replication.ReplicateStartTime(workspace:GetServerTimeNow())
     round:SetRoundPhase("Playing", round.Gamemode.Duration(#participantList))
 
     Random.new():Shuffle(participantList)
@@ -267,37 +264,16 @@ local function EndRound(round: Types.Round, victor: Types.Victor, isTimeout: boo
         VictoryText = victorRole.Definition.VictoryText,
     })
     
-    data.Events:ClearAllChildren()
-    data.Highlights:ClearAllChildren()
-    data.Scores:ClearAllChildren()
+    Replication.ClearEvents()
+    Replication.ClearHighlights()
+    Replication.ClearScores()
     for _, v in round:GetEventLog() do
-        local value = Instance.new("StringValue")
-        value.Name = tostring(v.Timestamp)
-        value.Value = EventStrings(v)
-
-        if v.Data.Kind == "DeathRoundEvent" then
-            local corpse = v.Data.Victim:GetCorpse()
-            assert(corpse, "Victim has no corpse")
-
-            value:SetAttribute("WasSelfDefense", corpse.CorpseView.WasSelfDefense)
-            value:SetAttribute("WasFreeKill", corpse.CorpseView.WasFreeKill)
-            value:SetAttribute("WasCorrectKill", corpse.WasCorrectKill)
-        end
-
-        value.Parent = data.Events
+        Replication.AddEvent(v)
     end
 
     for _, v in round:GetParticipants() do
         assert(v)
-        local value = Instance.new("StringValue")
-        value.Name = v.Player.Name
-        
-        for reason, score in v:GetScores() do
-            assert(score)
-            value:SetAttribute(reason:gsub(" ", "_"), score)
-        end
-
-        value.Parent = data.Scores
+        Replication.AddScore(v)
     end
 
     local possibleMusic: {Sound}
@@ -319,8 +295,7 @@ local function EndRound(round: Types.Round, victor: Types.Victor, isTimeout: boo
         chosenMusic:Play()
     end
 
-    data:SetAttribute("WinnerKind", victor.Kind)
-    data:SetAttribute("Winner", if victor.Kind == "Role" then victor:GetFormattedRoleName() else victor:GetFormattedName())
+    Replication.ReplicateWinner(victor)
     round:SetRoundPhase("Highlights", HIGHLIGHTS_TIME)
 end
 
@@ -736,13 +711,12 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         SendMessage = SendMessage,
     }
 
-    data:SetAttribute("Phase", round:GetRoundPhase())
-    data:SetAttribute("Paused", round:GetIsRoundPaused())
-    data:SetAttribute("AdvanceTime", nil)
-    data:SetAttribute("Gamemode", gamemode.Name)
-    data:SetAttribute("StartTime", nil)
-    data:SetAttribute("Winner", nil)
-    data:SetAttribute("WinnerKind", nil)
+    Replication.ReplicateRoundPhase(round:GetRoundPhase())
+    Replication.ReplicateRoundPause(round:GetIsRoundPaused())
+    Replication.ReplicateGamemode(gamemode)
+    Replication.ReplicateStartTime()
+    Replication.ReplicateAdvanceTime()
+    Replication.ReplicateWinner()
 
     for _, v in SoundService:GetChildren() do
         if v:GetAttribute("IsRoundVictoryMusic") then
