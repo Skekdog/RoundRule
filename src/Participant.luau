@@ -4,6 +4,7 @@ local AmmoBox = require(script.Parent.AmmoBox)
 local Corpse = require(script.Parent.Corpse)
 local Item = require(script.Parent.Item)
 local MakeRagdoll = require(script.Parent.MakeRagdoll)
+local Replication = require(script.Parent.Replication)
 local Types = require(script.Parent.Types)
 
 local SELF_DEFENSE_DURATION = 15
@@ -99,11 +100,6 @@ local function tryAssignHumanoidPropertiesForRole(humanoid: Humanoid?, role: Typ
     end
 end
 
-local function replicateParticipantRole(roleOf: Types.Participant, replicateTo: Types.Participant, reveal: boolean): ()
-    local role = if reveal then assert(roleOf:GetRole()).Definition.Name else nil
-    remotes.UpdatePlayerRole:FireClient(replicateTo.Player, roleOf.Player.Name, role)
-end
-
 local function GetFormattedName(participant: Types.Participant): string
     local role = participant:GetRole()
     if not role then
@@ -150,7 +146,7 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
         assert(v)
 
         if v == participant then
-            replicateParticipantRole(participant, participant, true)
+            Replication.ReplicateRole(participant, participant, false)
         end
 
         if v:GetStatus() == "Missing" then
@@ -165,15 +161,15 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
             local otherRole = v:GetRole()
             if otherRole then
                 if otherRole.Definition.RevealedRoles and table.find(otherRole.Definition.RevealedRoles, role.Name) then
-                    replicateParticipantRole(participant, v, true)
+                    Replication.ReplicateRole(v, participant, false)
                 else
-                    replicateParticipantRole(participant, v, false)
+                    Replication.ReplicateRole(v, participant, true)
                 end
 
                 if role.RevealedRoles and table.find(role.RevealedRoles, otherRole.Definition.Name) then
-                    replicateParticipantRole(v, participant, true)
+                    Replication.ReplicateRole(participant, v, false)
                 else
-                    replicateParticipantRole(v, participant, false)
+                    Replication.ReplicateRole(participant, v, true)
                 end
             end
         end

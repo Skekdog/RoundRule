@@ -1,4 +1,5 @@
 local GetDisplayName = require(script.Parent.Common.GetDisplayName)
+local Replication = require(script.Parent.Replication)
 local Types = require(script.Parent.Types)
 
 local module = {}
@@ -47,7 +48,7 @@ local function updateCorpseForPlayer(corpse: Types.Corpse, participant: Types.Pa
 
     local role = corpse.Participant:GetRole()
     if participant ~= corpse.Participant and role then
-        remotes.UpdatePlayerRole:FireClient(participant.Player, corpse.Participant.Player.Name, role.Definition.Name)
+        Replication.ReplicateRole(participant, corpse.Participant, false)
     end
     
     remotes.UpdatePlayerCorpse:FireClient(participant.Player, corpse.Participant.Player.Name, corpse.CorpseView)
