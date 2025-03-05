@@ -19,6 +19,10 @@ local function SetHealth(prop: Types.MapProp, health: number): ()
 end
 
 local function TryTakeDamage(prop: Types.MapProp, params: Types.DamageParams): boolean
+    if prop.Round:IsPreGame() then
+        return false
+    end
+    
     local health = prop:GetHealth()
     if health == nil or health <= 0 then
         return false
