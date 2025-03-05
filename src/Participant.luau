@@ -31,7 +31,7 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
     local attacker = params.Attacker
     if attacker and not params.IgnoreKarma and not attacker:IsDamageJustifiedAgainstParticipant(participant) then
         attacker:SetFreeKill("Killed Teammate")
-        remotes.SlayVote:FireClient(participant.Player, attacker.Player.Name)
+        Replication.SlayVote(participant, attacker)
     end
 
     local role = participant:GetRole()
@@ -151,9 +151,9 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
 
         if v:GetStatus() == "Missing" then
             if role.CanSeeMissingInAction then
-                remotes.UpdatePlayerStatus:FireClient(v.Player, participant.Player.Name, "Missing")
+                Replication.ReplicatePlayerStatus(v, participant, "Missing")
             else
-                remotes.UpdatePlayerStatus:FireClient(v.Player, participant.Player.Name, "Alive")
+                Replication.ReplicatePlayerStatus(v, participant, "Alive")
             end
         end
 
@@ -330,7 +330,7 @@ local function _setStatus(participant: Types.Participant, status: Types.Particip
             assert(v)
             local role = v:GetRole()
             if role and role.Definition.CanSeeMissingInAction then
-                remotes.UpdatePlayerStatus:FireClient(v.Player, participant.Player.Name, status)
+                Replication.ReplicatePlayerStatus(v, participant, status)
             end
         end
     else
@@ -361,7 +361,7 @@ end
 
 local function SetCredits(participant: Types.Participant, amount: number): ()
     participant._credits = amount
-    remotes.UpdateCredits:FireClient(participant.Player, amount)
+    Replication.ReplicateCredits(participant)
 end
 
 local function AddCredits(participant: Types.Participant, amount: number): ()
@@ -504,14 +504,12 @@ local function AddItem(participant: Types.Participant, item: Types.AnyItem): ()
     end
 
     participant._items[item.Definition.Name] = item
-
-    remotes.UpdateInventory:FireClient(participant.Player, "Add", item)
+    Replication.UpdateInventory(participant.Player, "Add", item)
 end
 
 local function RemoveItem(participant: Types.Participant, item: Types.AnyItem): ()
     participant._items[item.Definition.Name] = nil
-
-    remotes.UpdateInventory:FireClient(participant.Player, "Remove", item.Definition.Name)
+    Replication.UpdateInventory(participant.Player, "Remove", item.Definition.Name)
 end
 
 local function GetItems(participant: Types.Participant): {[string]: Types.AnyItem?}
@@ -703,7 +701,7 @@ local function GetAmmo(participant: Types.Participant, kind: string): number
 end
 
 local function SetAmmo(participant: Types.Participant, kind: string, amount: number): ()
-    remotes.UpdateReserveAmmo:FireClient(participant.Player, "Update", kind, amount)
+    Replication.UpdateReserveAmmo(participant.Player, "Update", kind, amount)
     participant._ammo[kind] = amount
 end
 
@@ -776,8 +774,8 @@ local function TryStopAnimation(participant: Types.Participant, name: string): (
 end
 
 function module.new(player: Player, round: Types.Round): Types.Participant
-    remotes.UpdateReserveAmmo:FireClient(player, "Reset")
-    remotes.UpdateInventory:FireClient(player, "Reset")
+    Replication.UpdateInventory(player, "Reset")
+    Replication.UpdateReserveAmmo(player, "Reset")
 
     return {
         Kind = "Participant",
