@@ -1,3 +1,4 @@
+local GetDisplayName = require(script.Parent.Common.GetDisplayName)
 local Types = require(script.Parent.Types)
 local module = {}
 
@@ -6,7 +7,7 @@ local function GetFormattedString(role: Types.Role, str: string): string
 end
 
 local function GetFormattedRoleName(role: Types.Role): string
-    return role:GetFormattedString(role.Definition.Name)
+    return role:GetFormattedString(GetDisplayName(role.Definition))
 end
 
 local function GetExclamatoryString(role: Types.Role): string
