@@ -9,8 +9,6 @@ local Types = require(script.Parent.Types)
 
 local SELF_DEFENSE_DURATION = 15
 
-local remotes = script.Parent.Remotes
-
 local module = {}
 
 local function rejoinRound(participant: Types.Participant): ()
@@ -128,7 +126,10 @@ end
 local function SetRole(participant: Types.Participant, role: Types.RoleDefinition?): ()
     if not role then
         participant._role = nil
-        remotes.UpdatePlayerRole:FireAllClients(participant.Player.Name, nil)
+        for _, v in participant.Round:GetParticipants() do
+            assert(v)
+            Replication.ReplicateRole(v, participant, true)
+        end
         return
     end
     
@@ -334,7 +335,10 @@ local function _setStatus(participant: Types.Participant, status: Types.Particip
             end
         end
     else
-        remotes.UpdatePlayerStatus:FireAllClients(participant.Player.Name, status)
+        for _, v in participant.Round:GetParticipants() do
+            assert(v)
+            Replication.ReplicatePlayerStatus(v, participant, status)
+        end
     end
 end
 
