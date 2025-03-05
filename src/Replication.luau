@@ -119,4 +119,16 @@ function module.ClearScores(): ()
 	replicatedData.Scores:ClearAllChildren()
 end
 
+function module.Reset(): ()
+	remotes.Reset:FireAllClients()
+
+	module.ClearEvents()
+	module.ClearHighlights()
+	module.ClearScores()
+
+    module.ReplicateStartTime()
+    module.ReplicateAdvanceTime()
+    module.ReplicateWinner()
+end
+
 return module

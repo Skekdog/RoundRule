@@ -714,9 +714,8 @@ function module.new(gamemode: Types.Gamemode): Types.Round
     Replication.ReplicateRoundPhase(round:GetRoundPhase())
     Replication.ReplicateRoundPause(round:GetIsRoundPaused())
     Replication.ReplicateGamemode(gamemode)
-    Replication.ReplicateStartTime()
-    Replication.ReplicateAdvanceTime()
-    Replication.ReplicateWinner()
+
+    Replication.Reset()
 
     for _, v in SoundService:GetChildren() do
         if v:GetAttribute("IsRoundVictoryMusic") then
