@@ -104,7 +104,7 @@ local function GetFormattedName(participant: Types.Participant): string
         return participant.Player.Name
     end
 
-    return role:GetFormattedPlayerName(participant.Player.Name)
+    return role:GetFormattedString(participant.Player.Name)
 end
 
 local function GetCharacter(participant: Types.Participant): Model?
