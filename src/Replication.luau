@@ -71,7 +71,7 @@ end
 
 function module.ReplicateWinner(victor: Types.Victor?): ()
 	replicatedData:SetAttribute("WinnerKind", if victor then victor.Kind else nil)
-	replicatedData:SetAttribute("Winner", if victor then if victor.Kind == "Role" then victor:GetFormattedRoleName() else victor:GetFormattedName() else nil)
+	replicatedData:SetAttribute("Winner", if victor then if victor.Kind == "Role" then victor.Definition.Name else victor.Player.Name else nil)
 end
 
 function module.ReplicateGamemode(gamemode: Types.Gamemode): ()
