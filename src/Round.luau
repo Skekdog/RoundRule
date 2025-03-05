@@ -478,7 +478,9 @@ local function GetParticipantsWithRole(round: Types.Round, role: Types.Role): {T
     
     for _, v in round:GetParticipants() do
         assert(v)
-        table.insert(participants, v)
+        if v:GetRole() == role then
+            table.insert(participants, v)
+        end
     end
 
     return participants
