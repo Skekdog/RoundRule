@@ -87,6 +87,12 @@ local function updateCorpseInfo(corpse: Types.Corpse, searcher: Types.Participan
     local shouldUpdateForAll = false
     if not covert then
         corpse.Participant:_setStatus("Dead")
+
+        local char = corpse.Participant:GetCharacter()
+        if char then
+            char:SetAttribute("Unidentified", false)
+        end
+
         local searcherRole = searcher:GetRole()
         if searcherRole then
             shouldUpdateForAll = searcherRole.Definition.CorpseSearchResultsPublicised == true
