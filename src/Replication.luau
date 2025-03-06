@@ -3,38 +3,54 @@ local Types = require(script.Parent.Types)
 
 local module = {}
 
+export type ReplicationTarget = Player | {Player} | "All"
+
+local function fireToTargets(remote: RemoteEvent, target: ReplicationTarget, ...): ()
+	if target == "All" then
+		remote:FireAllClients(...)
+	else
+		if typeof(target) == "Instance" then
+			target = {target}
+		end
+		assert(typeof(target) == "table")
+		for _, target in target do
+			remote:FireClient(target, ...)
+		end
+	end
+end
+
 local remotes = script.Parent.Remotes
 local replicatedData = script.Parent.ReplicatedData
 
-function module.ReplicateRole(to: Types.Participant, roleOf: Types.Participant, replicateNil: boolean): ()
+function module.ReplicateRole(target: ReplicationTarget, roleOf: Types.Participant, replicateNil: boolean): ()
 	local role = roleOf:GetRole()
 	local roleName = if replicateNil or not role then nil else role.Definition.Name
-    remotes.UpdatePlayerRole:FireClient(to.Player, roleOf.Player.Name, roleName)
+	fireToTargets(remotes.UpdatePlayerRole, target, roleOf.Player.Name, roleName)
 end
 
-function module.ReplicatePlayerStatus(to: Types.Participant, statusOf: Types.Participant, status: Types.ParticipantStatus): ()
-	remotes.UpdatePlayerStatus:FireClient(to.Player, statusOf.Player.Name, status)
+function module.ReplicatePlayerStatus(target: ReplicationTarget, statusOf: Types.Participant, status: Types.ParticipantStatus): ()
+	fireToTargets(remotes.UpdatePlayerStatus, target, statusOf.Player.Name, status)
 end
 
-function module.ReplicateCredits(to: Types.Participant): ()
-	remotes.UpdateCredits:FireClient(to.Player, to:GetCredits())
+function module.ReplicateCredits(target: Types.Participant): ()
+	fireToTargets(remotes.UpdateCredits, target, target:GetCredits())
 end
 
-function module.ReplicateCorpse(to: Types.Participant, corpse: Types.Corpse): ()
-	remotes.UpdatePlayerCorpse:FireClient(to.Player, corpse.CorpseView)
+function module.ReplicateCorpse(target: ReplicationTarget, corpse: Types.Corpse): ()
+	fireToTargets(remotes.UpdatePlayerCorpse, target, corpse.CorpseView)
 end
 
-function module.UpdateInventory(player: Player, mode: "Add" | "Remove" | "Reset", item: string | Types.AnyItem?): ()
+function module.UpdateInventory(target: ReplicationTarget, mode: "Add" | "Remove" | "Reset", item: string | Types.AnyItem?): ()
 	if mode == "Add" or mode == "Remove" then
 		assert(item, "Item must not be nil")
 	elseif mode == "Reset" then
 		assert(not item, "Item must be nil")
 	end
 
-	remotes.UpdateInventory:FireClient(player, mode, item)
+	fireToTargets(remotes.UpdateInventory, target, mode, item)
 end
 
-function module.UpdateReserveAmmo(player: Player, mode: "Update" | "Reset", kind: string?, amount: number?): ()
+function module.UpdateReserveAmmo(target: ReplicationTarget, mode: "Update" | "Reset", kind: string?, amount: number?): ()
 	if mode == "Update" then
 		assert(kind, "Kind must not be nil")
 		assert(amount, "Amount must not be nil")
@@ -42,15 +58,15 @@ function module.UpdateReserveAmmo(player: Player, mode: "Update" | "Reset", kind
 		assert(kind == nil, "Kind must be nil")
 	end
 
-	remotes.UpdateReserveAmmo:FireClient(player, mode, kind, amount)
+	fireToTargets(remotes.UpdateReserveAmmo, target, mode, kind, amount)
 end
 
-function module.SlayVote(to: Types.Participant, against: Types.Participant): ()
-	remotes.SlayVote:FireClient(to.Player, against.Player.Name)
+function module.SlayVote(target: ReplicationTarget, against: Types.Participant): ()
+	fireToTargets(remotes.SlayVote, target, against.Player.Name)
 end
 
-function module.SendMessage(player: Player, message: string, kind: Types.MessageKind?): ()
-	remotes.SendMessage:FireClient(player, message, kind or "All")
+function module.SendMessage(target: ReplicationTarget, message: string, kind: Types.MessageKind?): ()
+	fireToTargets(remotes.SendMessage, target, message, kind or "All")
 end
 
 function module.ReplicateAdvanceTime(target: number?): ()
