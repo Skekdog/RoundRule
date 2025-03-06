@@ -274,6 +274,7 @@ local function EndRound(round: Types.Round, victor: Types.Victor, isTimeout: boo
     for _, v in round:GetParticipants() do
         assert(v)
         Replication.AddScore(v)
+        Replication.ReplicateRole("All", v, false)
     end
 
     local possibleMusic: {Sound}
