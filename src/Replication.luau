@@ -3,7 +3,7 @@ local Types = require(script.Parent.Types)
 
 local module = {}
 
-export type ReplicationTarget = Player | {Player} | "All"
+export type ReplicationTarget = Player | {[string | number]: Player} | "All"
 
 local function fireToTargets(remote: RemoteEvent, target: ReplicationTarget, ...): ()
 	if target == "All" then
@@ -13,8 +13,9 @@ local function fireToTargets(remote: RemoteEvent, target: ReplicationTarget, ...
 			target = {target}
 		end
 		assert(typeof(target) == "table")
-		for _, target in target do
-			remote:FireClient(target, ...)
+		for _, v in target do
+			assert(v)
+			remote:FireClient(v, ...)
 		end
 	end
 end
@@ -33,7 +34,7 @@ function module.ReplicatePlayerStatus(target: ReplicationTarget, statusOf: Types
 end
 
 function module.ReplicateCredits(target: Types.Participant): ()
-	fireToTargets(remotes.UpdateCredits, target, target:GetCredits())
+	fireToTargets(remotes.UpdateCredits, target.Player, target:GetCredits())
 end
 
 function module.ReplicateCorpse(target: ReplicationTarget, corpse: Types.Corpse): ()

@@ -33,7 +33,7 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
 
     if attacker and not params.IgnoreKarma and not attacker:IsDamageJustifiedAgainstParticipant(participant) then
         attacker:SetFreeKill("Killed Teammate")
-        Replication.SlayVote(participant, attacker)
+        Replication.SlayVote(participant.Player, attacker)
     end
 
     local role = participant:GetRole()
@@ -130,10 +130,7 @@ end
 local function SetRole(participant: Types.Participant, role: Types.RoleDefinition?): ()
     if not role then
         participant._role = nil
-        for _, v in participant.Round:GetParticipants() do
-            assert(v)
-            Replication.ReplicateRole(v, participant, true)
-        end
+        Replication.ReplicateRole("All", participant, true)
         return
     end
     
@@ -151,14 +148,14 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
         assert(v)
 
         if v == participant then
-            Replication.ReplicateRole(participant, participant, false)
+            Replication.ReplicateRole(participant.Player, participant, false)
         end
 
         if v:GetStatus() == "Missing" then
             if role.CanSeeMissingInAction then
-                Replication.ReplicatePlayerStatus(v, participant, "Missing")
+                Replication.ReplicatePlayerStatus(v.Player, participant, "Missing")
             else
-                Replication.ReplicatePlayerStatus(v, participant, "Alive")
+                Replication.ReplicatePlayerStatus(v.Player, participant, "Alive")
             end
         end
 
@@ -166,15 +163,15 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
             local otherRole = v:GetRole()
             if otherRole then
                 if otherRole.Definition.RevealedRoles and table.find(otherRole.Definition.RevealedRoles, role.Name) then
-                    Replication.ReplicateRole(v, participant, false)
+                    Replication.ReplicateRole(v.Player, participant, false)
                 else
-                    Replication.ReplicateRole(v, participant, true)
+                    Replication.ReplicateRole(v.Player, participant, true)
                 end
 
                 if role.RevealedRoles and table.find(role.RevealedRoles, otherRole.Definition.Name) then
-                    Replication.ReplicateRole(participant, v, false)
+                    Replication.ReplicateRole(participant.Player, v, false)
                 else
-                    Replication.ReplicateRole(participant, v, true)
+                    Replication.ReplicateRole(participant.Player, v, true)
                 end
             end
         end
@@ -335,14 +332,11 @@ local function _setStatus(participant: Types.Participant, status: Types.Particip
             assert(v)
             local role = v:GetRole()
             if role and role.Definition.CanSeeMissingInAction then
-                Replication.ReplicatePlayerStatus(v, participant, status)
+                Replication.ReplicatePlayerStatus(v.Player, participant, status)
             end
         end
     else
-        for _, v in participant.Round:GetParticipants() do
-            assert(v)
-            Replication.ReplicatePlayerStatus(v, participant, status)
-        end
+        Replication.ReplicatePlayerStatus("All", participant, status)
     end
 end
 

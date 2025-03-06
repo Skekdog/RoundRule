@@ -46,10 +46,10 @@ local function updateCorpseForPlayer(corpse: Types.Corpse, participant: Types.Pa
 
     local role = corpse.Participant:GetRole()
     if participant ~= corpse.Participant and role then
-        Replication.ReplicateRole(participant, corpse.Participant, false)
+        Replication.ReplicateRole(participant.Player, corpse.Participant, false)
     end
     
-    Replication.ReplicateCorpse(participant, corpse)
+    Replication.ReplicateCorpse(participant.Player, corpse)
 end
 
 local function notifyCorpseFound(corpse: Types.Corpse, searcher: Types.Participant): ()
