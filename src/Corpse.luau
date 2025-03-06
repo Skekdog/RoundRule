@@ -52,8 +52,8 @@ local function updateCorpseForPlayer(corpse: Types.Corpse, participant: Types.Pa
     Replication.ReplicateCorpse(participant.Player, corpse)
 end
 
-local function notifyCorpseFound(corpse: Types.Corpse, searcher: Types.Participant): ()
-    local msg = `[PLAYER-{searcher.Player.Name}] found the body of {corpse.Participant:GetFormattedName()}.`
+local function notifyCorpseFound(corpse: Types.Corpse, searcher: Types.Participant, isFromKillList: boolean): ()
+    local msg = `[PLAYER-{searcher.Player.Name}] {if isFromKillList then "confirmed the death" else "found the body"} of {corpse.Participant:GetFormattedName()}.`
     local otherRole = corpse.Participant:GetRole()
     if otherRole then
         msg ..= ` They were a {otherRole:GetFormattedRoleName()}{otherRole:GetExclamatoryString()}`
@@ -62,7 +62,23 @@ local function notifyCorpseFound(corpse: Types.Corpse, searcher: Types.Participa
     searcher.Round:SendMessage(searcher.Player, msg)
 end
 
-local function tryNotifyAndAwardScore(corpse: Types.Corpse, searcher: Types.Participant, covert: boolean, didSteal: boolean): ()
+local function tryLogEvent(corpse: Types.Corpse, searcher: Types.Participant, covert: boolean, didSteal: boolean): ()
+    if didSteal or covert then
+        return
+    end
+
+    searcher.Round:AddEvent({
+        Kind = "CorpseSearchedRoundEvent",
+        SearchedBy = searcher,
+        Victim = corpse.Participant,
+    })
+end
+
+local function tryAwardScore(corpse: Types.Corpse, searcher: Types.Participant, covert: boolean, isFromKillList: boolean): ()
+    if covert then
+        return
+    end
+
     if corpse.Participant:GetStatus() ~= "Missing" then
         return
     end
@@ -73,14 +89,6 @@ local function tryNotifyAndAwardScore(corpse: Types.Corpse, searcher: Types.Part
     end
 
     searcher:AddScore("Bodies Found", searcherRole.Definition.ScoreForFindingBodies or 0)
-
-    if not didSteal and not covert then
-        searcher.Round:AddEvent({
-            Kind = "CorpseSearchedRoundEvent",
-            SearchedBy = searcher,
-            Victim = corpse.Participant,
-        })
-    end
 end
 
 local function updateCorpseInfo(corpse: Types.Corpse, searcher: Types.Participant, covert: boolean): ()
@@ -111,6 +119,28 @@ local function updateCorpseInfo(corpse: Types.Corpse, searcher: Types.Participan
     updateCorpseForPlayer(corpse, searcher)
 end
 
+local function tryConfirmKillList(corpse: Types.Corpse, searcher: Types.Participant, covert: boolean): ()
+    if covert then
+        return
+    end
+
+    for _, v in corpse.Participant:GetKillList() do
+        if v:GetStatus() ~= "Missing" then
+            continue
+        end
+
+        local otherCorpse = v:GetCorpse()
+        if not otherCorpse then
+            continue
+        end
+
+        v:_setStatus("Dead")
+        tryAwardScore(otherCorpse, searcher, false, false)
+        notifyCorpseFound(otherCorpse, searcher, true)
+        tryLogEvent(otherCorpse, searcher, false, false)
+    end
+end
+
 local function searchAsAlive(corpse: Types.Corpse, searcher: Types.Participant, covert: boolean): boolean
     local searcherChar = searcher:GetCharacter()
     if not searcherChar or not searcherChar.PrimaryPart then
@@ -127,9 +157,11 @@ local function searchAsAlive(corpse: Types.Corpse, searcher: Types.Participant, 
     end
 
     local didSteal = tryStealCredits(corpse, searcher)
-    tryNotifyAndAwardScore(corpse, searcher, covert, didSteal)
+    tryAwardScore(corpse, searcher, covert, didSteal)
     updateCorpseInfo(corpse, searcher, covert)
-    notifyCorpseFound(corpse, searcher)
+    notifyCorpseFound(corpse, searcher, false)
+    tryLogEvent(corpse, searcher, covert, didSteal)
+    tryConfirmKillList(corpse, searcher, covert)
 
     return true
 end
