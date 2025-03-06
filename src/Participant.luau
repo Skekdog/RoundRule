@@ -351,6 +351,13 @@ end
 local function _addToKillList(participant: Types.Participant, toAdd: Types.Participant): ()
     assert(not table.find(participant._killList, toAdd), "Participant already on kill list")
     table.insert(participant._killList, toAdd)
+
+    local corpse = participant:GetCorpse()
+    if not corpse then
+        return
+    end
+
+    corpse:UpdateKillList()
 end
 
 local function GetScores(participant: Types.Participant): Types.ScoreTable

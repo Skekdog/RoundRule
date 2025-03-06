@@ -15,6 +15,25 @@ local function addSearchedBy(corpse: Types.Corpse, participant: Types.Participan
     table.insert(corpse._searchedBy, participant)
 end
 
+local function generateKillList(participant: Types.Participant): {string}
+    local killList: {string} = {}
+    for _, v in participant:GetKillList() do
+        table.insert(killList, v:GetFormattedName())
+    end
+    return killList
+end
+    
+
+local function UpdateKillList(corpse: Types.Corpse): ()
+    local killList = generateKillList(corpse.Participant)
+
+    corpse.CorpseView.KillList = killList
+
+    for _, v in corpse:GetSearchedBy() do
+        Replication.ReplicateCorpse(v.Player, corpse)
+    end
+end
+
 local function tryStealCredits(corpse: Types.Corpse, searcher: Types.Participant): boolean
     local searcherRole = searcher:GetRole()
     if not searcherRole or not searcherRole.Definition.CanStealCreditsFromCorpses then
@@ -210,11 +229,6 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
 
     local source: Types.NamedDamageSource = if typeof(params.Source) == "table" then GetDisplayName(params.Source.Definition) else params.Source
 
-    local killList: {string} = {}
-    for _, v in participant:GetKillList() do
-        table.insert(killList, v:GetFormattedName())
-    end
-
     local equipmentList: {string} = {}
     for i in participant:GetItemPurchases() do
         local definition = participant.Round:GetItemDefinition(i)
@@ -234,7 +248,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
         WasHeadshot = params.IsHeadshot,
         WasSelfDefense = selfDefense,
 
-        KillList = killList,
+        KillList = generateKillList(participant),
         EquipmentList = equipmentList,
 
         DeathTime = workspace:GetServerTimeNow(),
@@ -250,6 +264,8 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
         
         _searchedBy = {},
         GetSearchedBy = GetSearchedBy,
+
+        UpdateKillList = UpdateKillList,
 
         Search = Search,
 

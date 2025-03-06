@@ -466,6 +466,8 @@ export type Corpse = {
     _searchedBy: {Participant},
     GetSearchedBy: (Corpse) -> {Participant},
 
+    UpdateKillList: (Corpse) -> (),
+
     Search: (Corpse, searcher: Participant, covert: boolean) -> boolean,
 
     Killer: Participant?,
