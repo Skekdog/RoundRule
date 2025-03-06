@@ -335,7 +335,7 @@ local function _setStatus(participant: Types.Participant, status: Types.Particip
         for _, v in participant.Round:GetParticipants() do
             assert(v)
             local role = v:GetRole()
-            if role and role.Definition.CanSeeMissingInAction then
+            if not v:IsAlive() or (role and role.Definition.CanSeeMissingInAction) then
                 Replication.ReplicatePlayerStatus(v.Player, participant, status)
             end
         end
