@@ -53,7 +53,7 @@ local function updateCorpseForPlayer(corpse: Types.Corpse, participant: Types.Pa
 end
 
 local function notifyCorpseFound(corpse: Types.Corpse, searcher: Types.Participant): ()
-    local msg = `{searcher.Player.Name} found the body of {corpse.Participant:GetFormattedName()}.`
+    local msg = `[PLAYER-{searcher.Player.Name}] found the body of {corpse.Participant:GetFormattedName()}.`
     local otherRole = corpse.Participant:GetRole()
     if otherRole then
         msg ..= ` They were a {otherRole:GetFormattedRoleName()}{otherRole:GetExclamatoryString()}`
