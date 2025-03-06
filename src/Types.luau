@@ -345,7 +345,7 @@ export type RoundEvent = {
     Data: RoundEventData,
 }
 
-export type RoundEventData = DeathEventData | CorpseSearchedEventData | StartRoundEventData | EndRoundEventData
+export type RoundEventData = DeathEventData | CorpseSearchedEventData | StartRoundEventData | EndRoundEventData | DeathConfirmedEventData
 
 export type DeathEventData = {
     Kind: "DeathRoundEvent",
@@ -359,6 +359,12 @@ export type CorpseSearchedEventData = {
     SearchedBy: Participant,
     Victim: Participant,
     FoundCredits: number?,
+}
+
+export type DeathConfirmedEventData = {
+    Kind: "DeathConfirmedRoundEvent",
+    Victim: Participant,
+    ConfirmedBy: Participant,
 }
 
 export type StartRoundEventData = {

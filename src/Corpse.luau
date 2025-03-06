@@ -66,9 +66,17 @@ local function tryNotifyCorpseFound(corpse: Types.Corpse, searcher: Types.Partic
     searcher.Round:SendMessage(searcher.Player, msg)
 end
 
-local function tryLogEvent(corpse: Types.Corpse, searcher: Types.Participant, covert: boolean, didSteal: boolean): ()
+local function tryLogEvent(corpse: Types.Corpse, searcher: Types.Participant, covert: boolean, didSteal: boolean, isFromKillList: boolean): ()
     if didSteal or covert then
         return
+    end
+
+    if isFromKillList then
+        return searcher.Round:AddEvent({
+            Kind = "DeathConfirmedRoundEvent",
+            Victim = corpse.Participant,
+            ConfirmedBy = searcher,
+        })
     end
 
     searcher.Round:AddEvent({
@@ -146,7 +154,7 @@ local function tryConfirmKillList(corpse: Types.Corpse, searcher: Types.Particip
 
         tryNotifyCorpseFound(otherCorpse, searcher, true)
         tryAwardScore(otherCorpse, searcher, false, false)
-        tryLogEvent(otherCorpse, searcher, false, false)
+        tryLogEvent(otherCorpse, searcher, false, false, true)
         tryMarkIdentified(otherCorpse, searcher, false)
     end
 end
@@ -170,7 +178,7 @@ local function searchAsAlive(corpse: Types.Corpse, searcher: Types.Participant, 
     tryAwardScore(corpse, searcher, covert, didSteal)
     updateCorpseInfo(corpse, searcher, covert)
     tryNotifyCorpseFound(corpse, searcher, false)
-    tryLogEvent(corpse, searcher, covert, didSteal)
+    tryLogEvent(corpse, searcher, covert, didSteal, false)
     tryConfirmKillList(corpse, searcher, covert)
     tryMarkIdentified(corpse, searcher, covert)
 
