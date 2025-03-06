@@ -358,6 +358,9 @@ local function GetScores(participant: Types.Participant): Types.ScoreTable
 end
 
 local function AddScore(participant: Types.Participant, reason: string, amount: number): ()
+    if amount == 0 then
+        return
+    end
     participant._scores[reason] = (participant._scores[reason] or 0) + amount
 end
 
