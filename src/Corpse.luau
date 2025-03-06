@@ -52,7 +52,11 @@ local function updateCorpseForPlayer(corpse: Types.Corpse, participant: Types.Pa
     Replication.ReplicateCorpse(participant.Player, corpse)
 end
 
-local function notifyCorpseFound(corpse: Types.Corpse, searcher: Types.Participant, isFromKillList: boolean): ()
+local function tryNotifyCorpseFound(corpse: Types.Corpse, searcher: Types.Participant, isFromKillList: boolean): ()
+    if corpse.Participant:GetStatus() ~= "Missing" then
+        return
+    end
+
     local msg = `[PLAYER-{searcher.Player.Name}] {if isFromKillList then "confirmed the death" else "found the body"} of {corpse.Participant:GetFormattedName()}.`
     local otherRole = corpse.Participant:GetRole()
     if otherRole then
@@ -94,13 +98,6 @@ end
 local function updateCorpseInfo(corpse: Types.Corpse, searcher: Types.Participant, covert: boolean): ()
     local shouldUpdateForAll = false
     if not covert then
-        corpse.Participant:_setStatus("Dead")
-
-        local char = corpse.Participant:GetCharacter()
-        if char then
-            char:SetAttribute("Unidentified", false)
-        end
-
         local searcherRole = searcher:GetRole()
         if searcherRole then
             shouldUpdateForAll = searcherRole.Definition.CorpseSearchResultsPublicised == true
@@ -119,6 +116,19 @@ local function updateCorpseInfo(corpse: Types.Corpse, searcher: Types.Participan
     updateCorpseForPlayer(corpse, searcher)
 end
 
+local function tryMarkIdentified(corpse: Types.Corpse, searcher: Types.Participant, covert: boolean): ()
+    if covert then
+        return
+    end
+
+    corpse.Participant:_setStatus("Dead")
+
+    local char = corpse.Participant:GetCharacter()
+    if char then
+        char:SetAttribute("Unidentified", false)
+    end
+end
+
 local function tryConfirmKillList(corpse: Types.Corpse, searcher: Types.Participant, covert: boolean): ()
     if covert then
         return
@@ -134,10 +144,10 @@ local function tryConfirmKillList(corpse: Types.Corpse, searcher: Types.Particip
             continue
         end
 
-        v:_setStatus("Dead")
+        tryNotifyCorpseFound(otherCorpse, searcher, true)
         tryAwardScore(otherCorpse, searcher, false, false)
-        notifyCorpseFound(otherCorpse, searcher, true)
         tryLogEvent(otherCorpse, searcher, false, false)
+        tryMarkIdentified(otherCorpse, searcher, false)
     end
 end
 
@@ -159,9 +169,10 @@ local function searchAsAlive(corpse: Types.Corpse, searcher: Types.Participant, 
     local didSteal = tryStealCredits(corpse, searcher)
     tryAwardScore(corpse, searcher, covert, didSteal)
     updateCorpseInfo(corpse, searcher, covert)
-    notifyCorpseFound(corpse, searcher, false)
+    tryNotifyCorpseFound(corpse, searcher, false)
     tryLogEvent(corpse, searcher, covert, didSteal)
     tryConfirmKillList(corpse, searcher, covert)
+    tryMarkIdentified(corpse, searcher, covert)
 
     return true
 end
