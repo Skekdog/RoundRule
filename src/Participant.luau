@@ -144,34 +144,38 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
         end
     end
 
-    for _, v in participant.Round:GetParticipants() do
-        assert(v)
+    if not participant.Round:IsInProgress() then
+        Replication.ReplicateRole("All", participant, false)
+    else
+        for _, v in participant.Round:GetParticipants() do
+            assert(v)
 
-        if v == participant then
-            Replication.ReplicateRole(participant.Player, participant, false)
-        end
-
-        if v:GetStatus() == "Missing" then
-            if role.CanSeeMissingInAction then
-                Replication.ReplicatePlayerStatus(v.Player, participant, "Missing")
-            else
-                Replication.ReplicatePlayerStatus(v.Player, participant, "Alive")
+            if v == participant then
+                Replication.ReplicateRole(participant.Player, participant, false)
             end
-        end
 
-        if v ~= participant then
-            local otherRole = v:GetRole()
-            if otherRole then
-                if otherRole.Definition.RevealedRoles and table.find(otherRole.Definition.RevealedRoles, role.Name) then
-                    Replication.ReplicateRole(v.Player, participant, false)
+            if v:GetStatus() == "Missing" then
+                if role.CanSeeMissingInAction then
+                    Replication.ReplicatePlayerStatus(v.Player, participant, "Missing")
                 else
-                    Replication.ReplicateRole(v.Player, participant, true)
+                    Replication.ReplicatePlayerStatus(v.Player, participant, "Alive")
                 end
+            end
 
-                if role.RevealedRoles and table.find(role.RevealedRoles, otherRole.Definition.Name) then
-                    Replication.ReplicateRole(participant.Player, v, false)
-                else
-                    Replication.ReplicateRole(participant.Player, v, true)
+            if v ~= participant then
+                local otherRole = v:GetRole()
+                if otherRole then
+                    if otherRole.Definition.RevealedRoles and table.find(otherRole.Definition.RevealedRoles, role.Name) then
+                        Replication.ReplicateRole(v.Player, participant, false)
+                    else
+                        Replication.ReplicateRole(v.Player, participant, true)
+                    end
+
+                    if role.RevealedRoles and table.find(role.RevealedRoles, otherRole.Definition.Name) then
+                        Replication.ReplicateRole(participant.Player, v, false)
+                    else
+                        Replication.ReplicateRole(participant.Player, v, true)
+                    end
                 end
             end
         end
@@ -327,7 +331,7 @@ end
 local function _setStatus(participant: Types.Participant, status: Types.ParticipantStatus): ()
     participant._status = status
 
-    if status == "Missing" then
+    if status == "Missing" and participant.Round:IsInProgress() then
         for _, v in participant.Round:GetParticipants() do
             assert(v)
             local role = v:GetRole()
