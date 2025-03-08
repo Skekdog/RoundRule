@@ -37,8 +37,8 @@ function module.ReplicateCredits(target: Types.Participant): ()
 	fireToTargets(remotes.UpdateCredits, target.Player, target:GetCredits())
 end
 
-function module.ReplicateCorpse(target: ReplicationTarget, corpse: Types.Corpse): ()
-	fireToTargets(remotes.UpdatePlayerCorpse, target, corpse.CorpseView)
+function module.ReplicateCorpse(target: ReplicationTarget, corpse: Types.Corpse, covert: boolean): ()
+	fireToTargets(remotes.UpdatePlayerCorpse, target, corpse.CorpseView, covert)
 end
 
 function module.UpdateInventory(target: ReplicationTarget, mode: "Add" | "Remove" | "Reset", item: string | Types.AnyItem?): ()
