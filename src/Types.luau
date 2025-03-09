@@ -198,16 +198,25 @@ export type CommonWeaponDefinition = CommonItemDefinition & {
     HoldAnimation: string,
 }
 
+export type FireActionClient = (item: Item, mode: "Primary" | "Alternate", origin: Vector3, direction: Vector3) -> ()
+export type FireActionServer = (item: Item, mode: "Primary" | "Alternate", origin: Vector3, direction: Vector3, participant: Participant) -> ()
+
 export type ItemDefinition = CommonItemDefinition & {
     Kind: "Item",
 
     PrimaryHint: string?,
     AlternateHint: string?,
 
-    HeartbeatClient: ((Item) -> ())?,
+    HeartbeatClient: ((item: Item, dt: number) -> ())?,
 
-    PrimaryFire: ((item: Item, participant: Participant, direction: Vector3) -> ())?,
-    AlternateFire: ((item: Item, participant: Participant, direction: Vector3) -> ())?,
+    PrimaryFireClient: FireActionClient?,
+    AlternateFireClient: FireActionClient?,
+
+    PrimaryFireServer: FireActionServer?,
+    AlternateFireServer: FireActionServer?,
+
+    PrimaryToggled: boolean?,
+    AlternateToggled: boolean?,
 
     OnPurchase: ((item: Item, participant: Participant) -> ())?,
 }
