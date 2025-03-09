@@ -15,6 +15,14 @@ export type DamageSource = AnyItem | GeneralDamageSource
 export type Bound = BasePart
 export type InteractionCallback = (object: Bound, participant: Participant) -> ()
 
+-- todo: when recursive generic types are supported, do that
+export type ItemBeforeHit = AnyWeapon | ExplosionParams
+export type BeforeHitAnything = (item: ItemBeforeHit, round: Round, hitPart: BasePart, params: DamageParams) -> boolean
+export type BeforeHitParticipant = (item: ItemBeforeHit, round: Round, hitParticipant: Participant, params: DamageParams) -> boolean
+export type BeforeHitProp = (item: ItemBeforeHit, round: Round, hitProp: Prop, params: DamageParams) -> boolean
+
+export type RunBeforeHit = (item: ItemBeforeHit, round: Round, hitPart: BasePart, params: DamageParams) -> boolean
+
 export type ExplosionInfo = {
     Damage: number,
     FalloffBegin: number,
@@ -36,6 +44,8 @@ export type ExplosionParams = {
     Definition: ExplosionInfo,
     Attacker: Participant?,
     Position: Vector3,
+
+    RunBeforeHit: RunBeforeHit,
 }
 
 export type DamageParams = {
@@ -195,12 +205,6 @@ export type ItemDefinition = CommonItemDefinition & {
 
     OnPurchase: ((item: Item, participant: Participant) -> ())?,
 }
-
--- todo: when recursive generic types are supported, do that
-export type ItemBeforeHit = AnyWeapon | ExplosionParams
-export type BeforeHitAnything = (item: ItemBeforeHit, hitPart: BasePart, params: DamageParams) -> ()
-export type BeforeHitParticipant = (item: ItemBeforeHit, hitParticipant: Participant, params: DamageParams) -> boolean
-export type BeforeHitProp = (item: ItemBeforeHit, hitProp: Prop, params: DamageParams) -> boolean
 
 export type GunWeaponDefinition = CommonWeaponDefinition & {
     Kind: "Gun",
@@ -381,35 +385,33 @@ export type SelfDefenseParams = {
     Duration: number,
 }
 
-export type GunWeapon = {
+export type BaseWeapon = {
+    Model: BasePart,
+    Extras: {[string]: any},
+
+    RunBeforeHit: RunBeforeHit,
+}
+
+export type GunWeapon = BaseWeapon & {
     Kind: "Gun",
     Definition: GunWeaponDefinition,
-    Model: BasePart,
 
     Ammo: number,
     LastAttackTime: number,
 
     IsReloading: boolean,
-
-    Extras: {[string]: any},
 }
 
-export type GrenadeWeapon = {
+export type GrenadeWeapon = BaseWeapon & {
     Kind: "Grenade",
     Definition: GrenadeWeaponDefinition,
-    Model: BasePart,
-
-    Extras: {[string]: any},
 }
 
-export type MeleeWeapon = {
+export type MeleeWeapon = BaseWeapon & {
     Kind: "Melee",
     Definition: MeleeWeaponDefinition,
-    Model: BasePart,
 
     LastAttackTime: number,
-
-    Extras: {[string]: any},
 }
 
 export type Item = {

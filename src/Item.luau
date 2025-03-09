@@ -1,4 +1,6 @@
+local RunBeforeHit = require(script.Parent.RunBeforeHit)
 local Types = require(script.Parent.Types)
+
 local module = {}
 
 function module.new(definition: Types.AnyItemDefinition, model: BasePart?): Types.AnyItem
@@ -26,6 +28,8 @@ function module.new(definition: Types.AnyItemDefinition, model: BasePart?): Type
             IsReloading = false,
 
             Extras = {},
+
+            RunBeforeHit = RunBeforeHit,
         }
     elseif definition.Kind == "Grenade" then
         return {
@@ -34,6 +38,8 @@ function module.new(definition: Types.AnyItemDefinition, model: BasePart?): Type
             Model = model :: BasePart,
 
             Extras = {},
+
+            RunBeforeHit = RunBeforeHit,
         }
     elseif definition.Kind == "Melee" then
         return {
@@ -44,6 +50,8 @@ function module.new(definition: Types.AnyItemDefinition, model: BasePart?): Type
             LastAttackTime = 0,
 
             Extras = {},
+
+            RunBeforeHit = RunBeforeHit,
         }
     else
         error("Unknown item kind: " .. definition.Kind)

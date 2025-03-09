@@ -3,7 +3,7 @@ local Types = require(script.Parent.Types)
 local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round: Types.Round, hitPart: BasePart, params: Types.DamageParams): boolean
     local beforeHitAnything = if item.Kind == "Grenade" then item.Definition.ExplosionInfo.BeforeHitAnything else item.Definition.BeforeHitAnything
     if beforeHitAnything then
-        beforeHitAnything(item, hitPart, params)
+        beforeHitAnything(item, round, hitPart, params)
     end
 
     local hitThing: Types.Participant | Types.Prop?
@@ -52,14 +52,14 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
             return true
         end
 
-        return beforeHitParticipant(item, hitThing, params)
+        return beforeHitParticipant(item, round, hitThing, params)
     elseif hitThing.Kind == "MapProp" or hitThing.Kind == "ItemProp" or hitThing.Kind == "CorpseProp" or hitThing.Kind == "AmmoProp" then
         local beforeHitProp = if item.Kind == "Grenade" then item.Definition.ExplosionInfo.BeforeHitProp else item.Definition.BeforeHitProp
         if not beforeHitProp then
             return true
         end
 
-        return beforeHitProp(item, hitThing, params)
+        return beforeHitProp(item, round, hitThing, params)
     end
 
     error("Unknown hit thing kind: " .. hitThing.Kind)
