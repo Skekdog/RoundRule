@@ -1,4 +1,5 @@
 local RunBeforeHit = require(script.Parent.RunBeforeHit)
+local RunOnHitClient = require(script.Parent.RunOnHitClient)
 local Types = require(script.Parent.Types)
 
 local module = {}
@@ -30,6 +31,7 @@ function module.new(definition: Types.AnyItemDefinition, model: BasePart?): Type
             Extras = {},
 
             RunBeforeHit = RunBeforeHit,
+            RunOnHitClient = RunOnHitClient,
         }
     elseif definition.Kind == "Grenade" then
         return {
@@ -40,6 +42,7 @@ function module.new(definition: Types.AnyItemDefinition, model: BasePart?): Type
             Extras = {},
 
             RunBeforeHit = RunBeforeHit,
+            RunOnHitClient = RunOnHitClient,
         }
     elseif definition.Kind == "Melee" then
         return {
@@ -52,6 +55,7 @@ function module.new(definition: Types.AnyItemDefinition, model: BasePart?): Type
             Extras = {},
 
             RunBeforeHit = RunBeforeHit,
+            RunOnHitClient = RunOnHitClient,
         }
     else
         error("Unknown item kind: " .. definition.Kind)

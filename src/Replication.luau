@@ -148,4 +148,8 @@ function module.Reset(): ()
     module.ReplicateWinner()
 end
 
+function module.RunOnHitClient(item: Types.ItemBeforeHit, participant: Types.Participant, hitPart: BasePart?): ()
+	remotes.RunOnHitClient:FireClient(participant.Player, if item.Kind == "ExplosionParams" then "ExplosionParams" else item.Definition.Name, hitPart)
+end
+
 return module
