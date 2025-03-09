@@ -23,7 +23,7 @@ export type BeforeHitProp = (item: ItemBeforeHit, round: Round, hitProp: Prop, p
 
 export type RunBeforeHit = (item: ItemBeforeHit, round: Round, hitPart: BasePart, params: DamageParams) -> boolean
 
-export type ItemDefinitionOnHitClient = GunWeaponDefinition | MeleeWeaponDefinition
+export type ItemDefinitionOnHitClient = GunWeaponDefinition | MeleeWeaponDefinition | GrenadeWeaponDefinition
 export type OnHitClient = (item: ItemDefinitionOnHitClient, hitPart: BasePart?) -> ()
 
 export type RunOnHitClient = (item: ItemBeforeHit, participant: Participant, hitPart: BasePart?) -> ()
@@ -42,18 +42,16 @@ export type ExplosionInfo = {
     BeforeHitAnything: BeforeHitAnything?,
     BeforeHitProp: BeforeHitProp?,
     BeforeHitParticipant: BeforeHitParticipant?,
-
-    OnHitClient: OnHitClient?,
 }
 
 export type ExplosionParams = {
     Kind: "ExplosionParams",
+
     Definition: ExplosionInfo,
     Attacker: Participant?,
     Position: Vector3,
 
     RunBeforeHit: RunBeforeHit,
-    RunOnHitClient: RunOnHitClient,
 }
 
 export type DamageParams = {
@@ -266,6 +264,7 @@ export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
     ExplosionInfo: ExplosionInfo,
 
     OnExplode: ((item: GrenadeWeapon, attacker: Participant, projectile: BasePart) -> ())?,
+    OnHitClient: OnHitClient?,
 }
 
 export type MeleeWeaponDefinition = CommonWeaponDefinition & {
