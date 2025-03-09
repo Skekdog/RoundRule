@@ -26,7 +26,7 @@ export type RunBeforeHit = (item: ItemBeforeHit, round: Round, hitPart: BasePart
 export type ItemDefinitionOnHitClient = GunWeaponDefinition | MeleeWeaponDefinition | GrenadeWeaponDefinition
 export type OnHitClient = (item: ItemDefinitionOnHitClient, hitPart: BasePart?) -> ()
 
-export type RunOnHitClient = (item: ItemBeforeHit, participant: Participant, hitPart: BasePart?) -> ()
+export type RunOnHitClient = (item: ItemBeforeHit, participant: Participant, hitPart: BasePart) -> ()
 
 export type ExplosionInfo = {
     Damage: number,
