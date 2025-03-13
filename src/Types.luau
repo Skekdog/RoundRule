@@ -219,6 +219,12 @@ export type ItemDefinition = CommonItemDefinition & {
     AlternateToggled: boolean?,
 
     OnPurchase: ((item: Item, participant: Participant) -> ())?,
+
+    OnUnequipClient: ((item: Item) -> ())?,
+    OnUnequipServer: ((item: Item, participant: Participant) -> ())?,
+
+    OnEquipClient: ((item: Item) -> ())?,
+    OnEquipServer: ((item: Item, participant: Participant) -> ())?,
 }
 
 export type GunWeaponDefinition = CommonWeaponDefinition & {

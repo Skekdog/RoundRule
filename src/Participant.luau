@@ -220,6 +220,11 @@ local function GetEquippedItem(participant: Types.Participant): Types.AnyItem?
 end
 
 local function SetEquippedItem(participant: Types.Participant, item: Types.AnyItem?): ()
+    local lastItem = participant:GetEquippedItem()
+    if lastItem and lastItem.Kind == "Item" and lastItem.Definition.OnUnequipServer then
+        lastItem.Definition.OnUnequipServer(lastItem, participant)
+    end
+    
     participant:TryStopAnimation("HoldItem")
 
     local char = participant:GetCharacter()
@@ -257,6 +262,10 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.AnyIt
     end
 
     participant._equippedItem = item
+
+    if item and item.Kind == "Item" and item.Definition.OnEquipServer then
+        item.Definition.OnEquipServer(item, participant)
+    end
 end
 
 local function GetKarmaDamageMultiplier(participant: Types.Participant): number
