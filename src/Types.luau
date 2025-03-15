@@ -201,13 +201,18 @@ export type CommonWeaponDefinition = CommonItemDefinition & {
 export type FireActionClient = (item: Item, mode: "Primary" | "Alternate", origin: Vector3, direction: Vector3) -> ()
 export type FireActionServer = (item: Item, mode: "Primary" | "Alternate", origin: Vector3, direction: Vector3, participant: Participant) -> ()
 
+export type SchedulerCallback = (item: Item, dt: number) -> ()
 export type ItemDefinition = CommonItemDefinition & {
     Kind: "Item",
 
     PrimaryHint: string?,
     AlternateHint: string?,
 
-    HeartbeatClient: ((item: Item, dt: number) -> ())?,
+    HeartbeatClient: SchedulerCallback?,
+    PreSimulationClient: SchedulerCallback?,
+    PostSimulationClient: SchedulerCallback?,
+    PreRenderClient: SchedulerCallback?,
+    PreAnimationClient: SchedulerCallback?,
 
     PrimaryFireClient: FireActionClient?,
     AlternateFireClient: FireActionClient?,
