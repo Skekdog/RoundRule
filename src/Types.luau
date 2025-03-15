@@ -93,7 +93,6 @@ export type Gamemode = {
     
     RequiredSlayVotes: number?,
 
-    DefaultVictor: (Gamemode, Round) -> Victor,
     TimeoutVictor: (Gamemode, Round) -> Victor,
     TimeoutMusic: {Sound}?,
 
