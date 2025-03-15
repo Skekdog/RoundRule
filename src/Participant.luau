@@ -288,7 +288,7 @@ local function SetFreeKill(participant: Types.Participant, reason: string?): ()
     participant._isFreeKill = not not reason
 end
 
-local function TryTakeDamage(participant: Types.Participant, params: Types.DamageParams): boolean
+local function TryTakeDamage(participant: Types.Participant, params: Types.DamageParams, deferDeath: boolean?): boolean
     local hum = participant:GetHumanoid()
     if not hum then
         return false
@@ -323,7 +323,11 @@ local function TryTakeDamage(participant: Types.Participant, params: Types.Damag
     hum:TakeDamage(damage)
 
     if health <= damage then
-        onDeath(participant, params)
+        if deferDeath then
+            task.defer(onDeath, participant, params)
+        else
+            onDeath(participant, params)
+        end
     end
 
     return true

@@ -605,7 +605,7 @@ export type Participant = {
 
     _wasDeathProcessed: boolean?,
     IsAlive: (Participant) -> boolean,
-    TryTakeDamage: (Participant, params: DamageParams) -> boolean,
+    TryTakeDamage: (Participant, params: DamageParams, deferDeath: boolean?) -> boolean,
     GetHealth: (Participant) -> number,
     SetHealth: (Participant, health: number) -> (),
 
@@ -642,7 +642,7 @@ export type MapProp = {
     GetHealth: (MapProp) -> number?,
     SetHealth: (MapProp, health: number) -> (),
 
-    TryTakeDamage: (MapProp, params: DamageParams) -> boolean,
+    TryTakeDamage: (MapProp, params: DamageParams, deferDeath: boolean?) -> boolean,
 }
 
 export type Prop = CorpseProp | ItemProp | MapProp | AmmoProp

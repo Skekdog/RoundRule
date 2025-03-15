@@ -18,7 +18,7 @@ local function SetHealth(prop: Types.MapProp, health: number): ()
     prop._health = health
 end
 
-local function TryTakeDamage(prop: Types.MapProp, params: Types.DamageParams): boolean
+local function TryTakeDamage(prop: Types.MapProp, params: Types.DamageParams, deferDeath: boolean?): boolean
     if prop.Round:IsPreGame() then
         return false
     end
@@ -31,7 +31,11 @@ local function TryTakeDamage(prop: Types.MapProp, params: Types.DamageParams): b
     prop:SetHealth(health - params.Amount)
 
     if health - params.Amount <= 0 then
-        destroyProp(prop, params)
+        if deferDeath then
+            task.defer(destroyProp, prop, params)
+        else
+            destroyProp(prop, params)
+        end
     end
 
     return true
