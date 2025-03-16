@@ -502,9 +502,7 @@ local function TryThrowAssembly(participant: Types.Participant, assemblyRoot: Ba
 
     assert(position and direction)
 
-    local velocityModifier = head.AssemblyLinearVelocity:Dot(direction) / (16 * 3)
-
-    local startPosition = if noForward then position else position + (direction * 3) + (head.AssemblyLinearVelocity * velocityModifier)
+    local startPosition = if noForward then position else position + (direction * 3.5)
     if isObscured(participant, startPosition, position) then
         return false
     end
