@@ -95,6 +95,10 @@ function module.ReplicateGamemode(gamemode: Types.Gamemode): ()
 	replicatedData:SetAttribute("Gamemode", gamemode.Name)
 end
 
+function module.ReplicateMap(): ()
+	fireToTargets(remotes.MapLoaded, "All")
+end
+
 function module.AddEvent(event: Types.RoundEvent): ()
 	local value = Instance.new("StringValue")
 	value.Name = tostring(event.Timestamp)

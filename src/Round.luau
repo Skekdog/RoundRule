@@ -638,6 +638,8 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
 
     currentMap = map
     assert(currentMap)
+
+    Replication.ReplicateMap()
 end
 
 local function GetExclamatoryString(role: Types.RoleDefinition): string
