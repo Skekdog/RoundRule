@@ -16,8 +16,8 @@ local module = {}
 local knownWaterSettings: {string} = {}
 local knownTerrainColours: {[Enum.Material]: Color3} = {}
 
-local HIGHLIGHTS_TIME = 5
-local PREPARING_TIME = 5
+local HIGHLIGHTS_TIME = 20
+local PREPARING_TIME = 20
 
 local currentMap: Types.Map?
 
