@@ -215,9 +215,9 @@ local function Search(corpse: Types.Corpse, searcher: Types.Participant, covert:
 end
 
 function module.new(participant: Types.Participant, params: Types.DamageParams): Types.Corpse
-    local selfDefense
+    local selfDefense: boolean?
     if not params.IgnoreSelfDefense and params.Attacker then
-        selfDefense = params.Attacker:HasSelfDefenseAgainstParticipant(params.Attacker)
+        selfDefense = params.Attacker:HasSelfDefenseAgainstParticipant(participant)
     end
 
     local source: Types.NamedDamageSource = if typeof(params.Source) == "table" then GetDisplayName(params.Source.Definition) else params.Source
