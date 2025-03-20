@@ -645,7 +645,8 @@ local function SpawnCharacter(participant: Types.Participant): ()
             if not participant._wasDeathProcessed then
                 onDeath(participant, {
                     Amount = 0,
-                    Source = "Other"
+                    Source = "Other",
+                    Attacker = participant,
                 }, false)
             end
         end)
