@@ -110,7 +110,7 @@ export type Gamemode = {
     
     Roles: {[string]: RoleDefinition},
 
-    OnDeath: (Gamemode, Participant) -> (),
+    OnDeath: (Gamemode, Participant, deferVictoryCheck: boolean) -> (),
     OnCharacterAdded: (Gamemode, Participant) -> (),
 }
 

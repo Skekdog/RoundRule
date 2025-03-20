@@ -110,7 +110,7 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
         participant:UnspawnCharacter()
 
         if round:IsInProgress() then
-            round.Gamemode:OnDeath(participant)
+            round.Gamemode:OnDeath(participant, false)
         end
     end
 

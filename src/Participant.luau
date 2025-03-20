@@ -16,12 +16,7 @@ local function rejoinRound(participant: Types.Participant): ()
     participant.Round:AddPlayer(participant.Player)
 end
 
-local function onDeath(participant: Types.Participant, params: Types.DamageParams): ()
-    if participant._wasDeathProcessed then
-        return
-    end
-    participant._wasDeathProcessed = true
-
+local function onDeath(participant: Types.Participant, params: Types.DamageParams, deferVictoryCheck: boolean): ()
     if participant.Round:IsPreGame() then
         return rejoinRound(participant)
     end
@@ -70,7 +65,7 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
     end
 
     if participant.Round:IsInProgress() then
-        participant.Round.Gamemode:OnDeath(participant)
+        participant.Round.Gamemode:OnDeath(participant, deferVictoryCheck)
     end
 end
 
@@ -289,6 +284,10 @@ local function SetFreeKill(participant: Types.Participant, reason: string?): ()
 end
 
 local function TryTakeDamage(participant: Types.Participant, params: Types.DamageParams, deferDeath: boolean?): boolean
+    if participant._wasDeathProcessed then
+        return false
+    end
+
     local hum = participant:GetHumanoid()
     if not hum then
         return false
@@ -320,15 +319,13 @@ local function TryTakeDamage(participant: Types.Participant, params: Types.Damag
     end
 
     local health = participant:GetHealth()
-    hum:TakeDamage(damage)
 
     if health <= damage then
-        if deferDeath then
-            task.defer(onDeath, participant, params)
-        else
-            onDeath(participant, params)
-        end
+        participant._wasDeathProcessed = true
+        onDeath(participant, params, deferDeath or false)
     end
+
+    hum:TakeDamage(damage)
 
     return true
 end
@@ -613,7 +610,6 @@ local function SpawnCharacter(participant: Types.Participant): ()
     assert(not participant._isCharacterLoading, "Character is already loading")
 
     participant._isCharacterLoading = true
-    participant._wasDeathProcessed = false
 
     participant.Player.CharacterAppearanceLoaded:Once(function(char)
         local hum = char:WaitForChild("Humanoid")
@@ -646,10 +642,12 @@ local function SpawnCharacter(participant: Types.Participant): ()
         participant._isCharacterLoading = false
 
         hum.Died:Once(function()
-            onDeath(participant, {
-                Amount = 0,
-                Source = "Other"
-            })
+            if not participant._wasDeathProcessed then
+                onDeath(participant, {
+                    Amount = 0,
+                    Source = "Other"
+                }, false)
+            end
         end)
 
         local charsFolder = workspace:FindFirstChild("Characters") :: Folder or Instance.new("Folder", workspace)
