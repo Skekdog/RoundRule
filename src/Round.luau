@@ -41,7 +41,7 @@ local function GetParticipants(round: Types.Round): {[string]: Types.Participant
     return round._participants
 end
 
-local function spawnParticipant(participant: Types.Participant)
+local function spawnParticipant(participant: Types.Participant): ()
     local round = participant.Round
 
     participant:_setStatus("Alive")
@@ -50,14 +50,16 @@ local function spawnParticipant(participant: Types.Participant)
         participant:AddItem(Item.new(v))
     end
 
-    local count = 0
-    for _, v in round:GetParticipants() do
-        assert(v)
-        if v:GetStatus() ~= "Spectating" then
-            count += 1
-            if count == round.Gamemode.MinimumPlayers then
-                round:SetRoundPhase("Preparing", PREPARING_TIME)
-                break
+    if not round._heartbeat or not round._heartbeat.Connected then
+        local count = 0
+        for _, v in round:GetParticipants() do
+            assert(v)
+            if v:GetStatus() ~= "Spectating" then
+                count += 1
+                if count == round.Gamemode.MinimumPlayers then
+                    round:SetRoundPhase("Preparing", PREPARING_TIME)
+                    break
+                end
             end
         end
     end
@@ -87,13 +89,13 @@ local function AddPlayer(round: Types.Round, player: Player, addAsSpectator: boo
     end
 
     player.Destroying:Once(function()
-        round:RemoveParticipant(participant)
+        round:RemoveParticipant(participant, false)
     end)
 
     return participant
 end
 
-local function RemoveParticipant(round: Types.Round, participant: Types.Participant): ()
+local function RemoveParticipant(round: Types.Round, participant: Types.Participant, isRejoining: boolean): ()
     round._participants[participant.Player.Name] = nil
 
     local role = participant:GetRole()
@@ -114,8 +116,9 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
         end
     end
 
-    if count < round.Gamemode.MinimumPlayers and round:IsPreGame() then
-        round:SetRoundPhase("Waiting", math.huge)
+    if not isRejoining and count < round.Gamemode.MinimumPlayers and round:IsPreGame() then
+        round:SetRoundPhase("Waiting", 0)
+        assert(round._heartbeat):Disconnect()
     end
 end
 
@@ -137,6 +140,7 @@ local function setAdvanceTime(round: Types.Round, duration: number, callback: ()
 
     if round._heartbeat then
         round._heartbeat:Disconnect()
+        round._heartbeat = nil
     end
 
     local wasPaused = false

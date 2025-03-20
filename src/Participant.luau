@@ -12,7 +12,7 @@ local SELF_DEFENSE_DURATION = 15
 local module = {}
 
 local function rejoinRound(participant: Types.Participant): ()
-    participant.Round:RemoveParticipant(participant)
+    participant.Round:RemoveParticipant(participant, true)
     participant.Round:AddPlayer(participant.Player)
 end
 
