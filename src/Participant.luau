@@ -320,12 +320,16 @@ local function TryTakeDamage(participant: Types.Participant, params: Types.Damag
 
     local health = participant:GetHealth()
 
-    if health <= damage then
+    local dead = health <= damage
+
+    if dead then
         participant._wasDeathProcessed = true
-        onDeath(participant, params, deferDeath or false)
     end
 
     hum:TakeDamage(damage)
+    if dead then
+        onDeath(participant, params, deferDeath or false)
+    end
 
     return true
 end
