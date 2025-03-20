@@ -218,16 +218,18 @@ end
 local function StartRound(round: Types.Round): ()
     assert(round:IsPreGame(), "Round is not in PreGame phase")
 
-    local participantList = {}
+    local participantList: {Types.Participant} = {}
     for _, v in round:GetParticipants() do
         assert(v)
+        if v:GetStatus() == "Spectating" then
+            continue
+        end
         table.insert(participantList, v)
     end
 
     assert(#participantList >= round.Gamemode.MinimumPlayers, "Not enough players to start round")
 
-    for _, v in round:GetParticipants() do
-        assert(v)
+    for _, v in participantList do
         while not v:GetCharacter() and v.Player:IsDescendantOf(Players) do
             task.wait()
         end
