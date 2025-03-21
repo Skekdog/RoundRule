@@ -250,6 +250,7 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.AnyIt
 
         motor.Parent = model
 
+        model.Massless = true
         model.CanCollide = false
         model.CanTouch = false
         model.CanQuery = false
