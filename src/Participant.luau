@@ -594,7 +594,7 @@ local function onCharacterPartAdded(part: Instance): ()
         return
     end
 
-    part.CollisionGroup = "PlayerCharacterParts"
+    part.CollisionGroup = if part:FindFirstAncestorOfClass("Accessory") then "PlayerAccessories" else "PlayerCharacterParts"
 end
 
 local function MoveToSpawn(participant: Types.Participant): ()
