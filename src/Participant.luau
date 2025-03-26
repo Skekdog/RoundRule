@@ -135,6 +135,9 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
     participant:AddCredits(role.StartingCredits or 0)
     if role.StartingItems then
         for _, v in role.StartingItems do
+            if v.Slot and participant:IsItemSlotOccupied(v.Slot) then
+                continue
+            end
             participant:GiveItemFromItemDefinition(v)
         end
     end
