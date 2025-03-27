@@ -200,7 +200,7 @@ export type CommonWeaponDefinition = CommonItemDefinition & {
 export type FireActionClient = (item: Item, mode: "Primary" | "Alternate", origin: Vector3, direction: Vector3) -> ()
 export type FireActionServer = (item: Item, mode: "Primary" | "Alternate", origin: Vector3, direction: Vector3, participant: Participant) -> ()
 
-export type SchedulerCallback = (item: Item, dt: number) -> ()
+export type SchedulerCallback = (item: AnyItem, dt: number) -> ()
 export type ItemDefinition = CommonItemDefinition & {
     Kind: "Item",
 
@@ -268,6 +268,12 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
     BeforeHitProp: BeforeHitProp?,
 
     OnHitClient: OnHitClient?,
+
+    HeartbeatClient: SchedulerCallback?,
+    PreSimulationClient: SchedulerCallback?,
+    PostSimulationClient: SchedulerCallback?,
+    PreRenderClient: SchedulerCallback?,
+    PreAnimationClient: SchedulerCallback?,
 }
 
 export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
