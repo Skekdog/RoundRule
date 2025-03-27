@@ -231,6 +231,7 @@ export type ItemDefinition = CommonItemDefinition & {
     OnEquipServer: ((item: Item, participant: Participant) -> ())?,
 }
 
+export type BeforeGunPrimaryFireClient = (item: GunWeapon, targettedParts: {BasePart}) -> boolean
 export type GunWeaponDefinition = CommonWeaponDefinition & {
     Kind: "Gun",
 
@@ -274,6 +275,8 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
     PostSimulationClient: SchedulerCallback?,
     PreRenderClient: SchedulerCallback?,
     PreAnimationClient: SchedulerCallback?,
+
+    BeforePrimaryFireClient: BeforeGunPrimaryFireClient?,
 }
 
 export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
