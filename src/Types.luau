@@ -684,6 +684,11 @@ export type Round = {
     AddPlayer: (Round, player: Player, addAsSpectator: boolean?) -> Participant,
     RemoveParticipant: (Round, participant: Participant, isRejoining: boolean) -> (),
 
+    RoundEndMusic: {
+        Music: Sound,
+        StartedAt: number,
+    }?,
+
     _eventLog: {RoundEvent},
     AddEvent: (Round, data: RoundEventData) -> (),
     GetEventLog: (Round) -> {RoundEvent},

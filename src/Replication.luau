@@ -1,3 +1,4 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local EventStrings = require(script.Parent.EventStrings)
 local Types = require(script.Parent.Types)
 
@@ -20,6 +21,11 @@ local function fireToTargets(remote: RemoteEvent, target: ReplicationTarget, ...
 	end
 end
 
+local function canInstanceReplicate(instance: Instance): boolean
+	-- note: instances under ReplicatedFirst will not be nil if passed to the client, but they will not replicated either. That is, updating their properties on the server will have no effect on the client.
+	return instance:IsDescendantOf(ReplicatedStorage) or instance:IsDescendantOf(workspace)
+end
+
 local remotes = script.Parent.Remotes
 local replicatedData = script.Parent.ReplicatedData
 
@@ -39,6 +45,11 @@ end
 
 function module.ReplicateCorpse(target: ReplicationTarget, corpse: Types.Corpse, covert: boolean): ()
 	fireToTargets(remotes.UpdatePlayerCorpse, target, corpse.CorpseView, covert)
+end
+
+function module.ReplicateRoundEndMusic(target: ReplicationTarget, music: Sound, startedAtServerTime: number): ()
+	assert(canInstanceReplicate(music), "Music must be parented to a replicatable service")
+	fireToTargets(remotes.RoundEndMusic, target, music, startedAtServerTime)
 end
 
 function module.UpdateInventory(target: ReplicationTarget, mode: "Add" | "Remove" | "Reset", item: string | Types.AnyItem?): ()

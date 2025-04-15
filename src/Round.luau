@@ -292,15 +292,7 @@ local function EndRound(round: Types.Round, victor: Types.Victor, isTimeout: boo
     end
     local chosenMusic = if #possibleMusic > 0 then possibleMusic[math.random(#possibleMusic)] else nil -- note: math.random(0) errors
     if chosenMusic then
-        chosenMusic = chosenMusic:Clone()
-        chosenMusic:SetAttribute("IsRoundVictoryMusic", true)
-        chosenMusic.Parent = SoundService
-
-        chosenMusic.Ended:Once(function()
-            chosenMusic:Destroy()
-        end)
-
-        chosenMusic:Play()
+        Replication.ReplicateRoundEndMusic("All", chosenMusic, workspace:GetServerTimeNow())
     end
 
     Replication.ReplicateWinner(victor)
