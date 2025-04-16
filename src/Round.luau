@@ -661,6 +661,8 @@ function module.new(gamemode: Types.Gamemode): Types.Round
     local round: Types.Round = {
         Gamemode = gamemode,
 
+        Extras = {},
+
         LoadMap = LoadMap,
         GetMap = GetMap,
 

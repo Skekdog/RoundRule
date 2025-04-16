@@ -28,6 +28,8 @@ export type OnHitClient = (item: ItemDefinitionOnHitClient, hitPart: BasePart?) 
 
 export type RunOnHitClient = (item: AnyWeapon, participant: Participant, hitPart: BasePart) -> ()
 
+export type Extras = {[any]: any}
+
 export type ExplosionInfo = {
     Damage: number,
     FalloffBegin: number,
@@ -172,7 +174,7 @@ export type InteractableObject = {
     Definition: InteractableObjectDefinition,
     Object: BasePart,
 
-    Extras: {[string]: any},
+    Extras: Extras,
 }
 
 export type CommonItemDefinition = {
@@ -426,7 +428,7 @@ export type SelfDefenseParams = {
 
 export type BaseWeapon = {
     Model: BasePart,
-    Extras: {[string]: any},
+    Extras: Extras,
 
     RunBeforeHit: RunBeforeHit,
     RunOnHitClient: RunOnHitClient,
@@ -459,7 +461,7 @@ export type Item = {
     Definition: ItemDefinition,
     Model: BasePart?,
 
-    Extras: {[string]: any},
+    Extras: Extras,
 }
 
 export type AnyItem = Item | AnyWeapon
@@ -518,7 +520,7 @@ export type Corpse = {
 export type Participant = {
     Kind: "Participant",
 
-    Extras: {[string]: any},
+    Extras: Extras,
     
     Player: Player,
     Round: Round,
@@ -657,6 +659,8 @@ export type Prop = CorpseProp | ItemProp | MapProp | AmmoProp
 
 export type Round = {
     Gamemode: Gamemode,
+
+    Extras: Extras,
 
     GetItemDefinition: (Round, item: string) -> AnyItemDefinition?,
     GetAmmoDefinition: (Round, ammo: string) -> AmmoDefinition?,
