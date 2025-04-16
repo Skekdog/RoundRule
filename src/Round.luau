@@ -145,7 +145,7 @@ local function setAdvanceTime(round: Types.Round, duration: number, callback: ()
 
     local wasPaused = false
 
-    local elapsedTime = 0
+    round.ElapsedPhaseTime = 0
     round._heartbeat = RunService.Heartbeat:Connect(function(dt)
         if round:GetIsRoundPaused() then
             wasPaused = true
@@ -154,12 +154,12 @@ local function setAdvanceTime(round: Types.Round, duration: number, callback: ()
         
         if wasPaused then
             wasPaused = false
-            Replication.ReplicateAdvanceTime((duration - elapsedTime) + workspace:GetServerTimeNow())
+            Replication.ReplicateAdvanceTime((duration - round.ElapsedPhaseTime) + workspace:GetServerTimeNow())
         end
 
-        elapsedTime += dt
+        round.ElapsedPhaseTime += dt
 
-        if elapsedTime >= duration then
+        if round.ElapsedPhaseTime >= duration then
             assert(round._heartbeat):Disconnect()
             callback()
         end
@@ -665,6 +665,8 @@ function module.new(gamemode: Types.Gamemode): Types.Round
 
         LoadMap = LoadMap,
         GetMap = GetMap,
+
+        ElapsedPhaseTime = 0,
 
         _participants = {},
         _roundPhase = "Waiting",

@@ -697,6 +697,7 @@ export type Round = {
     AddEvent: (Round, data: RoundEventData) -> (),
     GetEventLog: (Round) -> {RoundEvent},
 
+    ElapsedPhaseTime: number,
     _heartbeat: RBXScriptConnection?,
     _roundPhase: RoundPhase,
     GetRoundPhase: (Round) -> RoundPhase,
