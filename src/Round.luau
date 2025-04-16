@@ -283,14 +283,8 @@ local function EndRound(round: Types.Round, victor: Types.Victor, isTimeout: boo
         Replication.ReplicateRole("All", v, false)
         Replication.ReplicatePlayerStatus("All", v, v:GetStatus())
     end
-
-    local possibleMusic: {Sound}
-    if isTimeout and round.Gamemode.TimeoutMusic then
-        possibleMusic = round.Gamemode.TimeoutMusic
-    else
-        possibleMusic = victorRole.Definition.VictoryMusic or {}
-    end
-    local chosenMusic = if #possibleMusic > 0 then possibleMusic[math.random(#possibleMusic)] else nil -- note: math.random(0) errors
+    
+    local chosenMusic = round.Gamemode:GetRoundEndMusic(round, victor, isTimeout or false)
     if chosenMusic then
         round.RoundEndMusic = {
             Music = chosenMusic,

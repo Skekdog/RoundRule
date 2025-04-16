@@ -94,7 +94,8 @@ export type Gamemode = {
     RequiredSlayVotes: number?,
 
     TimeoutVictor: (Gamemode, Round) -> Victor,
-    TimeoutMusic: {Sound}?,
+    
+    GetRoundEndMusic: (Gamemode, Round, victor: Victor, isTimeout: boolean) -> Sound?,
 
     EnableFriendlyFire: boolean?,
     EnableKarma: boolean?,
@@ -126,7 +127,6 @@ export type RoleDefinition = {
 
     Allegiance: VictorType,
     VictoryText: string?,
-    VictoryMusic: {Sound}?,
 
     StartingItems: {AnyItemDefinition}?,
     StartingCredits: number?,
