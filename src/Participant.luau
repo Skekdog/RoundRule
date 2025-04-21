@@ -16,6 +16,14 @@ local function rejoinRound(participant: Types.Participant): ()
     participant.Round:AddPlayer(participant.Player)
 end
 
+local function randomElementFromArray<T>(array: {T}): T?
+    if #array == 0 then
+        return nil
+    end
+
+    return array[math.random(#array)]
+end
+
 local function onDeath(participant: Types.Participant, params: Types.DamageParams, deferVictoryCheck: boolean): ()
     if participant.Round:IsPreGame() then
         return rejoinRound(participant)
@@ -62,6 +70,11 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
     if ragdoll then
         participant.Round:LoadProp(ragdoll, "CorpseProp")
         ragdoll:SetAttribute("Unidentified", true)
+
+        local deathSound = ragdoll:FindFirstChild("DeathSound")
+        if deathSound and deathSound:IsA("Sound") then
+            deathSound:Play()
+        end
     end
 
     if participant.Round:IsInProgress() then
@@ -645,6 +658,14 @@ local function SpawnCharacter(participant: Types.Participant): ()
         local healthScript = char:FindFirstChild("Health")
         if healthScript then
             healthScript:Destroy()
+        end
+
+        local deathSoundId = randomElementFromArray(participant.Round.Gamemode.DeathSounds)
+        if deathSoundId then
+            local deathSound = Instance.new("Sound")
+            deathSound.Name = "DeathSound"
+            deathSound.SoundId = deathSoundId
+            deathSound.Parent = char.PrimaryPart
         end
     
         participant._isCharacterLoading = false
