@@ -105,6 +105,8 @@ export type Gamemode = {
     AvailableItems: {[string]: AnyItemDefinition},
     AvailableAmmo: {[string]: AmmoDefinition},
 
+    InteractableDefinitions: {[string]: InteractableDefinition},
+
     StartingItems: {AnyItemDefinition},
 
     Duration: (numParticipants: number) -> number,
