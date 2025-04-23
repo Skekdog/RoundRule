@@ -29,7 +29,7 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
     local windows = waitForFolder(mapScript, "Windows")
     local itemSpawns = waitForFolder(mapScript, "ItemSpawns")
     local ammoSpawns = waitForFolder(mapScript, "AmmoSpawns")
-    local interactableObjects = waitForFolder(mapScript, "InteractableObjects")
+    local interactables = waitForFolder(mapScript, "Interactables")
 
     local materialVariants = waitForFolder(mapScript, "MaterialVariants")
 
@@ -68,7 +68,7 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
         Windows = windows,
         ItemSpawns = itemSpawns,
         AmmoSpawns = ammoSpawns,
-        InteractableObjects = interactableObjects,
+        Interactables = interactables,
 
         MaterialVariants = materialVariants,
     }

@@ -370,7 +370,7 @@ export type Map = MapDefinition & {
     Windows: Folder,
     ItemSpawns: Folder,
     AmmoSpawns: Folder,
-    InteractableObjects: Folder,
+    Interactables: Folder,
 
     MaterialVariants: Folder,
 }
