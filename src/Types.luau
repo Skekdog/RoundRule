@@ -159,7 +159,7 @@ export type RoleDefinition = {
     HighlightedRoles: {string}?,
 }
 
-export type InteractableObjectDefinition = {
+export type InteractableDefinition = {
     Name: string,
     Description: string,
 
@@ -168,12 +168,12 @@ export type InteractableObjectDefinition = {
     IsContinuousInteraction: boolean,
     InteractionRange: number,
 
-    OnInteractClient: (object: InteractableObject) -> (),
-    OnInteractServer: (object: InteractableObject, participant: Participant) -> (),
+    OnInteractClient: (object: Interactable) -> (),
+    OnInteractServer: (object: Interactable, participant: Participant) -> (),
 }
 
-export type InteractableObject = {
-    Definition: InteractableObjectDefinition,
+export type Interactable = {
+    Definition: InteractableDefinition,
     Object: BasePart,
 
     Extras: Extras,
