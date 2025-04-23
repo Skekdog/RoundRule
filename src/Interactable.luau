@@ -5,7 +5,7 @@ function module.new(definition: Types.InteractableDefinition): Types.Interactabl
 	local object = definition.Model:Clone()
 
 	object.Name = definition.Name
-	object.CollisionGroup = "InteractableObjects"
+	object.CollisionGroup = "Interactables"
 	
 	return {
 		Definition = definition,
