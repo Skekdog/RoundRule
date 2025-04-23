@@ -346,6 +346,8 @@ export type MapDefinition = {
     AvailableItems: {[string]: AnyItemDefinition},
     AvailableAmmo: {[string]: AmmoDefinition},
 
+    InteractableDefinitions: {[string]: InteractableDefinition},
+
     Gravity: number,
 
     LightingSettings: {[string]: any},

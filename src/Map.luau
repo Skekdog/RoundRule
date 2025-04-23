@@ -33,6 +33,8 @@ local function validateDefinition(definition: any): Types.MapDefinition
     assert(typeof(definition.AvailableItems) == "table", "AvailableItems must be a table")
     assert(typeof(definition.AvailableAmmo) == "table", "AvailableAmmo must be a table")
 
+    assert(typeof(definition.InteractableDefinitions) == "table", "InteractableDefinitions must be a table")
+
     assert(typeof(definition.Gravity) == "number", "Gravity must be a number")
 
     assert(typeof(definition.WaterSettings) == "table", "WaterSettings must be a table")
@@ -77,6 +79,8 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
 
         AvailableAmmo = definition.AvailableAmmo,
         AvailableItems = definition.AvailableItems,
+
+        InteractableDefinitions = definition.InteractableDefinitions,
 
         Gravity = definition.Gravity,
 
