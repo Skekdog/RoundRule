@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 local AmmoBox = require(script.Parent.AmmoBox)
+local Interactable = require(script.Parent.Interactable)
 local Item = require(script.Parent.Item)
 local Map = require(script.Parent.Map)
 local Participant = require(script.Parent.Participant)
@@ -443,6 +444,13 @@ local function GetAmmoBox(round: Types.Round, model: Types.DataModelItem): Types
     return round._ammoBoxes[model]
 end
 
+local function AddInteractable(round: Types.Round, definition: Types.InteractableDefinition): Types.Interactable
+    local interactable = Interactable.new(definition)
+    interactable.Object.Parent = round:GetMap().Interactables
+
+    return interactable
+end
+
 local function loadBound(round: Types.Round, bound: Types.Bound): ()
     bound.CollisionGroup = "Bounds"
     
@@ -660,6 +668,8 @@ function module.new(gamemode: Types.Gamemode): Types.Round
 
     local round: Types.Round = {
         Gamemode = gamemode,
+
+        AddInteractable = AddInteractable,
 
         Extras = {},
 

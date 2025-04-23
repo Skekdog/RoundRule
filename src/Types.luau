@@ -685,6 +685,8 @@ export type Round = {
     GetProp: (Round, model: DataModelProp) -> Prop?,
     LoadProp: (Round, model: DataModelProp, kind: "MapProp" | "CorpseProp" | "ItemProp" | "AmmoProp") -> Prop,
 
+    AddInteractable: (Round, definition: InteractableDefinition) -> Interactable,
+
     _participants: {[string]: Participant?},
     GetParticipant: (Round, name: string) -> Participant?,
     GetParticipants: (Round) -> {[string]: Participant?},
