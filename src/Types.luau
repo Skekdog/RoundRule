@@ -161,7 +161,6 @@ export type RoleDefinition = {
 
 export type InteractableDefinition = {
     Name: string,
-    Description: string,
 
     Model: BasePart,
 
