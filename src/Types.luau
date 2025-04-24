@@ -170,8 +170,8 @@ export type InteractableDefinition = {
     IsContinuousInteraction: boolean,
     InteractionRange: number,
 
-    OnInteractClient: (object: Interactable) -> (),
-    OnInteractServer: (object: Interactable, participant: Participant) -> (),
+    OnInteractClient: ((object: Interactable) -> ())?,
+    OnInteractServer: ((object: Interactable, participant: Participant) -> ())?,
 }
 
 export type Interactable = {
