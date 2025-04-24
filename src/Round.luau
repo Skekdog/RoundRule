@@ -458,6 +458,10 @@ local function AddInteractable(round: Types.Round, definition: Types.Interactabl
 
     round._interactables[interactable.Object] = interactable
 
+    if interactable.Definition.OnLoadServer then
+        interactable.Definition.OnLoadServer(interactable)
+    end
+
     return interactable
 end
 

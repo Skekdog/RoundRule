@@ -172,6 +172,9 @@ export type InteractableDefinition = {
 
     OnInteractClient: ((object: Interactable) -> ())?,
     OnInteractServer: ((object: Interactable, participant: Participant) -> ())?,
+
+    OnLoadClient: ((object: Interactable) -> ())?,
+    OnLoadServer: ((object: Interactable) -> ())?,
 }
 
 export type Interactable = {
