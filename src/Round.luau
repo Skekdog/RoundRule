@@ -444,9 +444,19 @@ local function GetAmmoBox(round: Types.Round, model: Types.DataModelItem): Types
     return round._ammoBoxes[model]
 end
 
+local function GetInteractables(round: Types.Round): {[Types.DataModelInteractable]: Types.Interactable?}
+    return round._interactables
+end
+
+local function GetInteractable(round: Types.Round, model: Types.DataModelInteractable): Types.Interactable?
+    return round._interactables[model]
+end
+
 local function AddInteractable(round: Types.Round, definition: Types.InteractableDefinition): Types.Interactable
     local interactable = Interactable.new(definition)
     interactable.Object.Parent = round:GetMap().Interactables
+
+    round._interactables[interactable.Object] = interactable
 
     return interactable
 end
@@ -706,6 +716,10 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         _ammoBoxes = {},
         GetAmmoBoxes = GetAmmoBoxes,
         GetAmmoBox = GetAmmoBox,
+
+        _interactables = {},
+        GetInteractables = GetInteractables,
+        GetInteractable = GetInteractable,
 
         AddEvent = AddEvent,
         GetEventLog = GetEventLog,

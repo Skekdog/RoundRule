@@ -79,6 +79,7 @@ export type RoundPhase = "Waiting" | "Preparing" | "Playing" | "Highlights" | "I
 
 export type DataModelMapProp = BasePart
 export type DataModelItem = BasePart
+export type DataModelInteractable = BasePart
 export type DataModelCorpse = Model
 export type DataModelAmmo = BasePart
 export type DataModelProp = DataModelMapProp | DataModelItem | DataModelCorpse | DataModelAmmo
@@ -682,6 +683,10 @@ export type Round = {
     _ammoBoxes: {[DataModelItem]: AmmoBox?},
     GetAmmoBoxes: (Round) -> {[DataModelItem]: AmmoBox?},
     GetAmmoBox: (Round, part: DataModelItem) -> AmmoBox?,
+
+    _interactables: {[DataModelInteractable]: Interactable?},
+    GetInteractables: (Round) -> {[DataModelInteractable]: Interactable?},
+    GetInteractable: (Round, part: DataModelInteractable) -> Interactable?,
 
     _props: {[DataModelProp]: Prop?},
     GetProps: (Round) -> {[DataModelProp]: Prop?},
