@@ -181,6 +181,7 @@ export type Interactable = {
     Definition: InteractableDefinition,
     Object: BasePart,
 
+    Round: Round?,
     Extras: Extras,
 }
 

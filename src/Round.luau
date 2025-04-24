@@ -454,6 +454,7 @@ end
 
 local function AddInteractable(round: Types.Round, definition: Types.InteractableDefinition): Types.Interactable
     local interactable = Interactable.new(definition)
+    interactable.Round = round
     interactable.Object.Parent = round:GetMap().Interactables
 
     round._interactables[interactable.Object] = interactable
