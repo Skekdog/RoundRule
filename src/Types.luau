@@ -669,6 +669,7 @@ export type Round = {
 
     GetItemDefinition: (Round, item: string) -> AnyItemDefinition?,
     GetAmmoDefinition: (Round, ammo: string) -> AmmoDefinition?,
+    GetInteractableDefinition: (Round, interactable: string) -> InteractableDefinition?,
 
     _map: Map?,
     LoadMap: (Round, mapScript: ModuleScript) -> (),

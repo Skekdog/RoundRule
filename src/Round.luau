@@ -504,6 +504,10 @@ local function GetItemDefinition(round: Types.Round, item: string): Types.AnyIte
     return round:GetMap().AvailableItems[item] or round.Gamemode.AvailableItems[item]
 end
 
+local function GetInteractableDefinition(round: Types.Round, interactable: string): Types.InteractableDefinition?
+    return round:GetMap().InteractableDefinitions[interactable] or round.Gamemode.InteractableDefinitions[interactable]
+end
+
 local function loadProps(round: Types.Round, map: Types.Map): ()
     if not map.Props then
         return
@@ -693,6 +697,7 @@ function module.new(gamemode: Types.Gamemode): Types.Round
 
         GetAmmoDefinition = GetAmmoDefinition,
         GetItemDefinition = GetItemDefinition,
+        GetInteractableDefinition = GetInteractableDefinition,
 
         IsPreGame = IsPreGame,
         IsPostGame = IsPostGame,
