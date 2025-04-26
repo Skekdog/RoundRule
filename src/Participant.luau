@@ -289,11 +289,19 @@ local function IsDamageJustifiedAgainstParticipant(participant: Types.Participan
 end
 
 local function IsFreeKill(participant: Types.Participant): boolean
-    local item = participant:GetEquippedItem()
-    if item and item.Definition.AllowFreeKill then
+    if participant._isFreeKill then
         return true
     end
-    return participant._isFreeKill
+
+    local item = participant:GetEquippedItem()
+    if item and item.Definition.IsBadGuyItem then
+        local role = participant:GetRole()
+        if not role or not role.Definition.IsBadGuys then
+            return true
+        end
+    end
+
+    return false
 end
 
 local function SetFreeKill(participant: Types.Participant, reason: string?): ()

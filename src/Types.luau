@@ -193,6 +193,8 @@ export type CommonItemDefinition = {
     Description: string?,
     Icon: string?,
 
+	IsBadGuyItem: boolean?,
+
     Model: BasePart?,
     HoldAnimation: string?,
 
@@ -201,8 +203,6 @@ export type CommonItemDefinition = {
 
     CreditCost: number?,
     MaxStock: number?,
-
-    AllowFreeKill: boolean?,
 }
 
 export type CommonWeaponDefinition = CommonItemDefinition & {
