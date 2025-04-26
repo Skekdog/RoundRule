@@ -39,10 +39,24 @@ local function PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent:
     end
 
 	soundObject.Volume = props.Volume or 0.5
-	soundObject.RollOffMinDistance = props.RollOffMinDistance or 5
-	soundObject.RollOffMaxDistance = props.RollOffMaxDistance or 15
-	soundObject.RollOffMode = Enum.RollOffMode.Linear
-	soundObject.SoundGroup = props.SoundGroup
+
+	if props.RollOffMinDistance then
+		soundObject.RollOffMode = Enum.RollOffMode.Linear
+		soundObject.RollOffMinDistance = props.RollOffMinDistance
+	end
+
+	if props.RollOffMaxDistance then
+		soundObject.RollOffMode = Enum.RollOffMode.Linear
+		soundObject.RollOffMaxDistance = props.RollOffMaxDistance
+	end
+
+	if props.Volume then
+		soundObject.Volume = props.Volume
+	end
+
+	if props.SoundGroup then
+		soundObject.SoundGroup = props.SoundGroup
+	end
 
 	if props.PlaybackRegion then
 		soundObject.PlaybackRegionsEnabled = true
