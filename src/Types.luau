@@ -132,6 +132,8 @@ export type RoleDefinition = {
     Sound: string,
     IsExclamatory: boolean?,
 
+	IsBadGuys: boolean?,
+
     Allegiance: VictorType,
     VictoryText: string?,
 
