@@ -81,6 +81,10 @@ function module.SendMessage(target: ReplicationTarget, message: string, kind: Ty
 	fireToTargets(remotes.SendMessage, target, message, kind or "All")
 end
 
+function module.InformFreeKill(target: ReplicationTarget, reason: string?): ()
+	fireToTargets(remotes.FreeKill, target, reason)
+end
+
 function module.ReplicateAdvanceTime(target: number?): ()
 	replicatedData:SetAttribute("AdvanceTime", target)
 end

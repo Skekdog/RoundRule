@@ -35,7 +35,7 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
     end
 
     if attacker and not params.IgnoreKarma and not attacker:IsDamageJustifiedAgainstParticipant(participant) then
-        attacker:SetFreeKill("Killed Teammate")
+        attacker:SetFreeKill("killed a teammate")
         Replication.SlayVote(participant.Player, attacker)
     end
 
@@ -298,6 +298,7 @@ end
 
 local function SetFreeKill(participant: Types.Participant, reason: string?): ()
     participant._isFreeKill = not not reason
+    Replication.InformFreeKill(participant.Player, reason)
 end
 
 local function TryTakeDamage(participant: Types.Participant, params: Types.DamageParams, deferDeath: boolean?): boolean
