@@ -452,8 +452,8 @@ local function GetInteractable(round: Types.Round, model: Types.DataModelInterac
     return round._interactables[model]
 end
 
-local function AddInteractable(round: Types.Round, definition: Types.InteractableDefinition): Types.Interactable
-    local interactable = Interactable.new(definition)
+local function AddInteractable(round: Types.Round, definition: Types.InteractableDefinition, object: Types.DataModelInteractable?): Types.Interactable
+    local interactable = Interactable.new(definition, object)
     interactable.Round = round
     interactable.Object.Parent = round:GetMap().Interactables
 
@@ -464,6 +464,11 @@ local function AddInteractable(round: Types.Round, definition: Types.Interactabl
     end
 
     return interactable
+end
+
+local function loadInteractable(round: Types.Round, model: Types.DataModelInteractable): ()
+    local definition = round:GetInteractableDefinition(model.Name) or error(`Interactable {model.Name} does not exist in map or gamemode`)
+    round:AddInteractable(definition, model)
 end
 
 local function loadBound(round: Types.Round, bound: Types.Bound): ()
@@ -573,6 +578,14 @@ local function loadBounds(round: Types.Round, map: Types.Map): ()
     end
 end
 
+local function loadInteractables(round: Types.Round, map: Types.Map): ()
+    for _, v in map.Interactables:GetDescendants() do
+        if v:IsA("BasePart") then
+            loadInteractable(round, v)
+        end
+    end
+end
+
 local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
     mapScript = mapScript:Clone()
     local map = Map.fromModuleScript(mapScript)
@@ -653,6 +666,7 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
     loadProps(round, map)
     loadItems(round, map)
     loadAmmoBoxes(round, map)
+    loadInteractables(round, map)
 
     for _, v in round:GetParticipants() do
         assert(v)
