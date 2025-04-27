@@ -194,7 +194,9 @@ export type CommonItemDefinition = {
     Name: string,
     DisplayName: string?,
     Description: string?,
+    
     Icon: string?,
+    IsPixelIcon: boolean?,
 
 	IsBadGuyItem: boolean?,
 
