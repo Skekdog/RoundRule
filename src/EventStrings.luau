@@ -35,9 +35,11 @@ local function GetEventString(event: Types.RoundEvent): string
         elseif source == "Fall" then
             msg = `{victim} fell to their death{if killer then ` at the hands of {killer}` else ""}.`
         elseif source == "Explode" then
-            msg = `{victim} exploded{if killer then ` at the hands of {killer}` else ""}.`
+            msg = `{victim} was exploded{if killer then ` by {killer}` else ""}.`
         elseif source == "Magic" then
-            msg = `{victim} was killed by magic{if killer then ` at the hands of {killer}` else ""}.`
+            msg = `{victim} was killed by magic{if killer then ` used by {killer}` else ""}.`
+        elseif source == "Poison" then
+            msg = `{victim} was poisoned{if killer then ` by {killer}` else ""}.`
         elseif source == "Other" then
             msg = `{victim} died{if killer then ` at the hands of {killer}` else ""}.`
         else
