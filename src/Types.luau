@@ -186,6 +186,8 @@ export type Interactable = {
 
     Round: Round?,
     Extras: Extras,
+
+    HintTextClient: string?,
 }
 
 export type CommonItemDefinition = {
