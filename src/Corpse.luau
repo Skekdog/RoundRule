@@ -22,7 +22,7 @@ local function generateKillList(participant: Types.Participant): {string}
     end
     return killList
 end
-    
+
 
 local function UpdateKillList(corpse: Types.Corpse): ()
     local killList = generateKillList(corpse.Participant)
@@ -227,7 +227,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
         local definition = participant.Round:GetItemDefinition(i)
         assert(definition)
 
-        if definition.Model then
+        if definition.NeverShownInCorpseEquipmentList or definition.Model then
             continue
         end
         table.insert(equipmentList, i)
@@ -254,7 +254,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
 
         CorpseView = corpseView,
         WasCorrectKill = if params.Attacker then params.Attacker:IsDamageJustifiedAgainstParticipant(participant) else nil,
-        
+
         _searchedBy = {},
         GetSearchedBy = GetSearchedBy,
 

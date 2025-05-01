@@ -200,6 +200,8 @@ export type CommonItemDefinition = {
 
 	IsBadGuyItem: boolean?,
 
+    NeverShownInCorpseEquipmentList: boolean?,
+
     Model: BasePart?,
     HoldAnimation: string?,
 
