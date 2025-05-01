@@ -729,6 +729,26 @@ local function GetSlayVotes(participant: Types.Participant): {Types.Participant}
     return participant._slayVotes
 end
 
+local function AddCorpseIcon(participant: Types.Participant, icon: Types.CorpseIcon): ()
+    local toRemove: number?
+    for i, v in participant._additionalCorpseIcons do
+        if v.Name == icon.Name then
+            toRemove = i
+            break
+        end
+    end
+
+    if toRemove then
+        table.remove(participant._additionalCorpseIcons, toRemove)
+    end
+
+    table.insert(participant._additionalCorpseIcons, icon)
+end
+
+local function GetAdditionalCorpseIcons(participant: Types.Participant): {Types.CorpseIcon}
+    return participant._additionalCorpseIcons
+end
+
 local function TryAddSlayVote(participant: Types.Participant, other: Types.Participant): boolean
     if not participant.Round.Gamemode.RequiredSlayVotes then
         return false
@@ -873,6 +893,10 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         _itemPurchases = {},
         _items = {},
         _ammo = {},
+
+        _additionalCorpseIcons = {},
+        AddCorpseIcon = AddCorpseIcon,
+        GetAdditionalCorpseIcons = GetAdditionalCorpseIcons,
 
         DropAmmoBoxForCurrentItem = DropAmmoBoxForCurrentItem,
 

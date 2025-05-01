@@ -237,6 +237,8 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
         Name = participant.Player.Name,
         UserId = participant.Player.UserId,
 
+        AdditionalIcons = participant:GetAdditionalCorpseIcons(),
+
         WasFreeKill = participant:IsFreeKill(), 
         WasHeadshot = params.IsHeadshot,
         WasSelfDefense = selfDefense,

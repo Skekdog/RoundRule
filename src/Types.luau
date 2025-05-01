@@ -46,6 +46,12 @@ export type ExplosionInfo = {
     BeforeHitParticipant: BeforeHitParticipant?,
 }
 
+export type CorpseIcon = {
+    Name: string,
+    Description: string,
+    Icon: string,
+}
+
 export type ExplosionParams = {
     Kind: "ExplosionParams",
 
@@ -505,6 +511,8 @@ export type CorpseView = {
     Name: string,
     UserId: number,
 
+    AdditionalIcons: {CorpseIcon},
+
     WasFreeKill: boolean?,
     WasHeadshot: boolean?,
     WasSelfDefense: boolean?,
@@ -540,7 +548,7 @@ export type Participant = {
     Kind: "Participant",
 
     Extras: Extras,
-    
+
     Player: Player,
     Round: Round,
 
@@ -572,6 +580,10 @@ export type Participant = {
 
     _corpse: Corpse?,
     GetCorpse: (Participant) -> Corpse?,
+
+    _additionalCorpseIcons: {CorpseIcon},
+    AddCorpseIcon: (Participant, icon: CorpseIcon) -> (),
+    GetAdditionalCorpseIcons: (Participant) -> {CorpseIcon},
 
     _isCharacterLoading: boolean,
     _character: Model?,
