@@ -187,6 +187,7 @@ export type InteractableDefinition = {
 }
 
 export type Interactable = {
+    Kind: "Interactable",
     Definition: InteractableDefinition,
     Object: BasePart,
 
@@ -194,6 +195,11 @@ export type Interactable = {
     Extras: Extras,
 
     HintTextClient: string?,
+
+    _health: number?,
+    GetHealth: (Interactable) -> number?,
+    SetHealth: (Interactable, health: number) -> (),
+    TryTakeDamage: (Interactable, params: DamageParams, deferDeath: boolean?) -> boolean,
 }
 
 export type CommonItemDefinition = {
@@ -686,7 +692,7 @@ export type MapProp = {
     TryTakeDamage: (MapProp, params: DamageParams, deferDeath: boolean?) -> boolean,
 }
 
-export type Prop = CorpseProp | ItemProp | MapProp | AmmoProp
+export type Prop = CorpseProp | ItemProp | MapProp | AmmoProp | Interactable
 
 export type Round = {
     Gamemode: Gamemode,
