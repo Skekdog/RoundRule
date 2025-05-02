@@ -694,7 +694,7 @@ export type MapProp = {
     TryTakeDamage: (MapProp, params: DamageParams, deferDeath: boolean?) -> boolean,
 }
 
-export type Prop = CorpseProp | ItemProp | MapProp | AmmoProp | Interactable
+export type Prop = CorpseProp | ItemProp | MapProp | AmmoProp
 
 export type Round = {
     Gamemode: Gamemode,
