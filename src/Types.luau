@@ -184,6 +184,8 @@ export type InteractableDefinition = {
 
     OnLoadClient: ((object: Interactable) -> ())?,
     OnLoadServer: ((object: Interactable) -> ())?,
+
+    OnBreakServer: ((object: Interactable, params: DamageParams?) -> ())?,
 }
 
 export type Interactable = {

@@ -2,7 +2,12 @@ local Types = require(script.Parent.Types)
 local module = {}
 
 local function destroyInteractable(interactable: Types.Interactable, params: Types.DamageParams?): ()
-	
+	local onBreakServer = interactable.Definition.OnBreakServer
+	if onBreakServer then
+		onBreakServer(interactable, params)
+	end
+
+	interactable.Object:Destroy()
 end
 
 local function GetHealth(interactable: Types.Interactable): number?
