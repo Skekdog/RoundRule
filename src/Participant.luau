@@ -24,7 +24,7 @@ local function randomElementFromArray<T>(array: {T}): T?
     return array[math.random(#array)]
 end
 
-local function onDeath(participant: Types.Participant, params: Types.DamageParams, deferVictoryCheck: boolean): ()
+function module.OnDeath(participant: Types.Participant, params: Types.DamageParams, deferVictoryCheck: boolean): ()
     if participant.Round:IsPreGame() then
         return rejoinRound(participant)
     end
@@ -354,7 +354,7 @@ local function TryTakeDamage(participant: Types.Participant, params: Types.Damag
 
     hum:TakeDamage(damage)
     if dead then
-        onDeath(participant, params, deferDeath or false)
+        module.OnDeath(participant, params, deferDeath or false)
     end
 
     return true
@@ -681,7 +681,7 @@ local function SpawnCharacter(participant: Types.Participant): ()
 
         hum.Died:Once(function()
             if not participant._wasDeathProcessed then
-                onDeath(participant, {
+                module.OnDeath(participant, {
                     Amount = 0,
                     Source = "Other",
                     Attacker = participant,
