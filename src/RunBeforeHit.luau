@@ -65,7 +65,12 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
 
         return beforeHitProp(item, round, hitThing, params)
     elseif hitThing.Kind == "Interactable" then
-        return true
+        local beforeTakeDamage = hitThing.Definition.BeforeTakeDamage
+        if not beforeTakeDamage then
+            return true
+        end
+
+        return beforeTakeDamage(hitThing, params)
     end
 
     error("Unknown hit thing kind: " .. hitThing.Kind)

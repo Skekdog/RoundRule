@@ -185,6 +185,8 @@ export type InteractableDefinition = {
     OnLoadServer: ((object: Interactable) -> ())?,
 
     OnBreakServer: ((object: Interactable, params: DamageParams?) -> ())?,
+
+    BeforeTakeDamage: ((object: Interactable, params: DamageParams) -> boolean)?,
 }
 
 export type Interactable = {
