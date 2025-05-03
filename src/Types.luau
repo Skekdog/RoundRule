@@ -47,6 +47,7 @@ export type ExplosionInfo = {
 
 export type CorpseIcon = {
     Name: string,
+    DisplayText: string?,
     Description: string,
     Icon: string,
 }
