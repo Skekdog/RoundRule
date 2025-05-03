@@ -6,7 +6,7 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
         beforeHitAnything(item, round, hitPart, params)
     end
 
-    local hitThing: Types.Participant | Types.Prop?
+    local hitThing: Types.Participant | Types.Prop | Types.Interactable?
 
     if hitPart:IsDescendantOf(workspace.Characters) then
         local model = hitPart:FindFirstAncestorOfClass("Model")
@@ -21,7 +21,7 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
 
         hitThing = participant
     else
-        local prop: Types.Prop?
+        local prop: Types.Prop | Types.Interactable?
         if hitPart:IsDescendantOf(workspace.Corpses) then
             local model = hitPart:FindFirstAncestorOfClass("Model")
             if not model then
@@ -34,7 +34,11 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
         if not prop then
             prop = round:GetProp(hitPart)
         end
-        
+
+        if not prop then
+            prop = round:GetInteractable(hitPart)
+        end
+
         if not prop then
             return false
         end
@@ -60,6 +64,8 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
         end
 
         return beforeHitProp(item, round, hitThing, params)
+    elseif hitThing.Kind == "Interactable" then
+        return true
     end
 
     error("Unknown hit thing kind: " .. hitThing.Kind)

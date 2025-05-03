@@ -22,7 +22,7 @@ local function TryTakeDamage(interactable: Types.Interactable, params: Types.Dam
 	if interactable.Round and interactable.Round:IsPreGame() then
         return false
     end
-    
+
     local health = interactable:GetHealth()
     if health == nil or health <= 0 then
         return false
