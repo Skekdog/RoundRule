@@ -531,7 +531,6 @@ export type CorpseView = {
     EquipmentList: {string},
 
     DeathTime: number,
-    DNAExpiry: number?,
 
     DamageSource: NamedDamageSource,
 }
