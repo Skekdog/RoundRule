@@ -48,15 +48,15 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
         end
     end
 
-    for _, v in participant:GetItems() do
-        assert(v)
-        participant:TryDropItem(v)
-    end
-
     participant:_setStatus("Missing")
 
     local corpse = Corpse.new(participant, params)
     participant._corpse = corpse
+
+    for _, v in participant:GetItems() do
+        assert(v)
+        participant:TryDropItem(v)
+    end
 
     participant.Round:AddEvent({
         Kind = "DeathRoundEvent",

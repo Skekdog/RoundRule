@@ -223,11 +223,11 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
     local source: Types.NamedDamageSource = if typeof(params.Source) == "table" then GetDisplayName(params.Source.Definition) else params.Source
 
     local equipmentList: {string} = {}
-    for i in participant:GetItemPurchases() do
+    for i in participant:GetItems() do
         local definition = participant.Round:GetItemDefinition(i)
         assert(definition)
 
-        if definition.NeverShownInCorpseEquipmentList or definition.Model then
+        if definition.Slot then
             continue
         end
         table.insert(equipmentList, i)
