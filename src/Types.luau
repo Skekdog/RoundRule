@@ -13,7 +13,6 @@ export type NamedDamageSource = GeneralDamageSource | string
 export type DamageSource = AnyItem | GeneralDamageSource
 
 export type Bound = BasePart
-export type InteractionCallback = (object: Bound, participant: Participant) -> ()
 
 -- todo: when recursive generic types are supported, do that
 export type ItemBeforeHit = AnyWeapon | ExplosionParams
