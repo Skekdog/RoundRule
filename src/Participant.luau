@@ -475,7 +475,7 @@ local function GiveItemFromItemDefinition(participant: Types.Participant, itemDe
     return item
 end
 
-local function DropItem(participant: Types.Participant, item: Types.AnyItem, throwDirection: Vector3?): ()
+function module.DropItem(participant: Types.Participant, item: Types.AnyItem, throwDirection: Vector3?): ()
     if not item.Definition.CanDrop then
         return
     end
@@ -947,7 +947,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         GiveItemFromItemDefinition = GiveItemFromItemDefinition,
         AddItem = AddItem,
         RemoveItem = RemoveItem,
-        DropItem = DropItem,
+        DropItem = module.DropItem,
         GetItems = GetItems,
         GetItemPurchases = GetItemPurchases,
         PurchaseItem = PurchaseItem,
