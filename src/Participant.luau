@@ -13,7 +13,7 @@ local module = {}
 
 local function rejoinRound(participant: Types.Participant): ()
     participant.Round:RemoveParticipant(participant, true)
-    participant.Round:AddPlayer(participant.Player)
+    participant.Round:AddPlayer(participant.Player, nil, participant:GetKarma())
 end
 
 local function randomElementFromArray<T>(array: {T}): T?
