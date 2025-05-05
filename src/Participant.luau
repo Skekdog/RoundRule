@@ -766,6 +766,19 @@ local function GetAdditionalCorpseIcons(participant: Types.Participant): {Types.
     return participant._additionalCorpseIcons
 end
 
+local function trySlay(participant: Types.Participant): ()
+    if not participant:IsAlive() then
+        return
+    end
+
+    participant.Round:SendMessage(Players:GetPlayers(), `[PLAYER-{participant.Player.Name}] was slain for RDM.`, "All")
+
+    participant:TryTakeDamage({
+        Amount = math.huge,
+        Source = "Other"
+    })
+end
+
 local function TryAddSlayVote(participant: Types.Participant, other: Types.Participant): boolean
     if not participant.Round.Gamemode.RequiredSlayVotes then
         return false
@@ -787,10 +800,7 @@ local function TryAddSlayVote(participant: Types.Participant, other: Types.Parti
     table.insert(participant._slayVotes, other)
 
     if #participant._slayVotes >= participant.Round.Gamemode.RequiredSlayVotes then
-        participant:TryTakeDamage({
-            Amount = math.huge,
-            Source = "Other"
-        })
+        trySlay(participant)
     end
 
     return true
