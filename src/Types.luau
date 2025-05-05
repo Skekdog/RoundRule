@@ -348,6 +348,10 @@ export type MeleeWeaponDefinition = CommonWeaponDefinition & {
     BeforeHitProp: BeforeHitProp?,
 
     OnHitClient: OnHitClient?,
+
+    AlternateFireServer: (item: MeleeWeapon, origin: Vector3, direction: Vector3, attacker: Participant) -> ()?,
+    AlternateFireClient: (item: MeleeWeapon, origin: Vector3, direction: Vector3) -> ()?,
+    AlternateToggled: boolean?,
 }
 
 export type AmmoDefinition = {
