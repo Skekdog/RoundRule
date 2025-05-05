@@ -174,6 +174,8 @@ export type InteractableDefinition = {
     Name: string,
     DisplayName: string?,
 
+    NoActionHint: boolean?,
+
     Model: BasePart,
 
     IsContinuousInteraction: boolean,
