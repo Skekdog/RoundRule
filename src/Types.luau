@@ -557,6 +557,11 @@ export type Corpse = {
     Killer: Participant?,
 }
 
+export type ParticipantLastDamaged = {
+    By: Participant,
+    ExpiresAt: number,
+}
+
 export type Participant = {
     Kind: "Participant",
 
@@ -613,6 +618,10 @@ export type Participant = {
     _selfDefenseList: {SelfDefenseEntry},
     AddSelfDefenseEntry: (Participant, params: SelfDefenseParams) -> (),
     HasSelfDefenseAgainstParticipant: (Participant, against: Participant) -> boolean,
+
+    _lastDamaged: ParticipantLastDamaged?,
+    SetLastDamaged: (Participant, by: Participant, duration: number) -> (),
+    GetLastDamagedBy: (Participant) -> Participant?,
 
     _killList: {Participant},
     _addToKillList: (Participant, toAdd: Participant) -> (),

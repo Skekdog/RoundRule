@@ -2,6 +2,7 @@ local InsertService = game:GetService("InsertService")
 local Players = game:GetService("Players")
 local AmmoBox = require(script.Parent.AmmoBox)
 local Corpse = require(script.Parent.Corpse)
+local IsPassiveDamageSource = require(script.Parent.IsPassiveDamageSource)
 local Item = require(script.Parent.Item)
 local MakeRagdoll = require(script.Parent.MakeRagdoll)
 local Replication = require(script.Parent.Replication)
@@ -31,6 +32,11 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
     end
 
     local attacker = params.Attacker
+    if not attacker and IsPassiveDamageSource(params.Source) then
+        attacker = participant:GetLastDamagedBy()
+    end
+    params.Attacker = attacker
+
     if attacker then
         attacker:_addToKillList(participant)
     end
@@ -733,6 +739,22 @@ local function UnspawnCharacter(participant: Types.Participant): ()
     char:Destroy()
 end
 
+local function SetLastDamaged(participant: Types.Participant, by: Types.Participant, duration: number): ()
+    participant._lastDamaged = {
+        By = by,
+        ExpiresAt = workspace:GetServerTimeNow() + duration,
+    }
+end
+
+local function GetLastDamagedBy(participant: Types.Participant): Types.Participant?
+    local lastDamaged = participant._lastDamaged
+    if not lastDamaged or lastDamaged.ExpiresAt < workspace:GetServerTimeNow() then
+        return nil
+    end
+
+    return lastDamaged.By
+end
+
 local function IsAlliedWithParticipant(participant: Types.Participant, other: Types.Participant): boolean
     local role1, role2 = participant:GetRole(), other:GetRole()
     if not role1 or not role2 then
@@ -986,6 +1008,9 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         TryThrowAssembly = TryThrowAssembly,
 
         MoveToSpawn = MoveToSpawn,
+
+        GetLastDamagedBy = GetLastDamagedBy,
+        SetLastDamaged = SetLastDamaged,
     }
 end
 
