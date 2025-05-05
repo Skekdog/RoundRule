@@ -98,10 +98,6 @@ local function AddPlayer(round: Types.Round, player: Player, addAsSpectator: boo
         participant:_setStatus("Spectating")
     end
 
-    player.Destroying:Once(function()
-        round:RemoveParticipant(participant, false)
-    end)
-
     return participant
 end
 
