@@ -25,7 +25,8 @@ local function randomElementFromArray<T>(array: {T}): T?
 end
 
 function module.OnDeath(participant: Types.Participant, params: Types.DamageParams, deferVictoryCheck: boolean): ()
-    if participant.Round:IsPreGame() then
+    local round = participant.Round
+    if round:IsPreGame() then
         return rejoinRound(participant)
     end
 
@@ -42,8 +43,11 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
     local role = participant:GetRole()
     if role then
         for otherRoleName, amount in role.Definition.AwardCreditsToRolesOnDeath do
-            for _, otherParticipant in participant.Round:GetParticipantsWithRole(participant.Round:GetRoleFromRoleName(otherRoleName)) do
+            local otherRole = round:GetRoleFromRoleName(otherRoleName)
+            local otherRoleParticipants = round:GetParticipantsWithRole(otherRole)
+            for _, otherParticipant in otherRoleParticipants do
                 otherParticipant:AddCredits(amount)
+                round:SendMessage(otherParticipant.Player, `{otherRoleName}{if #otherRoleParticipants == 1 then "" else "s"}, you have been awarded {amount} credit{if amount == 1 then "" else "s"} for your work.`, "Team")
             end
         end
     end
@@ -58,7 +62,7 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
         participant:TryDropItem(v)
     end
 
-    participant.Round:AddEvent({
+    round:AddEvent({
         Kind = "DeathRoundEvent",
         Victim = participant,
     })
@@ -68,7 +72,7 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
 
     local ragdoll = MakeRagdoll(participant, corpseFolder)
     if ragdoll then
-        participant.Round:LoadProp(ragdoll, "CorpseProp")
+        round:LoadProp(ragdoll, "CorpseProp")
         ragdoll:SetAttribute("Unidentified", true)
 
         local deathSound = ragdoll:FindFirstChild("DeathSound")
@@ -77,8 +81,8 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
         end
     end
 
-    if participant.Round:IsInProgress() then
-        participant.Round.Gamemode:OnDeath(participant, deferVictoryCheck)
+    if round:IsInProgress() then
+        round.Gamemode:OnDeath(participant, deferVictoryCheck)
     end
 end
 
