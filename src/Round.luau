@@ -68,11 +68,14 @@ local function spawnParticipant(participant: Types.Participant): ()
     participant:SpawnCharacter()
 end
 
-local function AddPlayer(round: Types.Round, player: Player, addAsSpectator: boolean?): Types.Participant
+local function AddPlayer(round: Types.Round, player: Player, addAsSpectator: boolean?, karma: number?): Types.Participant
     local existingParticipant = round:GetParticipant(player.Name)
     if existingParticipant then
         if existingParticipant:GetStatus() == "Spectating" then
             assert(not addAsSpectator, "Participant already exists as spectator")
+            if karma then
+                existingParticipant:SetKarma(karma)
+            end
             spawnParticipant(existingParticipant)
             return existingParticipant
         else
@@ -82,6 +85,10 @@ local function AddPlayer(round: Types.Round, player: Player, addAsSpectator: boo
 
     local participant = Participant.new(player, round)
     round._participants[player.Name] = participant
+
+    if karma then
+        participant:SetKarma(karma)
+    end
 
     if not addAsSpectator then
         spawnParticipant(participant)

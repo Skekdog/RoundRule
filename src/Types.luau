@@ -732,7 +732,7 @@ export type Round = {
     _participants: {[string]: Participant?},
     GetParticipant: (Round, name: string) -> Participant?,
     GetParticipants: (Round) -> {[string]: Participant?},
-    AddPlayer: (Round, player: Player, addAsSpectator: boolean?) -> Participant,
+    AddPlayer: (Round, player: Player, addAsSpectator: boolean?, karma: number?) -> Participant,
     RemoveParticipant: (Round, participant: Participant, isRejoining: boolean) -> (),
 
     RoundEndMusic: {
