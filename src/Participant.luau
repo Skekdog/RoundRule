@@ -643,14 +643,16 @@ end
 local function SpawnCharacter(participant: Types.Participant): ()
     assert(not participant._isCharacterLoading, "Character is already loading")
 
-    local msg: string
-    local dmgMult = participant:GetKarmaDamageMultiplier()
-    if dmgMult == 1 then
-        msg = "Your karma is 100%. You will deal full damage this round."
-    else
-        msg = string.format("Your karma is %d. You will deal %.1f%% damage this round.", participant:GetKarma(), dmgMult * 100)
+    if participant.Round.Gamemode.EnableKarma then
+        local msg: string
+        local dmgMult = participant:GetKarmaDamageMultiplier()
+        if dmgMult == 1 then
+            msg = "Your karma is 100%. You will deal full damage this round."
+        else
+            msg = string.format("Your karma is %d. You will deal %.1f%% damage this round.", participant:GetKarma(), dmgMult * 100)
+        end
+        participant.Round:SendMessage(participant.Player, msg, "All")
     end
-    participant.Round:SendMessage(participant.Player, msg, "All")
 
     participant._isCharacterLoading = true
 
