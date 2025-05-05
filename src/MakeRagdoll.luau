@@ -119,8 +119,6 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance): Mo
 			v:Destroy()
 		elseif v:IsA("BasePart") then
 			v.CollisionGroup = "Corpses"
-		elseif v.Name == "DeathSound" and v:IsA("Sound") then
-			v:Play()
 		end
 	end
 

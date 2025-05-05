@@ -75,8 +75,8 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
         round:LoadProp(ragdoll, "CorpseProp")
         ragdoll:SetAttribute("Unidentified", true)
 
-        local deathSound = ragdoll:FindFirstChild("DeathSound")
-        if deathSound and deathSound:IsA("Sound") then
+        local deathSound = ragdoll:FindFirstChild("DeathSound", true)
+        if not params.IsHeadshot and deathSound and deathSound:IsA("Sound") then
             deathSound:Play()
         end
     end
