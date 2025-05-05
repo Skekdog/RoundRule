@@ -289,7 +289,7 @@ local function GetKarmaDamageMultiplier(participant: Types.Participant): number
 end
 
 local function IsDamageJustifiedAgainstParticipant(participant: Types.Participant, other: Types.Participant): boolean
-    return participant.Player == other.Player or participant:IsFreeKill() or participant:HasSelfDefenseAgainstParticipant(other) or not participant:IsAlliedWithParticipant(other)
+    return participant.Player == other.Player or other:IsFreeKill() or participant:HasSelfDefenseAgainstParticipant(other) or not participant:IsAlliedWithParticipant(other)
 end
 
 local function IsFreeKill(participant: Types.Participant): boolean
