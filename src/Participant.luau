@@ -882,6 +882,8 @@ function module.new(player: Player, round: Types.Round): Types.Participant
     return {
         Kind = "Participant",
 
+        DidParticipate = false,
+
         Extras = {},
 
         Player = player,

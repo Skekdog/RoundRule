@@ -86,6 +86,8 @@ local function AddPlayer(round: Types.Round, player: Player, addAsSpectator: boo
     local participant = Participant.new(player, round)
     round._participants[player.Name] = participant
 
+    participant.DidParticipate = true
+
     if karma then
         participant:SetKarma(karma)
     end
@@ -290,6 +292,10 @@ local function EndRound(round: Types.Round, victor: Types.Victor, isTimeout: boo
         Replication.AddScore(v)
         Replication.ReplicateRole("All", v, false)
         Replication.ReplicatePlayerStatus("All", v, v:GetStatus())
+
+        if v.DidParticipate and round.Gamemode.EnableKarma and not v:IsFreeKill() then
+            v:SetKarma(v:GetKarma() + 100)
+        end
     end
     
     local chosenMusic = round.Gamemode:GetRoundEndMusic(round, victor, isTimeout or false)
