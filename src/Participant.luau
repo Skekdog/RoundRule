@@ -643,6 +643,8 @@ end
 local function SpawnCharacter(participant: Types.Participant): ()
     assert(not participant._isCharacterLoading, "Character is already loading")
 
+    participant.Round:SendMessage(participant.Player, "The round will begin soon. Prepare yourself.", "All")
+
     if participant.Round.Gamemode.EnableKarma then
         local msg: string
         local dmgMult = participant:GetKarmaDamageMultiplier()
