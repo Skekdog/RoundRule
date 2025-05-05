@@ -349,8 +349,8 @@ export type MeleeWeaponDefinition = CommonWeaponDefinition & {
 
     OnHitClient: OnHitClient?,
 
-    AlternateFireServer: (item: MeleeWeapon, origin: Vector3, direction: Vector3, attacker: Participant) -> ()?,
-    AlternateFireClient: (item: MeleeWeapon, origin: Vector3, direction: Vector3) -> ()?,
+    AlternateFireServer: (item: MeleeWeapon, _: never, origin: Vector3, direction: Vector3, attacker: Participant) -> ()?,
+    AlternateFireClient: (item: MeleeWeapon, _: never, origin: Vector3, direction: Vector3) -> ()?,
     AlternateToggled: boolean?,
 }
 
