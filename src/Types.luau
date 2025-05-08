@@ -729,6 +729,8 @@ export type Round = {
     GetItems: (Round) -> {[DataModelItem]: AnyItem?},
     GetItem: (Round, part: DataModelItem) -> AnyItem?,
 
+    LoadItem: (Round, model: DataModelItem) -> ItemProp,
+
     _ammoBoxes: {[DataModelItem]: AmmoBox?},
     GetAmmoBoxes: (Round) -> {[DataModelItem]: AmmoBox?},
     GetAmmoBox: (Round, part: DataModelItem) -> AmmoBox?,

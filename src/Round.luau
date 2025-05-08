@@ -320,7 +320,7 @@ local function loadMapProp(round: Types.Round, model: Types.DataModelMapProp): T
     return prop
 end
 
-local function loadItem(round: Types.Round, model: Types.DataModelItem): Types.ItemProp
+local function LoadItem(round: Types.Round, model: Types.DataModelItem): Types.ItemProp
     local itemDefinition = round:GetItemDefinition(model.Name) or error(`Item {model.Name} does not exist in map or gamemode`)
 
     local item = Item.new(itemDefinition, model)
@@ -425,7 +425,7 @@ local function LoadProp(round: Types.Round, model: Types.DataModelProp, kind: "M
         prop = loadCorpse(round, model)
     elseif kind == "ItemProp" then
         assert(model:IsA("BasePart"), "ItemProp must be a BasePart")
-        prop = loadItem(round, model)
+        prop = round:LoadItem(model)
     elseif kind == "AmmoProp" then
         assert(model:IsA("BasePart"), "AmmoProp must be a BasePart")
         prop = loadAmmoBox(round, model)
@@ -732,6 +732,8 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         _items = {},
         GetItems = GetItems,
         GetItem = GetItem,
+
+        LoadItem = LoadItem,
 
         GetAmmoDefinition = GetAmmoDefinition,
         GetItemDefinition = GetItemDefinition,
