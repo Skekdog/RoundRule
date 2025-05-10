@@ -65,11 +65,14 @@ export type ExplosionParams = {
 export type DamageParams = {
     Amount: number,
 
+    Origin: Vector3?,
+    HitPosition: Vector3?,
+
     IsHeadshot: boolean?,
     Source: DamageSource,
 
     Attacker: Participant?,
-    
+
     IgnoreKarma: boolean?,
     IgnoreSelfDefense: boolean?,
     IgnoreScore: boolean?,
