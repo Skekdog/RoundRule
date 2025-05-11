@@ -124,7 +124,7 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance): Mo
 
 	task.spawn(function()
 		while clone.Parent do
-			for _, v in clone:GetDescendants() do
+			for _, v in clone:GetChildren() do
 				if v:IsA("BasePart") and v.Name ~= "HumanoidRootPart" then
 					v.CanCollide = true
 				end
