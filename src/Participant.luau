@@ -571,6 +571,11 @@ local function AddItem(participant: Types.Participant, item: Types.AnyItem): ()
     end
 
     participant._items[item.Definition.Name] = item
+
+    if item.Kind == "Item" and not item.Definition.Slot and item.Definition.OnEquipServer then
+        item.Definition.OnEquipServer(item, participant)
+    end
+
     Replication.UpdateInventory(participant.Player, "Add", item)
 end
 
