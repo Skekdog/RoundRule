@@ -67,6 +67,7 @@ export type DamageParams = {
 
     Origin: Vector3?,
     HitPosition: Vector3?,
+    HitPart: BasePart?,
 
     IsHeadshot: boolean?,
     Source: DamageSource,
