@@ -319,7 +319,7 @@ local function SetFreeKill(participant: Types.Participant, reason: string?): ()
     Replication.InformFreeKill(participant.Player, reason)
 end
 
-local function TryTakeDamage(participant: Types.Participant, params: Types.DamageParams, deferDeath: boolean?): boolean
+function module.TryTakeDamage(participant: Types.Participant, params: Types.DamageParams, deferDeath: boolean?): boolean
     if participant._wasDeathProcessed then
         return false
     end
@@ -989,7 +989,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         GetFormattedName = GetFormattedName,
         GetHealth = GetHealth,
         SetHealth = SetHealth,
-        TryTakeDamage = TryTakeDamage,
+        TryTakeDamage = module.TryTakeDamage,
         IsAlive = IsAlive,
         GetStatus = GetStatus,
         _setStatus = _setStatus,
