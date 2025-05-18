@@ -30,9 +30,7 @@ local remotes = script.Parent.Remotes
 local replicatedData = script.Parent.ReplicatedData
 
 function module.ReplicateRole(target: ReplicationTarget, roleOf: Types.Participant, replicateNil: boolean): ()
-	local role = roleOf:GetRole()
-	local roleName = if replicateNil or not role then nil else role.Definition.Name
-	fireToTargets(remotes.UpdatePlayerRole, target, roleOf.Player.Name, roleName)
+	fireToTargets(remotes.UpdatePlayerRole, target, roleOf.Player.Name, if replicateNil then nil else roleOf:GetRole().Definition.Name)
 end
 
 function module.ReplicatePlayerStatus(target: ReplicationTarget, statusOf: Types.Participant, status: Types.ParticipantStatus): ()

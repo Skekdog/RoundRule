@@ -48,7 +48,7 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
     end
 
     local role = participant:GetRole()
-    if role and role.Definition.AwardCreditsToRolesOnDeath then
+    if role.Definition.AwardCreditsToRolesOnDeath then
         for otherRoleName, amount in role.Definition.AwardCreditsToRolesOnDeath do
             local otherRole = round:GetRoleFromRoleName(otherRoleName)
             local otherRoleParticipants = round:GetParticipantsWithRole(otherRole)
@@ -125,7 +125,7 @@ end
 
 local function GetFormattedName(participant: Types.Participant): string
     local role = participant:GetRole()
-    if not role then
+    if role == Defaults.Role then
         return participant.Player.Name
     end
 
@@ -188,18 +188,16 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
 
             if v ~= participant then
                 local otherRole = v:GetRole()
-                if otherRole then
-                    if otherRole.Definition.RevealedRoles and table.find(otherRole.Definition.RevealedRoles, role.Name) then
-                        Replication.ReplicateRole(v.Player, participant, false)
-                    else
-                        Replication.ReplicateRole(v.Player, participant, true)
-                    end
+                if otherRole.Definition.RevealedRoles and table.find(otherRole.Definition.RevealedRoles, role.Name) then
+                    Replication.ReplicateRole(v.Player, participant, false)
+                else
+                    Replication.ReplicateRole(v.Player, participant, true)
+                end
 
-                    if role.RevealedRoles and table.find(role.RevealedRoles, otherRole.Definition.Name) then
-                        Replication.ReplicateRole(participant.Player, v, false)
-                    else
-                        Replication.ReplicateRole(participant.Player, v, true)
-                    end
+                if role.RevealedRoles and table.find(role.RevealedRoles, otherRole.Definition.Name) then
+                    Replication.ReplicateRole(participant.Player, v, false)
+                else
+                    Replication.ReplicateRole(participant.Player, v, true)
                 end
             end
         end
@@ -308,8 +306,7 @@ local function IsFreeKill(participant: Types.Participant): boolean
 
     local item = participant:GetEquippedItem()
     if item and item.Definition.IsBadGuyItem then
-        local role = participant:GetRole()
-        if not role or not role.Definition.IsBadGuys then
+        if not participant:GetRole().Definition.IsBadGuys then
             return true
         end
     end
@@ -349,10 +346,9 @@ function module.TryTakeDamage(participant: Types.Participant, params: Types.Dama
 
         damage *= attacker:GetKarmaDamageMultiplier()
 
-        local role = participant:GetRole()
-        if role and not params.IgnoreKarma then
+        if not params.IgnoreKarma then
             local karma = participant:GetKarma()
-            karma = karma + (params.Amount * (role.Definition.DamageKarmaMultiplier or 1)) * (if attacker:IsDamageJustifiedAgainstParticipant(participant) then 1 else -1)
+            karma = karma + (params.Amount * (participant:GetRole().Definition.DamageKarmaMultiplier or 1)) * (if attacker:IsDamageJustifiedAgainstParticipant(participant) then 1 else -1)
             participant:SetKarma(karma)
         end
     end
@@ -387,8 +383,7 @@ local function _setStatus(participant: Types.Participant, status: Types.Particip
     if status == "Missing" and participant.Round:IsInProgress() then
         for _, v in participant.Round:GetParticipants() do
             assert(v)
-            local role = v:GetRole()
-            if not v:IsAlive() or (role and role.Definition.CanSeeMissingInAction) then
+            if not v:IsAlive() or (v:GetRole().Definition.CanSeeMissingInAction) then
                 if v:GetStatus() == "Missing" then
                     Replication.ReplicatePlayerStatus(participant.Player, v, "Missing")
                 end
@@ -602,7 +597,7 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
     
     local role = participant:GetRole()
 
-    if not role or not role.Definition.EquipmentShop or not table.find(role.Definition.EquipmentShop, itemDefinition) then
+    if not role.Definition.EquipmentShop or not table.find(role.Definition.EquipmentShop, itemDefinition) then
         return "InvalidItemForRole"
     end
 
@@ -772,10 +767,6 @@ end
 
 local function IsAlliedWithParticipant(participant: Types.Participant, other: Types.Participant): boolean
     local role1, role2 = participant:GetRole(), other:GetRole()
-    if not role1 or not role2 then
-        return false
-    end
-
     return role1:IsAlliedWith(role2)
 end
 

@@ -105,7 +105,7 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
     round._participants[participant.Player.Name] = nil
 
     local role = participant:GetRole()
-    if role and role.Definition.ShouldAnnounceDisconnect then
+    if role.Definition.ShouldAnnounceDisconnect then
         round:SendMessage(Players:GetPlayers(), `{participant:GetFormattedName()} has disconnected. They were a {role:GetFormattedRoleName()}{role:GetExclamatoryString()}`)
     end
 
@@ -259,7 +259,7 @@ local function EndRound(round: Types.Round, victor: Types.Victor, isTimeout: boo
     if victor.Kind == "Role" then
         role = victor
     elseif victor.Kind == "Participant" then
-        role = victor:GetRole() or error("Winning Participant has no assigned role")
+        role = victor:GetRole()
     end
 
     local victorRole: Types.Role

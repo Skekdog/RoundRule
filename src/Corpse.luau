@@ -1,4 +1,5 @@
 local GetDisplayName = require(script.Parent.Common.GetDisplayName)
+local Defaults = require(script.Parent.Defaults)
 local Replication = require(script.Parent.Replication)
 local Types = require(script.Parent.Types)
 
@@ -35,8 +36,7 @@ local function UpdateKillList(corpse: Types.Corpse): ()
 end
 
 local function tryStealCredits(corpse: Types.Corpse, searcher: Types.Participant): boolean
-    local searcherRole = searcher:GetRole()
-    if not searcherRole or not searcherRole.Definition.CanStealCreditsFromCorpses then
+    if not searcher:GetRole().Definition.CanStealCreditsFromCorpses then
         return false
     end
 
@@ -65,8 +65,7 @@ local function updateCorpseForPlayer(corpse: Types.Corpse, participant: Types.Pa
         addSearchedBy(corpse, participant)
     end
 
-    local role = corpse.Participant:GetRole()
-    if participant ~= corpse.Participant and role then
+    if participant ~= corpse.Participant then
         Replication.ReplicateRole(participant.Player, corpse.Participant, false)
     end
     
@@ -80,7 +79,7 @@ local function tryNotifyCorpseFound(corpse: Types.Corpse, searcher: Types.Partic
 
     local msg = `[PLAYER-{searcher.Player.Name}] {if isFromKillList then "confirmed the death" else "found the body"} of {corpse.Participant:GetFormattedName()}.`
     local otherRole = corpse.Participant:GetRole()
-    if otherRole then
+    if otherRole ~= Defaults.Role then
         msg ..= ` They were a {otherRole:GetFormattedRoleName()}{otherRole:GetExclamatoryString()}`
     end
 
@@ -108,22 +107,11 @@ local function tryAwardScore(corpse: Types.Corpse, searcher: Types.Participant):
         return
     end
 
-    local searcherRole = searcher:GetRole()
-    if not searcherRole then
-        return
-    end
-
-    searcher:AddScore("Bodies Found", searcherRole.Definition.ScoreForFindingBodies or 0)
+    searcher:AddScore("Bodies Found", searcher:GetRole().Definition.ScoreForFindingBodies or 0)
 end
 
 local function updateCorpseInfo(corpse: Types.Corpse, searcher: Types.Participant, covert: boolean): ()
-    local shouldUpdateForAll = false
-    if not covert then
-        local searcherRole = searcher:GetRole()
-        if searcherRole then
-            shouldUpdateForAll = searcherRole.Definition.CorpseSearchResultsPublicised == true
-        end
-    end
+    local shouldUpdateForAll = not covert and searcher:GetRole().Definition.CorpseSearchResultsPublicised == true
 
     if shouldUpdateForAll then
         for _, v in searcher.Round:GetParticipants() do
