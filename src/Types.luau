@@ -156,18 +156,18 @@ export type RoleDefinition = {
     CanSeeMissingInAction: boolean?,
     CanTeamChat: boolean?,
 
-    AwardCreditsToRolesOnDeath: {[string]: number},
+    AwardCreditsToRolesOnDeath: {[string]: number}?,
 
     CorpseSearchResultsPublicised: boolean?,
     ScoreForFindingBodies: number?,
 
-    WalkSpeed: number,
-    JumpPower: number,
-    Health: number,
+    WalkSpeed: number?,
+    JumpPower: number?,
+    Health: number?,
 
-    Accessories: {string},
+    Accessories: {string}?,
 
-    DamageKarmaMultiplier: number,
+    DamageKarmaMultiplier: number?,
 
     Allies: {string}?,
     RevealedRoles: {string}?,

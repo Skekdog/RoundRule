@@ -47,7 +47,7 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
     end
 
     local role = participant:GetRole()
-    if role then
+    if role and role.Definition.AwardCreditsToRolesOnDeath then
         for otherRoleName, amount in role.Definition.AwardCreditsToRolesOnDeath do
             local otherRole = round:GetRoleFromRoleName(otherRoleName)
             local otherRoleParticipants = round:GetParticipantsWithRole(otherRole)
@@ -97,26 +97,28 @@ local function tryAssignHumanoidPropertiesForRole(humanoid: Humanoid?, role: Typ
         return
     end
 
-    humanoid.MaxHealth = role.Definition.Health
-    humanoid.Health = role.Definition.Health
+    humanoid.MaxHealth = role.Definition.Health or 100
+    humanoid.Health = role.Definition.Health or 100
 
-    humanoid.WalkSpeed = role.Definition.WalkSpeed
-    humanoid.JumpPower = role.Definition.JumpPower
+    humanoid.WalkSpeed = role.Definition.WalkSpeed or 16
+    humanoid.JumpPower = role.Definition.JumpPower or 18
 
-    for _, v in role.Definition.Accessories do
-        local id = tonumber(v:split("//")[2])
-        if not id then
-            continue
+    if role.Definition.Accessories then
+        for _, v in role.Definition.Accessories do
+            local id = tonumber(v:split("//")[2])
+            if not id then
+                continue
+            end
+
+            local success, accessory = pcall(function()
+                return InsertService:LoadAsset(id):FindFirstChildOfClass("Accessory")
+            end)
+            if not success or not accessory then
+                continue
+            end
+
+            humanoid:AddAccessory(accessory)
         end
-
-        local success, accessory = pcall(function()
-            return InsertService:LoadAsset(id):FindFirstChildOfClass("Accessory")
-        end)
-        if not success or not accessory then
-            continue
-        end
-
-        humanoid:AddAccessory(accessory)
     end
 end
 
@@ -349,7 +351,7 @@ function module.TryTakeDamage(participant: Types.Participant, params: Types.Dama
         local role = participant:GetRole()
         if role and not params.IgnoreKarma then
             local karma = participant:GetKarma()
-            karma = karma + (params.Amount * role.Definition.DamageKarmaMultiplier) * (if attacker:IsDamageJustifiedAgainstParticipant(participant) then 1 else -1)
+            karma = karma + (params.Amount * (role.Definition.DamageKarmaMultiplier or 1)) * (if attacker:IsDamageJustifiedAgainstParticipant(participant) then 1 else -1)
             participant:SetKarma(karma)
         end
     end
