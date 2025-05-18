@@ -594,7 +594,7 @@ export type Participant = {
     GetKarmaDamageMultiplier: (Participant) -> number,
 
     _role: Role?,
-    GetRole: (Participant) -> Role?,
+    GetRole: (Participant) -> Role,
     SetRole: (Participant, role: RoleDefinition?) -> (),
 
     IsAlliedWithParticipant: (Participant, other: Participant) -> boolean,

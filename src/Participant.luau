@@ -2,6 +2,7 @@ local InsertService = game:GetService("InsertService")
 local Players = game:GetService("Players")
 local AmmoBox = require(script.Parent.AmmoBox)
 local Corpse = require(script.Parent.Corpse)
+local Defaults = require(script.Parent.Defaults)
 local IsPassiveDamageSource = require(script.Parent.IsPassiveDamageSource)
 local Item = require(script.Parent.Item)
 local MakeRagdoll = require(script.Parent.MakeRagdoll)
@@ -97,11 +98,11 @@ local function tryAssignHumanoidPropertiesForRole(humanoid: Humanoid?, role: Typ
         return
     end
 
-    humanoid.MaxHealth = role.Definition.Health or 100
-    humanoid.Health = role.Definition.Health or 100
+    humanoid.MaxHealth = role.Definition.Health or Defaults.Health
+    humanoid.Health = role.Definition.Health or Defaults.Health
 
-    humanoid.WalkSpeed = role.Definition.WalkSpeed or 16
-    humanoid.JumpPower = role.Definition.JumpPower or 18
+    humanoid.WalkSpeed = role.Definition.WalkSpeed or Defaults.WalkSpeed
+    humanoid.JumpPower = role.Definition.JumpPower or Defaults.JumpPower
 
     if role.Definition.Accessories then
         for _, v in role.Definition.Accessories do
@@ -143,8 +144,8 @@ local function GetHumanoid(participant: Types.Participant): Humanoid?
     return participant._humanoid
 end
 
-local function GetRole(participant: Types.Participant): Types.Role?
-    return participant._role
+local function GetRole(participant: Types.Participant): Types.Role
+    return participant._role or Defaults.Role
 end
 
 local function SetRole(participant: Types.Participant, role: Types.RoleDefinition?): ()
@@ -153,7 +154,7 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
         Replication.ReplicateRole("All", participant, true)
         return
     end
-    
+
     participant._role = participant.Round:GetRoleFromRoleName(role.Name)
     tryAssignHumanoidPropertiesForRole(participant._humanoid, participant._role)
 
