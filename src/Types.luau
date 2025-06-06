@@ -279,8 +279,8 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
     ReloadTime: number,
     AttackInterval: number,
 
-    AttackSound: string,
-    ReloadSound: string,
+    AttackSound: Sound?,
+    ReloadSound: Sound?,
 
     Damage: DamageInfo,
 
@@ -323,7 +323,7 @@ export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
 
     FuseTime: number,
 
-    AttackSound: string,
+    AttackSound: Sound?,
 
     Projectile: BasePart,
     ProjectileForce: number,
@@ -341,7 +341,7 @@ export type MeleeWeaponDefinition = CommonWeaponDefinition & {
     AttackAnimation: string,
 
     AttackInterval: number,
-    AttackSound: string,
+    AttackSound: Sound?,
 
     Damage: DamageInfo,
 
