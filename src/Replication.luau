@@ -60,6 +60,10 @@ function module.UpdateInventory(target: ReplicationTarget, mode: "Add" | "Remove
 	fireToTargets(remotes.UpdateInventory, target, mode, item)
 end
 
+function module.DamageTaken(target: ReplicationTarget, amount: number, kind: Types.DamageSource): ()
+	fireToTargets(remotes.DamageTaken, target, amount, if typeof(kind) == "string" then kind else kind.Definition.Name)
+end
+
 function module.UpdateReserveAmmo(target: ReplicationTarget, mode: "Update" | "Reset", kind: string?, amount: number?): ()
 	if mode == "Update" then
 		assert(kind, "Kind must not be nil")

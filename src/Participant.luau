@@ -362,6 +362,7 @@ function module.TryTakeDamage(participant: Types.Participant, params: Types.Dama
     end
 
     hum:TakeDamage(damage)
+    Replication.DamageTaken(participant.Player, params.Amount, params.Source)
     if dead then
         module.OnDeath(participant, params, deferDeath or false)
     end
