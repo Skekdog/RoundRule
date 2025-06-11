@@ -163,7 +163,7 @@ local function searchAsAlive(corpse: Types.Corpse, searcher: Types.Participant, 
         return false
     end
 
-    if (searcherChar.PrimaryPart.Position - corpseChar.PrimaryPart.Position).Magnitude > 10 then
+    if (searcherChar.PrimaryPart.Position - corpseChar.PrimaryPart.Position).Magnitude > searcher.CorpseSearchDistance then
         return false
     end
 

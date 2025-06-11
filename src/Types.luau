@@ -615,7 +615,9 @@ export type Participant = {
 
     _humanoid: Humanoid?,
     GetHumanoid: (Participant) -> Humanoid?,
-    
+
+    CorpseSearchDistance: number,
+
     SpawnCharacter: (Participant) -> (),
     UnspawnCharacter: (Participant) -> (),
 
