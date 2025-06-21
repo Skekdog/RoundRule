@@ -10,6 +10,13 @@ local function destroyProp(prop: Types.MapProp, params: Types.DamageParams?): ()
     prop.Model:Destroy()
 end
 
+local function tryRunOnDamage(prop: Types.MapProp, params: Types.DamageParams?): ()
+    local onDamage = prop.Model:FindFirstChild("OnDamage")
+    if onDamage and onDamage:IsA("ModuleScript") then
+        ((require)(onDamage) :: Types.OnMapPropBreak)(prop, params)
+    end
+end
+
 local function GetHealth(prop: Types.MapProp): number?
     return prop._health
 end
@@ -29,6 +36,7 @@ local function TryTakeDamage(prop: Types.MapProp, params: Types.DamageParams, de
     end
 
     prop:SetHealth(health - params.Amount)
+    tryRunOnDamage(prop, params)
 
     if health - params.Amount <= 0 then
         if deferDeath then
