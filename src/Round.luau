@@ -566,10 +566,6 @@ local function loadItems(round: Types.Round, map: Types.Map): ()
 end
 
 local function loadAmmoBoxes(round: Types.Round, map: Types.Map): ()
-    if not map.AmmoSpawns then
-        return
-    end
-
     for _, v in map.AmmoSpawns:GetChildren() do
         if v:IsA("BasePart") then
             round:LoadProp(v, "AmmoProp")
@@ -588,7 +584,7 @@ local function loadBounds(round: Types.Round, map: Types.Map): ()
 end
 
 local function loadInteractables(round: Types.Round, map: Types.Map): ()
-    for _, v in map.Interactables:GetDescendants() do
+    for _, v in map.Interactables:GetChildren() do
         if v:IsA("BasePart") then
             loadInteractable(round, v)
         end
