@@ -55,12 +55,10 @@ local function spawnParticipant(participant: Types.Participant): ()
         local count = 0
         for _, v in round:GetParticipants() do
             assert(v)
-            if v:GetStatus() ~= "Spectating" then
-                count += 1
-                if count == round.Gamemode.MinimumPlayers then
-                    round:SetRoundPhase("Preparing", PREPARING_TIME)
-                    break
-                end
+            count += 1
+            if count == round.Gamemode.MinimumPlayers then
+                round:SetRoundPhase("Preparing", PREPARING_TIME)
+                break
             end
         end
     end
@@ -68,19 +66,10 @@ local function spawnParticipant(participant: Types.Participant): ()
     participant:SpawnCharacter()
 end
 
-local function AddPlayer(round: Types.Round, player: Player, addAsSpectator: boolean?, karma: number?): Types.Participant
+local function AddPlayer(round: Types.Round, player: Player, karma: number?): Types.Participant
     local existingParticipant = round:GetParticipant(player.Name)
     if existingParticipant then
-        if existingParticipant:GetStatus() == "Spectating" then
-            assert(not addAsSpectator, "Participant already exists as spectator")
-            if karma then
-                existingParticipant:SetKarma(karma)
-            end
-            spawnParticipant(existingParticipant)
-            return existingParticipant
-        else
-            error("Participant already exists")
-        end
+        error("Participant already exists")
     end
 
     local participant = Participant.new(player, round)
@@ -92,11 +81,7 @@ local function AddPlayer(round: Types.Round, player: Player, addAsSpectator: boo
         participant:SetKarma(karma)
     end
 
-    if not addAsSpectator then
-        spawnParticipant(participant)
-    else
-        participant:_setStatus("Spectating")
-    end
+    spawnParticipant(participant)
 
     return participant
 end
@@ -136,7 +121,6 @@ local function destroyRound(round: Types.Round): ()
     for _, v in round:GetParticipants() do
         assert(v)
         v:SetRole(nil)
-        v:_setStatus("Spectating")
         v:UnspawnCharacter()
     end
 end
@@ -225,11 +209,9 @@ local function StartRound(round: Types.Round): ()
     assert(round:IsPreGame(), "Round is not in PreGame phase")
 
     local participantList: {Types.Participant} = {}
+
     for _, v in round:GetParticipants() do
         assert(v)
-        if v:GetStatus() == "Spectating" then
-            continue
-        end
         table.insert(participantList, v)
     end
 

@@ -1,4 +1,4 @@
-export type ParticipantStatus = "Alive" | "Missing" | "Dead" | "Spectating"
+export type ParticipantStatus = "Alive" | "Missing" | "Dead"
 
 export type Victor = Participant | Role
 export type VictorType = {Kind: "Role", Role: string} | {Kind: "Solo"}
@@ -755,7 +755,7 @@ export type Round = {
     _participants: {[string]: Participant?},
     GetParticipant: (Round, name: string) -> Participant?,
     GetParticipants: (Round) -> {[string]: Participant?},
-    AddPlayer: (Round, player: Player, addAsSpectator: boolean?, karma: number?) -> Participant,
+    AddPlayer: (Round, player: Player, karma: number?) -> Participant,
     RemoveParticipant: (Round, participant: Participant, isRejoining: boolean) -> (),
 
     RoundEndMusic: {

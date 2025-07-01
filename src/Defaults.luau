@@ -20,6 +20,4 @@ module.WalkSpeed = 16
 module.JumpPower = 18
 module.Health = 100
 
-module.ParticipantStatus = "Spectating" :: Types.ParticipantStatus
-
 return module

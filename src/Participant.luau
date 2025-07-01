@@ -15,7 +15,7 @@ local module = {}
 
 local function rejoinRound(participant: Types.Participant): ()
     participant.Round:RemoveParticipant(participant, true)
-    participant.Round:AddPlayer(participant.Player, nil, participant:GetKarma())
+    participant.Round:AddPlayer(participant.Player, participant:GetKarma())
 end
 
 local function randomElementFromArray<T>(array: {T}): T?
@@ -942,7 +942,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         _karma = 1000,
         _isFreeKill = false,
 
-        _status = "Spectating",
+        _status = "Alive",
 
         _isCharacterLoading = false,
         _selfDefenseList = {},
