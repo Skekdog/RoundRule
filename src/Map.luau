@@ -75,6 +75,8 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
         Description = definition.Description,
         Authors = definition.Authors,
 
+        Folder = mapScript,
+
         MapIcons = definition.MapIcons,
 
         AvailableAmmo = definition.AvailableAmmo,

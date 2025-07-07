@@ -397,6 +397,8 @@ export type MapDefinition = {
 }
 
 export type Map = MapDefinition & {
+    Folder: ModuleScript,
+
     PlayerSpawns: Folder,
 
     TerrainRegion: TerrainRegion,
