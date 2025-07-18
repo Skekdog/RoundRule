@@ -748,6 +748,8 @@ local function UnspawnCharacter(participant: Types.Participant): ()
     participant._character = nil
     participant.Player.Character = nil
     char:Destroy()
+
+    Replication.ReplicatePlayerStatus("All", participant, nil)
 end
 
 local function SetLastDamaged(participant: Types.Participant, by: Types.Participant, duration: number): ()

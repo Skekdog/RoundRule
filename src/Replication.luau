@@ -33,7 +33,7 @@ function module.ReplicateRole(target: ReplicationTarget, roleOf: Types.Participa
 	fireToTargets(remotes.UpdatePlayerRole, target, roleOf.Player.Name, if replicateNil then nil else roleOf:GetRole().Definition.Name)
 end
 
-function module.ReplicatePlayerStatus(target: ReplicationTarget, statusOf: Types.Participant, status: Types.ParticipantStatus): ()
+function module.ReplicatePlayerStatus(target: ReplicationTarget, statusOf: Types.Participant, status: Types.ParticipantStatus?): ()
 	fireToTargets(remotes.UpdatePlayerStatus, target, statusOf.Player.Name, status)
 end
 
