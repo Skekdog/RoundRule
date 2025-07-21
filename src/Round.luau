@@ -107,6 +107,11 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
         end
     end
 
+    for _, v in participant:GetItems() do
+        assert(v)
+        participant:RemoveItem(v)
+    end
+
     if not isRejoining and count < round.Gamemode.MinimumPlayers and round:IsPreGame() then
         round:SetRoundPhase("Waiting", 0)
         assert(round._heartbeat):Disconnect()
