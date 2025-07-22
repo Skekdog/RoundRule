@@ -38,8 +38,6 @@ local function PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent:
         soundObject.SoundId = soundId
     end
 
-	soundObject.Volume = props.Volume or 0.5
-
 	if props.RollOffMinDistance then
 		soundObject.RollOffMode = Enum.RollOffMode.Linear
 		soundObject.RollOffMinDistance = props.RollOffMinDistance
