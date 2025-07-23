@@ -713,6 +713,8 @@ local function SpawnCharacter(participant: Types.Participant): ()
             local deathSound = Instance.new("Sound")
             deathSound.Name = "DeathSound"
             deathSound.SoundId = deathSoundId
+            deathSound.RollOffMinDistance = 20
+            deathSound.RollOffMaxDistance = 50
             deathSound.Parent = char.PrimaryPart
         end
     
