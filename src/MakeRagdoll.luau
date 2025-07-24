@@ -38,6 +38,8 @@ local jointInfo: {[string]: Joint} = {
 	Waist = {Kind = "Hinge", Part0 = "LowerTorso", Part1 = "UpperTorso", LowerAngle = -45, UpperAngle = 45},
 }
 
+local noCollisionLimbs = {"LeftUpperArm", "RightUpperArm", "LowerTorso", "LeftUpperLeg", "RightUpperLeg"}
+
 local function MakeRagdoll(participant: Types.Participant, parent: Instance): Model?
 	local char = participant:GetCharacter()
 	if not char then
@@ -126,7 +128,7 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance): Mo
 		while clone.Parent do
 			for _, v in clone:GetChildren() do
 				if v:IsA("BasePart") and v.Name ~= "HumanoidRootPart" then
-					v.CanCollide = true
+					v.CanCollide = not table.find(noCollisionLimbs, v.Name)
 				end
 			end
 			task.wait()
