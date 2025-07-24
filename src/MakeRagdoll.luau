@@ -15,6 +15,7 @@ type BallJoint = {
 	UpperAngle: number,
 	TwistLowerAngle: number,
 	TwistUpperAngle: number,
+	MaxFrictionTorque: number?,
 }
 
 type Joint = HingeJoint | BallJoint
@@ -34,7 +35,7 @@ local jointInfo: {[string]: Joint} = {
 	LeftShoulder = {Kind = "Ball", Part0 = "UpperTorso", Part1 = "LeftUpperArm", UpperAngle = 90, TwistLowerAngle = 45, TwistUpperAngle = 90},
 	RightShoulder = {Kind = "Ball", Part0 = "UpperTorso", Part1 = "RightUpperArm", UpperAngle = 90, TwistLowerAngle = -45, TwistUpperAngle = 90},
 
-	Neck = {Kind = "Ball", Part0 = "UpperTorso", Part1 = "Head", UpperAngle = 15, TwistLowerAngle = 15, TwistUpperAngle = 25},
+	Neck = {Kind = "Ball", Part0 = "UpperTorso", Part1 = "Head", UpperAngle = 15, TwistLowerAngle = 15, TwistUpperAngle = 25, MaxFrictionTorque = 5},
 	Waist = {Kind = "Hinge", Part0 = "LowerTorso", Part1 = "UpperTorso", LowerAngle = -45, UpperAngle = 45},
 }
 
@@ -108,6 +109,7 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance): Mo
 			ballSocketConstraint.UpperAngle = v.UpperAngle
 			ballSocketConstraint.TwistUpperAngle = v.TwistUpperAngle
 			ballSocketConstraint.TwistLowerAngle = v.TwistLowerAngle
+			ballSocketConstraint.MaxFrictionTorque = v.MaxFrictionTorque or 0
 		elseif v.Kind == "Hinge" then
 			local hingeConstraint = constraint :: HingeConstraint
 
