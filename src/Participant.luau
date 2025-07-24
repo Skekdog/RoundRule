@@ -580,6 +580,9 @@ end
 
 local function RemoveItem(participant: Types.Participant, item: Types.AnyItem): ()
     participant._items[item.Definition.Name] = nil
+    if participant:GetEquippedItem() == item then
+        participant:SetEquippedItem()
+    end
 
     if item.Kind == "Item" and not item.Definition.Slot and item.Definition.OnUnequipServer then
         item.Definition.OnUnequipServer(item, participant)
