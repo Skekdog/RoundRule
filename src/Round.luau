@@ -97,8 +97,6 @@ local function AddPlayer(round: Types.Round, player: Player, karma: number?): Ty
 end
 
 local function RemoveParticipant(round: Types.Round, participant: Types.Participant, isRejoining: boolean): ()
-    round._participants[participant.Player.Name] = nil
-
     local role = participant:GetRole()
     if role.Definition.ShouldAnnounceDisconnect then
         round:SendMessage(Players:GetPlayers(), `{participant:GetFormattedName()} has disconnected. They were a {role:GetFormattedRoleName()}{role:GetExclamatoryString()}`)
@@ -109,7 +107,7 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
         count += 1
     end
 
-    if count > 0 and participant:IsAlive() then -- check count so that error doesn't get thrown when last person disconnects
+    if participant:IsAlive() then
         participant:UnspawnCharacter()
 
         if round:IsInProgress() then
@@ -126,6 +124,8 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
         round:SetRoundPhase("Waiting", 0)
         assert(round._heartbeat):Disconnect()
     end
+
+    round._participants[participant.Player.Name] = nil
 end
 
 local function GetRoundPhase(round: Types.Round): Types.RoundPhase
