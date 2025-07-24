@@ -79,16 +79,24 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance): Mo
 			continue
 		end
 
-		constraint.Attachment0 = part0:FindFirstChild(i .. "RigAttachment", true) :: Attachment
-		(constraint.Attachment0 :: Attachment).Name = i .. "RigAttach"
+		local attachment0 = part0:FindFirstChild(i .. "RigAttachment", true)
+		if not attachment0 or not attachment0:IsA("Attachment") then
+			continue
+		end
+		constraint.Attachment0 = attachment0
+		attachment0.Name = i .. "RigAttach"
 
 		local part1 = clone:FindFirstChild(v.Part1)
 		if not part1 then
 			continue
 		end
 
-		constraint.Attachment1 = part1:FindFirstChild(i .. "RigAttachment", true) :: Attachment
-		(constraint.Attachment1 :: Attachment).Name = i .. "RigAttach"
+		local attachment1 = part1:FindFirstChild(i .. "RigAttachment", true)
+		if not attachment1 or not attachment1:IsA("Attachment") then
+			continue
+		end
+		constraint.Attachment1 = attachment1
+		attachment1.Name = i .. "RigAttach"
 
 		constraint.Name = i
 
