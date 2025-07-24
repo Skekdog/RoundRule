@@ -38,6 +38,16 @@ local function GetParticipant(round: Types.Round, name: string): Types.Participa
     return round._participants[name]
 end
 
+local function GetParticipantFromCharacter(round: Types.Round, character: Instance): Types.Participant?
+    for _, v in round._participants do
+        assert(v)
+        if v:GetCharacter() == character then
+            return v
+        end
+    end
+    return nil
+end
+
 local function GetParticipants(round: Types.Round): {[string]: Types.Participant?}
     return round._participants
 end
@@ -751,6 +761,8 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         EndRound = EndRound,
         GetRoleFromRoleName = GetRoleFromRoleName,
         GetParticipantsWithRole = GetParticipantsWithRole,
+
+        GetParticipantFromCharacter = GetParticipantFromCharacter,
 
         GetProps = GetProps,
         GetProp = GetProp,

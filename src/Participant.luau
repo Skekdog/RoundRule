@@ -61,9 +61,6 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
 
     participant:_setStatus("Missing")
 
-    local corpse = Corpse.new(participant, params)
-    participant._corpse = corpse
-
     for _, v in participant:GetItems() do
         assert(v)
         participant:TryDropItem(v)
@@ -87,6 +84,9 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
             deathSound:Play()
         end
     end
+
+    local corpse = Corpse.new(participant, params, ragdoll)
+    participant._corpse = corpse
 
     if round:IsInProgress() then
         round.Gamemode:OnDeath(participant, deferVictoryCheck)
@@ -741,9 +741,10 @@ end
 local function UnspawnCharacter(participant: Types.Participant): ()
     assert(not participant._isCharacterLoading, "Character is loading")
 
-    local char = participant:GetCharacter()
+    local corpse = participant:GetCorpse()
+    local char = participant:GetCharacter() or if corpse then corpse.Model else nil
     if not char then
-        return
+        return print("no char", corpse)
     end
 
     for _, v in participant:GetItems() do

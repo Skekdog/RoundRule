@@ -760,6 +760,8 @@ export type Round = {
     AddPlayer: (Round, player: Player, karma: number?) -> Participant,
     RemoveParticipant: (Round, participant: Participant, isRejoining: boolean) -> (),
 
+    GetParticipantFromCharacter: (Round, character: Instance) -> Participant?,
+
     RoundEndMusic: {
         Music: Sound,
         StartedAt: number,

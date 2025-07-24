@@ -128,7 +128,7 @@ end
 local function tryMarkIdentified(corpse: Types.Corpse, searcher: Types.Participant): ()
     corpse.Participant:_setStatus("Dead")
 
-    local char = corpse.Participant:GetCharacter()
+    local char = corpse.Model
     if char then
         char:SetAttribute("Unidentified", false)
     end
@@ -158,7 +158,7 @@ local function searchAsAlive(corpse: Types.Corpse, searcher: Types.Participant, 
         return false
     end
 
-    local corpseChar = corpse.Participant:GetCharacter()
+    local corpseChar = corpse.Model
     if not corpseChar or not corpseChar.PrimaryPart then
         return false
     end
@@ -202,7 +202,7 @@ local function Search(corpse: Types.Corpse, searcher: Types.Participant, covert:
     return searchAsSpectator(corpse, searcher)
 end
 
-function module.new(participant: Types.Participant, params: Types.DamageParams): Types.Corpse
+function module.new(participant: Types.Participant, params: Types.DamageParams, ragdoll: Model?): Types.Corpse
     local selfDefense: boolean?
     if not params.IgnoreSelfDefense and params.Attacker then
         selfDefense = params.Attacker:HasSelfDefenseAgainstParticipant(participant)
@@ -241,6 +241,8 @@ function module.new(participant: Types.Participant, params: Types.DamageParams):
 
     return {
         Participant = participant,
+
+        Model = ragdoll,
 
         CorpseView = corpseView,
         WasCorrectKill = if params.Attacker then params.Attacker:IsDamageJustifiedAgainstParticipant(participant) else nil,
