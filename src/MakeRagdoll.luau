@@ -127,7 +127,7 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance): Mo
 
 	clone.Parent = parent
 	for _, v in clone:GetDescendants() do
-		if v:IsA("Motor6D") or v:IsA("BaseScript") or v:IsA("Fire") then
+		if v:IsA("Motor6D") or v:IsA("BaseScript") or v:IsA("Fire") or (v.Name == "Item" and v.Parent == clone) then
 			v:Destroy()
 		elseif v:IsA("BasePart") and not v:FindFirstAncestorOfClass("Accessory") then
 			v.CollisionGroup = "Corpses"
