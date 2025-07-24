@@ -1,4 +1,3 @@
-local GetDisplayName = require(script.Parent.Common.GetDisplayName)
 local Defaults = require(script.Parent.Defaults)
 local Replication = require(script.Parent.Replication)
 local Types = require(script.Parent.Types)
@@ -208,7 +207,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams, 
         selfDefense = params.Attacker:HasSelfDefenseAgainstParticipant(participant)
     end
 
-    local source: Types.NamedDamageSource = if typeof(params.Source) == "table" then GetDisplayName(params.Source.Definition) else params.Source
+    local source: Types.NamedDamageSource = if typeof(params.Source) == "table" then params.Source.Definition.Name else params.Source
 
     local equipmentList: {string} = {}
     for i in participant:GetItems() do
