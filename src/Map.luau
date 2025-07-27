@@ -20,7 +20,7 @@ local function validateMapIcons(mapIcons: any): ()
     assert(mapIcons["1:1"] == nil or typeof(mapIcons["1:1"]) == "string", 'MapIcons["1:1"] must be a string')
 end
 
-local function validateDefinition(definition: any): Types.MapDefinition
+function module.ValidateDefinition(definition: any): Types.MapDefinition
     assert(typeof(definition) == "table", "MapDefinition must be a table")
 
     assert(typeof(definition.Name) == "string", "Name must be a string")
@@ -48,7 +48,7 @@ end
 
 function module.fromModuleScript(mapScript: ModuleScript): Types.Map
     local maybeDefinition: unknown = (require)(mapScript)
-    local definition = validateDefinition(maybeDefinition)
+    local definition = module.ValidateDefinition(maybeDefinition)
 
     local playerSpawns = waitForFolder(mapScript, "PlayerSpawns")
     local staticMap = waitForFolder(mapScript, "StaticMap")
