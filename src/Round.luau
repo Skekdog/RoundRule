@@ -643,6 +643,16 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
         materialVariants.Name = "MapMaterialVariants"
         materialVariants.Parent = MaterialService
 
+        for _, v in map.PlayerSpawns:GetChildren() do
+            if v:IsA("BasePart") then
+                v.Transparency = 1
+                v.CanCollide = false
+                v.CanQuery = false
+                v.CanTouch = false
+                v.Anchored = true
+            end
+        end
+
         loadBounds(round, map)
 
         mapScript.Name = "Map"
