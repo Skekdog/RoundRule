@@ -54,7 +54,6 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
     local staticMap = waitForFolder(mapScript, "StaticMap")
 
     local lightingModifiers = waitForFolder(mapScript, "LightingModifiers")
-    local futureLightingModifiers = waitForFolder(mapScript, "FutureLightingModifiers")
 
     local bounds = waitForFolder(mapScript, "Bounds")
 
@@ -87,10 +86,8 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
         Gravity = definition.Gravity,
 
         LightingSettings = definition.LightingSettings,
-        FutureLightingSettings = definition.FutureLightingSettings,
 
         LightingModifiers = lightingModifiers,
-        FutureLightingModifiers = futureLightingModifiers,
 
         TerrainColors = definition.TerrainColors,
         WaterSettings = definition.WaterSettings,

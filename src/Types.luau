@@ -390,7 +390,6 @@ export type MapDefinition = {
     Gravity: number,
 
     LightingSettings: {[string]: any},
-    FutureLightingSettings: {[string]: any},
 
     WaterSettings: {[string]: any},
     TerrainColors: {[string]: any},
@@ -406,8 +405,7 @@ export type Map = MapDefinition & {
     Bounds: Folder,
 
     LightingModifiers: Folder,
-    FutureLightingModifiers: Folder,
-    
+
     DynamicMap: Folder,
     Props: Folder,
     Windows: Folder,
