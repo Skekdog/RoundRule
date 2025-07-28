@@ -619,7 +619,7 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
 
         for i, v in map.WaterSettings do
             if not table.find(knownWaterSettings, i) then
-                table.insert(knownWaterSettings, v)
+                table.insert(knownWaterSettings, i)
             end
             (workspace.Terrain :: any)[i] = v
         end
