@@ -322,10 +322,15 @@ local function LoadItem(round: Types.Round, model: Types.DataModelItem): Types.I
 
     local item = Item.new(itemDefinition, model)
     round._items[model] = item
-    
+
     model:SetAttribute("AmmoType", if item.Kind == "Gun" then item.Definition.AmmoType.Name else nil)
     model:SetAttribute("StoredAmmo", if item.Kind == "Gun" then item.Ammo else nil)
     model.CollisionGroup = "DroppedItems"
+
+    model.Anchored = false
+    model.CanCollide = true
+    model.CanTouch = true
+    model.CanQuery = true
 
     model.Touched:Connect(function(touchPart)
         local touchModel = touchPart:FindFirstAncestorOfClass("Model")
@@ -362,6 +367,11 @@ local function loadAmmoBox(round: Types.Round, model: Types.DataModelAmmo): Type
     model:SetAttribute("AmmoType", ammoBox.Definition.Name)
     model:SetAttribute("StoredAmmo", ammoBox.Ammo)
     model.CollisionGroup = "DroppedItems"
+
+    model.Anchored = false
+    model.CanCollide = true
+    model.CanTouch = true
+    model.CanQuery = true
 
     model.Touched:Connect(function(touchPart)
         local touchModel = touchPart:FindFirstAncestorOfClass("Model")
