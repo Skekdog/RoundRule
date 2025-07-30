@@ -426,7 +426,8 @@ export type Role = {
     GetFormattedString: (Role, str: string) -> string,
 }
 
-export type OnMapPropBreak = (prop: MapProp, params: DamageParams?) -> () 
+export type OnMapPropBreak = (prop: MapProp, params: DamageParams) -> ()
+export type OnMapPropDamage = (prop: MapProp, params: DamageParams) -> boolean?
 
 export type RoundEvent = {
     Timestamp: number,

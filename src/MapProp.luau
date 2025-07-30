@@ -1,7 +1,7 @@
 local Types = require(script.Parent.Types)
 local module = {}
 
-local function destroyProp(prop: Types.MapProp, params: Types.DamageParams?): ()
+local function destroyProp(prop: Types.MapProp, params: Types.DamageParams): ()
     local onBreak = prop.Model:FindFirstChild("OnBreak")
     if onBreak and onBreak:IsA("ModuleScript") then
         ((require)(onBreak) :: Types.OnMapPropBreak)(prop, params)
@@ -10,11 +10,12 @@ local function destroyProp(prop: Types.MapProp, params: Types.DamageParams?): ()
     prop.Model:Destroy()
 end
 
-local function tryRunOnDamage(prop: Types.MapProp, params: Types.DamageParams?): ()
+local function tryRunOnDamage(prop: Types.MapProp, params: Types.DamageParams): boolean?
     local onDamage = prop.Model:FindFirstChild("OnDamage")
     if onDamage and onDamage:IsA("ModuleScript") then
-        ((require)(onDamage) :: Types.OnMapPropBreak)(prop, params)
+        return ((require)(onDamage) :: Types.OnMapPropBreak)(prop, params)
     end
+    return true
 end
 
 local function GetHealth(prop: Types.MapProp): number?
@@ -35,8 +36,12 @@ local function TryTakeDamage(prop: Types.MapProp, params: Types.DamageParams, de
         return false
     end
 
+    local canDamage = tryRunOnDamage(prop, params)
+    if canDamage == false then -- if nil we still want to deal damage
+        return false
+    end
+
     prop:SetHealth(health - params.Amount)
-    tryRunOnDamage(prop, params)
 
     if health - params.Amount <= 0 then
         if deferDeath then
