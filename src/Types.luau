@@ -683,7 +683,7 @@ export type Participant = {
     GetHealth: (Participant) -> number,
     SetHealth: (Participant, health: number) -> (),
 
-    MoveToSpawn: (Participant) -> (),
+    MoveToSpawn: (Participant, spawnCFrame: CFrame?) -> (),
 
     TryThrowAssembly: (Participant, assemblyRoot: BasePart, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?) -> boolean,
 }

@@ -652,18 +652,21 @@ local function onCharacterPartAdded(part: Instance): ()
     part.CollisionGroup = "PlayerCharacterParts"
 end
 
-local function MoveToSpawn(participant: Types.Participant): ()
+local function MoveToSpawn(participant: Types.Participant, spawnCFrame: CFrame?): ()
     local char = participant:GetCharacter()
     if not char then
         return
     end
 
-    local spawns = participant.Round:GetMap().PlayerSpawns:GetChildren()
-    local chosenSpawn = spawns[math.random(#spawns)]
+    if not spawnCFrame then
+        local spawns = participant.Round:GetMap().PlayerSpawns:GetChildren()
+        local chosenSpawn = spawns[math.random(#spawns)]
 
-    assert(chosenSpawn, "No spawn found")
-    assert(chosenSpawn:IsA("BasePart"), "Spawn must be a BasePart")
-    char:PivotTo(chosenSpawn:GetPivot())
+        assert(chosenSpawn, "No spawn found")
+        assert(chosenSpawn:IsA("BasePart"), "Spawn must be a BasePart")
+        spawnCFrame = chosenSpawn.CFrame
+    end
+    char:PivotTo(assert(spawnCFrame))
 end
 
 local function SpawnCharacter(participant: Types.Participant): ()
