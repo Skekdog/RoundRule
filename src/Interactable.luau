@@ -54,6 +54,7 @@ function module.new(definition: Types.InteractableDefinition, object: BasePart?)
 	return {
 		Kind = "Interactable",
 		Definition = definition,
+		HintTextClient = definition.DefaultHintText,
 		Object = object,
 		Extras = {},
 
