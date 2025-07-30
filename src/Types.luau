@@ -180,6 +180,8 @@ export type InteractableDefinition = {
 
     NoActionHint: boolean?,
 
+    DefaultHintText: string?,
+
     Model: BasePart,
 
     IsContinuousInteraction: boolean,
