@@ -1,3 +1,4 @@
+local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 local CreateEmptyPart = require(script.Parent.CreateEmptyPart)
 
@@ -15,8 +16,13 @@ local module = {}
 
 module.DefaultSoundGroup = nil :: SoundGroup?
 
-function module.PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent: Instance?, props: SoundProperties?): Sound
+function module.PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent: Instance?, props: SoundProperties?, to: Player?): Sound
 	assert(not parent or not position, "Position and parent are mutually exclusive")
+
+	if to then
+		assert(RunService:IsServer(), "to must only be specified on the server")
+		script.Parent.Parent.Remotes.PlaySound:FireClient(to, sound, position, parent, props)
+	end
 
 	props = props or {}
 	assert(props)
@@ -96,8 +102,8 @@ function module.PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent
 end
 
 setmetatable(module, {
-	__call = function(self, sound: SoundId | {SoundId}, position: Vector3?, parent: Instance?, props: SoundProperties?): Sound
-		return module.PlaySound(sound, position, parent, props)
+	__call = function(self, sound: SoundId | {SoundId}, position: Vector3?, parent: Instance?, props: SoundProperties?, to: Player?): Sound
+		return module.PlaySound(sound, position, parent, props, to)
 	end
 })
 
