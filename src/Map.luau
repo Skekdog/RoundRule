@@ -73,6 +73,7 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
         DisplayName = definition.DisplayName,
         Description = definition.Description,
         Authors = definition.Authors,
+        Extras = definition.Extras or {},
 
         Folder = mapScript,
 

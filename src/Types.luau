@@ -378,6 +378,8 @@ export type MapDefinition = {
     Description: string,
     Authors: string,
 
+    Extras: Extras?,
+
     MapIcons: {
         ["16:9"]: string?,
         ["4:3"]: string?,
@@ -399,6 +401,7 @@ export type MapDefinition = {
 
 export type Map = MapDefinition & {
     Folder: ModuleScript,
+    Extras: Extras,
 
     PlayerSpawns: Folder,
 
