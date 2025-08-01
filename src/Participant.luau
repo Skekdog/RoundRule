@@ -319,6 +319,10 @@ local function SetFreeKill(participant: Types.Participant, reason: string?): ()
     Replication.InformFreeKill(participant.Player, reason)
 end
 
+local function IsBadGuy(participant: Types.Participant): boolean
+    return participant:GetRole().Definition.IsBadGuys or false
+end
+
 function module.TryTakeDamage(participant: Types.Participant, params: Types.DamageParams, deferDeath: boolean?): boolean
     if participant._wasDeathProcessed then
         return false
@@ -992,6 +996,8 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         SetRole = SetRole,
 
         GetCorpse = GetCorpse,
+
+        IsBadGuy = IsBadGuy,
 
         IsFreeKill = IsFreeKill,
         SetFreeKill = SetFreeKill,

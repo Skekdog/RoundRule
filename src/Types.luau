@@ -600,6 +600,8 @@ export type Participant = {
     GetRole: (Participant) -> Role,
     SetRole: (Participant, role: RoleDefinition?) -> (),
 
+    IsBadGuy: (Participant) -> boolean,
+
     IsAlliedWithParticipant: (Participant, other: Participant) -> boolean,
     IsDamageJustifiedAgainstParticipant: (Participant, other: Participant) -> boolean,
 
