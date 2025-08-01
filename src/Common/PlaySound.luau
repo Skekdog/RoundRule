@@ -11,7 +11,11 @@ export type SoundProperties = {
 	PlaybackRegion: NumberRange?,
 }
 
-local function PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent: Instance?, props: SoundProperties?): Sound
+local module = {}
+
+module.DefaultSoundGroup = nil :: SoundGroup?
+
+function module.PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent: Instance?, props: SoundProperties?): Sound
 	assert(not parent or not position, "Position and parent are mutually exclusive")
 
 	props = props or {}
@@ -52,7 +56,9 @@ local function PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent:
 		soundObject.Volume = props.Volume
 	end
 
-	if props.SoundGroup then
+	if module.DefaultSoundGroup and not props.SoundGroup then
+		soundObject.SoundGroup = props.SoundGroup
+	elseif props.SoundGroup then
 		soundObject.SoundGroup = props.SoundGroup
 	end
 
@@ -89,4 +95,10 @@ local function PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent:
 	return soundObject
 end
 
-return PlaySound
+setmetatable(module, {
+	__call = function(self, sound: SoundId | {SoundId}, position: Vector3?, parent: Instance?, props: SoundProperties?): Sound
+		return module.PlaySound(sound, position, parent, props)
+	end
+})
+
+return module
