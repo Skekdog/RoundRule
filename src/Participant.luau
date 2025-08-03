@@ -59,8 +59,6 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
         end
     end
 
-    participant:_setStatus("Missing")
-
     for _, v in participant:GetItems() do
         assert(v)
         participant:TryDropItem(v)
@@ -84,6 +82,8 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
             deathSound:Play()
         end
     end
+
+    participant:_setStatus("Missing")
 
     local corpse = Corpse.new(participant, params, ragdoll)
     participant._corpse = corpse
