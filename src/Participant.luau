@@ -651,6 +651,8 @@ local function onCharacterPartAdded(part: Instance): ()
         part.CanTouch = false
         part.CanQuery = false
         return
+    elseif part.Name == "Head" then
+        part.CanCollide = true
     end
 
     part.CollisionGroup = "PlayerCharacterParts"
