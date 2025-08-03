@@ -10,20 +10,15 @@ export type SoundProperties = {
 	RollOffMaxDistance: number?,
 	SoundGroup: SoundGroup?,
 	PlaybackRegion: NumberRange?,
+	TimePosition: number?,
+	Looped: boolean?,
 }
 
 local module = {}
 
 module.DefaultSoundGroup = nil :: SoundGroup?
 
-function module.PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent: Instance?, props: SoundProperties?, to: Player?): Sound
-	assert(not parent or not position, "Position and parent are mutually exclusive")
-
-	if to then
-		assert(RunService:IsServer(), "to must only be specified on the server")
-		script.Parent.Parent.Remotes.PlaySound:FireClient(to, sound, position, parent, props)
-	end
-
+function module.MakeSound(sound: SoundId | {SoundId}, props: SoundProperties?): Sound
 	props = props or {}
 	assert(props)
 
@@ -73,7 +68,28 @@ function module.PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent
 		soundObject.PlaybackRegion = props.PlaybackRegion
 	end
 
+	if props.TimePosition then
+		soundObject.TimePosition = props.TimePosition
+	end
+
+	if props.Looped then
+		soundObject.Looped = true
+	end
+
 	soundObject.PlayOnRemove = false
+
+	return soundObject
+end
+
+function module.PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent: Instance?, props: SoundProperties?, to: Player?): Sound
+	assert(not parent or not position, "Position and parent are mutually exclusive")
+
+	if to then
+		assert(RunService:IsServer(), "to must only be specified on the server")
+		script.Parent.Parent.Remotes.PlaySound:FireClient(to, sound, position, parent, props)
+	end
+
+	local soundObject = module.MakeSound(sound, props)
 
 	if parent then
 		soundObject.Parent = parent
