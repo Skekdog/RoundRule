@@ -152,7 +152,7 @@ local function GetRole(participant: Types.Participant): Types.Role
     return participant._role or Defaults.Role
 end
 
-local function SetRole(participant: Types.Participant, role: Types.RoleDefinition?): ()
+function module.SetRole(participant: Types.Participant, role: Types.RoleDefinition?): ()
     if not role then
         participant._role = nil
         Replication.ReplicateRole("All", participant, true)
@@ -999,7 +999,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         GetHumanoid = GetHumanoid,
 
         GetRole = GetRole,
-        SetRole = SetRole,
+        SetRole = module.SetRole,
 
         GetCorpse = GetCorpse,
 
