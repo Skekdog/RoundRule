@@ -201,7 +201,7 @@ local function Search(corpse: Types.Corpse, searcher: Types.Participant, covert:
     return searchAsSpectator(corpse, searcher)
 end
 
-function module.new(participant: Types.Participant, params: Types.DamageParams, ragdoll: Model?): Types.Corpse
+function module.new(participant: Types.Participant, params: Types.DamageParams, ragdoll: Model?, freeKill: boolean?): Types.Corpse
     local selfDefense: boolean?
     if not params.IgnoreSelfDefense and params.Attacker then
         selfDefense = params.Attacker:HasSelfDefenseAgainstParticipant(participant)
@@ -226,7 +226,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams, 
 
         AdditionalIcons = participant:GetAdditionalCorpseIcons(),
 
-        WasFreeKill = participant:IsFreeKill(), 
+        WasFreeKill = if freeKill == nil then participant:IsFreeKill() else freeKill, 
         WasHeadshot = params.IsHeadshot,
         WasSelfDefense = selfDefense,
 

@@ -59,6 +59,10 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
         end
     end
 
+    local isFreeKill = participant:IsFreeKill()
+    -- important to do here, otherwise someone holding a free kill item will not be a free kill
+    -- because now the item is unequipped.
+
     for _, v in participant:GetItems() do
         assert(v)
         participant:TryDropItem(v)
@@ -85,7 +89,7 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
 
     participant:_setStatus("Missing")
 
-    local corpse = Corpse.new(participant, params, ragdoll)
+    local corpse = Corpse.new(participant, params, ragdoll, isFreeKill)
     participant._corpse = corpse
 
     if round:IsInProgress() then
