@@ -765,7 +765,7 @@ local function UnspawnCharacter(participant: Types.Participant): ()
     Replication.ReplicatePlayerStatus("All", participant, nil)
 end
 
-local function SetLastDamaged(participant: Types.Participant, by: Types.Participant, duration: number): ()
+local function SetLastDamagedBy(participant: Types.Participant, by: Types.Participant, duration: number): ()
     participant._lastDamaged = {
         By = by,
         ExpiresAt = workspace:GetServerTimeNow() + duration,
@@ -1022,7 +1022,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         MoveToSpawn = MoveToSpawn,
 
         GetLastDamagedBy = GetLastDamagedBy,
-        SetLastDamaged = SetLastDamaged,
+        SetLastDamagedBy = SetLastDamagedBy,
     }
 end
 

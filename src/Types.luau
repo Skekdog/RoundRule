@@ -637,7 +637,7 @@ export type Participant = {
     HasSelfDefenseAgainstParticipant: (Participant, against: Participant) -> boolean,
 
     _lastDamaged: ParticipantLastDamaged?,
-    SetLastDamaged: (Participant, by: Participant, duration: number) -> (),
+    SetLastDamagedBy: (Participant, by: Participant, duration: number) -> (),
     GetLastDamagedBy: (Participant) -> Participant?,
 
     KillList: {Participant},
