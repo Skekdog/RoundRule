@@ -29,6 +29,12 @@ export type RunOnHitClient = (item: AnyWeapon, participant: Participant, hitPart
 
 export type Extras = {[any]: any}
 
+export type RoundHighlight = {
+    Title: string,
+    Description: string,
+    Priority: number,
+}
+
 export type ExplosionInfo = {
     Damage: number,
     FalloffBegin: number,
@@ -776,6 +782,10 @@ export type Round = {
     _eventLog: {RoundEvent},
     AddEvent: (Round, data: RoundEventData) -> (),
     GetEventLog: (Round) -> {RoundEvent},
+
+    _roundHighlights: {RoundHighlight},
+    AddRoundHighlight: (Round, roundHighlight: RoundHighlight) -> (),
+    GetRoundHighlights: (Round) -> {RoundHighlight},
 
     ElapsedPhaseTime: number,
     _heartbeat: RBXScriptConnection?,

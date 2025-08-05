@@ -145,6 +145,15 @@ function module.AddScore(participant: Types.Participant): ()
 	value.Parent = replicatedData.Scores
 end
 
+function module.AddRoundHighlight(roundHighlight: Types.RoundHighlight): ()
+	local value = Instance.new("StringValue")
+	value.Name = roundHighlight.Title
+	value.Value = roundHighlight.Description
+	value:SetAttribute("Priority", roundHighlight.Priority)
+
+	value.Parent = replicatedData.Highlights
+end
+
 function module.ClearEvents(): ()
 	replicatedData.Events:ClearAllChildren()
 end
