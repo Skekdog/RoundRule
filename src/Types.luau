@@ -588,8 +588,7 @@ export type Participant = {
 
     DidParticipate: boolean,
 
-    _slayVotes: {Participant},
-    GetSlayVotes: (Participant) -> {Participant},
+    SlayVotes: {Participant},
     TryAddSlayVote: (Participant, participant: Participant) -> boolean,
 
     TryPlayAnimation: (Participant, id: number, name: string) -> (),

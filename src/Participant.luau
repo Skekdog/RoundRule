@@ -798,10 +798,6 @@ local function IsAlliedWithParticipant(participant: Types.Participant, other: Ty
     return role1:IsAlliedWith(role2)
 end
 
-local function GetSlayVotes(participant: Types.Participant): {Types.Participant}
-    return participant._slayVotes
-end
-
 local function AddCorpseIcon(participant: Types.Participant, icon: Types.CorpseIcon): ()
     local toRemove: number?
     for i, v in participant._additionalCorpseIcons do
@@ -840,7 +836,7 @@ local function TryAddSlayVote(participant: Types.Participant, other: Types.Parti
         return false
     end
 
-    if table.find(participant:GetSlayVotes(), other) then
+    if table.find(participant.SlayVotes, other) then
         return false
     end
 
@@ -853,9 +849,9 @@ local function TryAddSlayVote(participant: Types.Participant, other: Types.Parti
         return false
     end
 
-    table.insert(participant._slayVotes, other)
+    table.insert(participant.SlayVotes, other)
 
-    if #participant._slayVotes >= participant.Round.Gamemode.RequiredSlayVotes then
+    if #participant.SlayVotes >= participant.Round.Gamemode.RequiredSlayVotes then
         trySlay(participant)
     end
 
@@ -962,8 +958,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         TryPlayAnimation = TryPlayAnimation,
         TryStopAnimation = TryStopAnimation,
 
-        _slayVotes = {},
-        GetSlayVotes = GetSlayVotes,
+        SlayVotes = {},
         TryAddSlayVote = TryAddSlayVote,
 
         _karma = 1000,
