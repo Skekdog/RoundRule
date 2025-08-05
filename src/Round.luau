@@ -219,7 +219,7 @@ local function IsPaused(round: Types.Round): boolean
     return round._isPaused
 end
 
-local function PauseRound(round: Types.Round, paused: boolean): ()
+local function Pause(round: Types.Round, paused: boolean): ()
     round._isPaused = paused
     Replication.ReplicateRoundPause(paused)
 end
@@ -781,7 +781,7 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         GetRoundPhase = GetRoundPhase,
         SetRoundPhase = SetRoundPhase,
         IsPaused = IsPaused,
-        PauseRound = PauseRound,
+        Pause = Pause,
         StartRound = StartRound,
         EndRound = EndRound,
         GetRoleFromRoleName = GetRoleFromRoleName,

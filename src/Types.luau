@@ -797,7 +797,7 @@ export type Round = {
     IsInProgress: (Round) -> boolean,
 
     _isPaused: boolean,
-    PauseRound: (Round, paused: boolean) -> (),
+    Pause: (Round, paused: boolean) -> (),
     IsPaused: (Round) -> boolean,
 
     StartRound: (Round) -> (),
