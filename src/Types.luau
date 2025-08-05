@@ -434,7 +434,7 @@ export type Role = {
     IsAlliedWith: (Role, other: Role) -> boolean,
     GetFormattedName: (Role) -> string,
     GetExclamatoryString: (Role) -> string,
-    GetFormattedString: (Role, str: string) -> string,
+    FormatString: (Role, str: string) -> string,
 }
 
 export type OnMapPropBreak = (prop: MapProp, params: DamageParams) -> ()

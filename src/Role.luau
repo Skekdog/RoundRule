@@ -2,12 +2,12 @@ local GetDisplayName = require(script.Parent.Common.GetDisplayName)
 local Types = require(script.Parent.Types)
 local module = {}
 
-local function GetFormattedString(role: Types.Role, str: string): string
+local function FormatString(role: Types.Role, str: string): string
     return `<font color="#{role.Definition.Color:ToHex()}">{str}</font>`
 end
 
 local function GetFormattedName(role: Types.Role): string
-    return role:GetFormattedString(GetDisplayName(role.Definition))
+    return role:FormatString(GetDisplayName(role.Definition))
 end
 
 local function GetExclamatoryString(role: Types.Role): string
@@ -25,7 +25,7 @@ function module.fromDefinition(roleDefinition: Types.RoleDefinition): Types.Role
 
         GetFormattedName = GetFormattedName,
         GetExclamatoryString = GetExclamatoryString,
-        GetFormattedString = GetFormattedString,
+        FormatString = FormatString,
         IsAlliedWith = IsAlliedWith,
     }
 end
