@@ -592,10 +592,6 @@ local function GetItems(participant: Types.Participant): {[string]: Types.AnyIte
     return participant._items
 end
 
-local function GetItemPurchases(participant: Types.Participant): Types.ItemPurchases
-    return participant._itemPurchases
-end
-
 local function PurchaseItem(participant: Types.Participant, itemDefinition: Types.AnyItemDefinition): Types.ItemPurchaseResult
     if participant:GetStatus() ~= "Alive" then
         return "NotInRound"
@@ -613,7 +609,7 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
         return "NotEnoughCredits"
     end
 
-    if (participant._itemPurchases[itemDefinition.Name] or 0) >= (itemDefinition.MaxStock or math.huge) then
+    if (participant.ItemPurchases[itemDefinition.Name] or 0) >= (itemDefinition.MaxStock or math.huge) then
         return "NotInStock"
     end
 
@@ -622,7 +618,7 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
     end
 
     participant:SetCredits(participant:GetCredits() - itemDefinition.CreditCost)
-    participant._itemPurchases[itemDefinition.Name] = (participant._itemPurchases[itemDefinition.Name] or 0) + 1
+    participant.ItemPurchases[itemDefinition.Name] = (participant.ItemPurchases[itemDefinition.Name] or 0) + 1
 
     local item = participant:GiveItemFromItemDefinition(itemDefinition)
 
@@ -956,7 +952,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         Scores = {},
 
         _credits = 0,
-        _itemPurchases = {},
+        ItemPurchases = {},
         _items = {},
         _ammo = {},
 
@@ -1012,7 +1008,6 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         RemoveItem = RemoveItem,
         DropItem = module.DropItem,
         GetItems = GetItems,
-        GetItemPurchases = GetItemPurchases,
         PurchaseItem = PurchaseItem,
         IsItemSlotOccupied = IsItemSlotOccupied,
         TryDropItem = TryDropItem,

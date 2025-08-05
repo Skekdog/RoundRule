@@ -675,8 +675,7 @@ export type Participant = {
     GetAllAmmo: (Participant) -> {[string]: number},
     HasWeaponOfAmmoType: (Participant, ammoType: string) -> boolean,
 
-    _itemPurchases: ItemPurchases,
-    GetItemPurchases: (Participant) -> ItemPurchases,
+    ItemPurchases: ItemPurchases,
     PurchaseItem: (Participant, itemDefinition: AnyItemDefinition) -> ItemPurchaseResult,
 
     _status: ParticipantStatus,
