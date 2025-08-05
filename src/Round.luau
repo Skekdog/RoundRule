@@ -152,7 +152,7 @@ local function setAdvanceTime(round: Types.Round, duration: number, callback: ()
 
     round.ElapsedPhaseTime = 0
     round._heartbeat = RunService.Heartbeat:Connect(function(dt)
-        if round:GetIsRoundPaused() then
+        if round:IsPaused() then
             wasPaused = true
             return
         end
@@ -215,7 +215,7 @@ local function AddHighlight(round: Types.Round, roundHighlight: Types.Highlight)
     table.insert(round.Highlights, roundHighlight)
 end
 
-local function GetIsRoundPaused(round: Types.Round): boolean
+local function IsPaused(round: Types.Round): boolean
     return round._isPaused
 end
 
@@ -780,7 +780,7 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         RemoveParticipant = RemoveParticipant,
         GetRoundPhase = GetRoundPhase,
         SetRoundPhase = SetRoundPhase,
-        GetIsRoundPaused = GetIsRoundPaused,
+        IsPaused = IsPaused,
         PauseRound = PauseRound,
         StartRound = StartRound,
         EndRound = EndRound,
@@ -797,7 +797,7 @@ function module.new(gamemode: Types.Gamemode): Types.Round
     }
 
     Replication.ReplicateRoundPhase(round:GetRoundPhase())
-    Replication.ReplicateRoundPause(round:GetIsRoundPaused())
+    Replication.ReplicateRoundPause(round:IsPaused())
     Replication.ReplicateGamemode(gamemode)
 
     Replication.Reset()
