@@ -640,9 +640,8 @@ export type Participant = {
     SetLastDamaged: (Participant, by: Participant, duration: number) -> (),
     GetLastDamagedBy: (Participant) -> Participant?,
 
-    _killList: {Participant},
+    KillList: {Participant},
     _addToKillList: (Participant, toAdd: Participant) -> (),
-    GetKillList: (Participant) -> {Participant},
 
     _scores: ScoreTable,
     GetScores: (Participant) -> ScoreTable,

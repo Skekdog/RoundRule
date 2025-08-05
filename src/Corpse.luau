@@ -17,7 +17,7 @@ end
 
 local function generateKillList(participant: Types.Participant): {string}
     local killList: {string} = {}
-    for _, v in participant:GetKillList() do
+    for _, v in participant.KillList do
         table.insert(killList, v:GetFormattedName())
     end
     return killList
@@ -134,7 +134,7 @@ local function tryMarkIdentified(corpse: Types.Corpse, searcher: Types.Participa
 end
 
 local function tryConfirmKillList(corpse: Types.Corpse, searcher: Types.Participant): ()
-    for _, v in corpse.Participant:GetKillList() do
+    for _, v in corpse.Participant.KillList do
         if v:GetStatus() ~= "Missing" then
             continue
         end

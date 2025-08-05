@@ -400,13 +400,9 @@ local function _setStatus(participant: Types.Participant, status: Types.Particip
     end
 end
 
-local function GetKillList(participant: Types.Participant): {Types.Participant}
-    return participant._killList
-end
-
 local function _addToKillList(participant: Types.Participant, toAdd: Types.Participant): ()
-    assert(not table.find(participant._killList, toAdd), "Participant already on kill list")
-    table.insert(participant._killList, toAdd)
+    assert(not table.find(participant.KillList, toAdd), "Participant already on kill list")
+    table.insert(participant.KillList, toAdd)
 
     local corpse = participant.Corpse
     if not corpse then
@@ -832,7 +828,7 @@ local function TryAddSlayVote(participant: Types.Participant, other: Types.Parti
         return false
     end
 
-    if not table.find(participant:GetKillList(), other) then
+    if not table.find(participant.KillList, other) then
         return false
     end
 
@@ -960,7 +956,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
 
         _isCharacterLoading = false,
         _selfDefenseList = {},
-        _killList = {},
+        KillList = {},
         _scores = {},
 
         _credits = 0,
@@ -1008,7 +1004,6 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         IsAlive = IsAlive,
         GetStatus = GetStatus,
         _setStatus = _setStatus,
-        GetKillList = GetKillList,
         _addToKillList = _addToKillList,
         GetScores = GetScores,
         AddScore = AddScore,
