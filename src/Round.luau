@@ -34,17 +34,17 @@ local function IsPostGame(round: Types.Round): boolean
     return round:GetRoundPhase() == "Highlights" or round:GetRoundPhase() == "Intermission"
 end
 
-local function GetParticipant(round: Types.Round, name: string): Types.Participant?
-    return round._participants[name]
-end
+local function GetParticipant(round: Types.Round, identifier: string | Player | Model): Types.Participant?
+    if typeof(identifier) == "string" then
+        return round._participants[identifier]
+    end
 
-local function GetParticipantFromCharacter(round: Types.Round, character: Instance): Types.Participant?
-    for _, v in round._participants do
-        assert(v)
-        if v:GetCharacter() == character then
+    for _, v in round:GetParticipants() do
+        if identifier:IsA("Player") and v.Player == identifier or identifier:IsA("Model") and v:GetCharacter() == identifier then
             return v
         end
     end
+
     return nil
 end
 
@@ -786,8 +786,6 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         EndRound = EndRound,
         GetRoleFromRoleName = GetRoleFromRoleName,
         GetParticipantsWithRole = GetParticipantsWithRole,
-
-        GetParticipantFromCharacter = GetParticipantFromCharacter,
 
         GetProps = GetProps,
         GetProp = GetProp,

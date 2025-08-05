@@ -767,12 +767,10 @@ export type Round = {
     AddInteractable: (Round, definition: InteractableDefinition, object: DataModelInteractable?) -> Interactable,
 
     _participants: {[string]: Participant?},
-    GetParticipant: (Round, name: string) -> Participant?,
+    GetParticipant: (Round, identifier: string | Player | Model) -> Participant?,
     GetParticipants: (Round) -> {[string]: Participant},
     AddPlayer: (Round, player: Player, karma: number?) -> Participant,
     RemoveParticipant: (Round, participant: Participant, isRejoining: boolean) -> (),
-
-    GetParticipantFromCharacter: (Round, character: Instance) -> Participant?,
 
     RoundEndMusic: {
         Music: Sound,
