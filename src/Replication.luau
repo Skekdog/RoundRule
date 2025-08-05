@@ -145,7 +145,7 @@ function module.AddScore(participant: Types.Participant): ()
 	value.Parent = replicatedData.Scores
 end
 
-function module.AddRoundHighlight(roundHighlight: Types.RoundHighlight): ()
+function module.AddHighlight(roundHighlight: Types.Highlight): ()
 	local value = Instance.new("StringValue")
 	value.Name = roundHighlight.Title
 	value.Value = roundHighlight.Description

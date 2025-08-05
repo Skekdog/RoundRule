@@ -211,12 +211,12 @@ local function GetEventLog(round: Types.Round): {Types.RoundEvent}
     return round._eventLog
 end
 
-local function AddRoundHighlight(round: Types.Round, roundHighlight: Types.RoundHighlight): ()
-    table.insert(round._roundHighlights, roundHighlight)
+local function AddHighlight(round: Types.Round, roundHighlight: Types.Highlight): ()
+    table.insert(round.Highlights, roundHighlight)
 end
 
-local function GetRoundHighlights(round: Types.Round): {Types.RoundHighlight}
-    return round._roundHighlights
+local function GetHighlights(round: Types.Round): {Types.Highlight}
+    return round.Highlights
 end
 
 local function GetIsRoundPaused(round: Types.Round): boolean
@@ -288,8 +288,8 @@ local function EndRound(round: Types.Round, victor: Types.Victor, isTimeout: boo
         Replication.AddEvent(v)
     end
 
-    for _, v in round:GetRoundHighlights() do
-        Replication.AddRoundHighlight(v)
+    for _, v in round:GetHighlights() do
+        Replication.AddHighlight(v)
     end
 
     for _, v in round:GetParticipants() do
@@ -779,9 +779,9 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         AddEvent = AddEvent,
         GetEventLog = GetEventLog,
 
-        _roundHighlights = {},
-        AddRoundHighlight = AddRoundHighlight,
-        GetRoundHighlights = GetRoundHighlights,
+        Highlights = {},
+        AddHighlight = AddHighlight,
+        GetHighlights = GetHighlights,
 
         GetExclamatoryString = GetExclamatoryString,
 
