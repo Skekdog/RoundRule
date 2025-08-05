@@ -79,7 +79,7 @@ local function tryNotifyCorpseFound(corpse: Types.Corpse, searcher: Types.Partic
     local msg = `[PLAYER-{searcher.Player.Name}] {if isFromKillList then "confirmed the death" else "found the body"} of {corpse.Participant:GetFormattedName()}.`
     local otherRole = corpse.Participant:GetRole()
     if otherRole ~= Defaults.Role then
-        msg ..= ` They were a {otherRole:GetFormattedRoleName()}{otherRole:GetExclamatoryString()}`
+        msg ..= ` They were a {otherRole:GetFormattedName()}{otherRole:GetExclamatoryString()}`
     end
 
     searcher.Round:SendMessage(searcher.Player, msg)

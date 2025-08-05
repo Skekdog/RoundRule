@@ -6,7 +6,7 @@ local function GetFormattedString(role: Types.Role, str: string): string
     return `<font color="#{role.Definition.Color:ToHex()}">{str}</font>`
 end
 
-local function GetFormattedRoleName(role: Types.Role): string
+local function GetFormattedName(role: Types.Role): string
     return role:GetFormattedString(GetDisplayName(role.Definition))
 end
 
@@ -23,7 +23,7 @@ function module.fromDefinition(roleDefinition: Types.RoleDefinition): Types.Role
         Kind = "Role",
         Definition = roleDefinition,
 
-        GetFormattedRoleName = GetFormattedRoleName,
+        GetFormattedName = GetFormattedName,
         GetExclamatoryString = GetExclamatoryString,
         GetFormattedString = GetFormattedString,
         IsAlliedWith = IsAlliedWith,

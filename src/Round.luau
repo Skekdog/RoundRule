@@ -99,7 +99,7 @@ end
 local function RemoveParticipant(round: Types.Round, participant: Types.Participant, isRejoining: boolean): ()
     local role = participant:GetRole()
     if role.Definition.ShouldAnnounceDisconnect then
-        round:SendMessage(Players:GetPlayers(), `{participant:GetFormattedName()} has disconnected. They were a {role:GetFormattedRoleName()}{role:GetExclamatoryString()}`)
+        round:SendMessage(Players:GetPlayers(), `{participant:GetFormattedName()} has disconnected. They were a {role:GetFormattedName()}{role:GetExclamatoryString()}`)
     end
 
     local count = 0
