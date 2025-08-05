@@ -184,7 +184,7 @@ local function SetPhase(round: Types.Round, phase: Types.Phase, duration: number
     elseif phase == "Playing" then
         callback = function(): ()
             local victors = round.Gamemode:TimeoutVictor(round)
-            round:End(victors, true)
+            round:Finish(victors, true)
         end
     elseif phase == "Highlights" then
         callback = function(): ()
@@ -253,7 +253,7 @@ local function _start(round: Types.Round): ()
     round.Gamemode:AssignRoles(participantList)
 end
 
-local function End(round: Types.Round, victor: Types.Victor, isTimeout: boolean?): ()
+local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boolean?): ()
     assert(round:IsInProgress(), "Round is not in Playing phase")
 
     local role: Types.Role
@@ -783,7 +783,7 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         IsPaused = IsPaused,
         Pause = Pause,
         _start = _start,
-        End = End,
+        Finish = Finish,
         GetRoleFromRoleName = GetRoleFromRoleName,
         GetParticipantsWithRole = GetParticipantsWithRole,
 
