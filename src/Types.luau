@@ -91,7 +91,7 @@ export type DamageInfo = number | {
     Limb: number,
 }
 
-export type RoundPhase = "Waiting" | "Preparing" | "Playing" | "Highlights" | "Intermission"
+export type Phase = "Waiting" | "Preparing" | "Playing" | "Highlights" | "Intermission"
 
 export type DataModelMapProp = BasePart
 export type DataModelItem = BasePart
@@ -786,9 +786,9 @@ export type Round = {
 
     ElapsedPhaseTime: number,
     _heartbeat: RBXScriptConnection?,
-    _roundPhase: RoundPhase,
-    GetRoundPhase: (Round) -> RoundPhase,
-    SetRoundPhase: (Round, phase: RoundPhase, duration: number) -> (),
+    _roundPhase: Phase,
+    GetPhase: (Round) -> Phase,
+    SetPhase: (Round, phase: Phase, duration: number) -> (),
 
     IsPreGame: (Round) -> boolean,
     IsPostGame: (Round) -> boolean,

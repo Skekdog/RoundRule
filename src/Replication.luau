@@ -91,7 +91,7 @@ function module.ReplicateAdvanceTime(target: number?): ()
 	replicatedData:SetAttribute("AdvanceTime", target)
 end
 
-function module.ReplicateRoundPhase(target: Types.RoundPhase): ()
+function module.ReplicateRoundPhase(target: Types.Phase): ()
 	replicatedData:SetAttribute("Phase", target)
 end
 

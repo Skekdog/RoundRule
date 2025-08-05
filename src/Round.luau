@@ -23,15 +23,15 @@ local PREPARING_TIME = 20
 local currentMap: Types.Map?
 
 local function IsPreGame(round: Types.Round): boolean
-    return round:GetRoundPhase() == "Waiting" or round:GetRoundPhase() == "Preparing"
+    return round:GetPhase() == "Waiting" or round:GetPhase() == "Preparing"
 end
 
 local function IsInProgress(round: Types.Round): boolean
-    return round:GetRoundPhase() == "Playing"
+    return round:GetPhase() == "Playing"
 end
 
 local function IsPostGame(round: Types.Round): boolean
-    return round:GetRoundPhase() == "Highlights" or round:GetRoundPhase() == "Intermission"
+    return round:GetPhase() == "Highlights" or round:GetPhase() == "Intermission"
 end
 
 local function GetParticipant(round: Types.Round, identifier: string | Player | Model): Types.Participant?
@@ -67,7 +67,7 @@ local function spawnParticipant(participant: Types.Participant): ()
             assert(v)
             count += 1
             if count == round.Gamemode.MinimumPlayers then
-                round:SetRoundPhase("Preparing", PREPARING_TIME)
+                round:SetPhase("Preparing", PREPARING_TIME)
                 break
             end
         end
@@ -121,14 +121,14 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
     end
 
     if not isRejoining and count < round.Gamemode.MinimumPlayers and round:IsPreGame() then
-        round:SetRoundPhase("Waiting", 0)
+        round:SetPhase("Waiting", 0)
         assert(round._heartbeat):Disconnect()
     end
 
     round._participants[participant.Player.Name] = nil
 end
 
-local function GetRoundPhase(round: Types.Round): Types.RoundPhase
+local function GetPhase(round: Types.Round): Types.Phase
     return round._roundPhase
 end
 
@@ -171,7 +171,7 @@ local function setAdvanceTime(round: Types.Round, duration: number, callback: ()
     end)
 end
 
-local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase, duration: number): ()
+local function SetPhase(round: Types.Round, phase: Types.Phase, duration: number): ()
     round._roundPhase = phase
 
     local callback: (() -> ()) | false
@@ -188,7 +188,7 @@ local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase, durati
         end
     elseif phase == "Highlights" then
         callback = function(): ()
-            round:SetRoundPhase("Intermission", 0)
+            round:SetPhase("Intermission", 0)
             destroyRound(round)
         end
     elseif phase == "Intermission" then
@@ -247,7 +247,7 @@ local function _start(round: Types.Round): ()
     })
 
     Replication.ReplicateStartTime(workspace:GetServerTimeNow())
-    round:SetRoundPhase("Playing", round.Gamemode.Duration(#participantList))
+    round:SetPhase("Playing", round.Gamemode.Duration(#participantList))
 
     Random.new():Shuffle(participantList)
     round.Gamemode:AssignRoles(participantList)
@@ -309,7 +309,7 @@ local function EndRound(round: Types.Round, victor: Types.Victor, isTimeout: boo
     end
 
     Replication.ReplicateWinner(victor)
-    round:SetRoundPhase("Highlights", HIGHLIGHTS_TIME)
+    round:SetPhase("Highlights", HIGHLIGHTS_TIME)
 end
 
 local function GetProps(round: Types.Round): {[Types.DataModelProp]: Types.Prop}
@@ -778,8 +778,8 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         GetParticipants = GetParticipants,
         AddPlayer = AddPlayer,
         RemoveParticipant = RemoveParticipant,
-        GetRoundPhase = GetRoundPhase,
-        SetRoundPhase = SetRoundPhase,
+        GetPhase = GetPhase,
+        SetPhase = SetPhase,
         IsPaused = IsPaused,
         Pause = Pause,
         _start = _start,
@@ -794,7 +794,7 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         SendMessage = SendMessage,
     }
 
-    Replication.ReplicateRoundPhase(round:GetRoundPhase())
+    Replication.ReplicateRoundPhase(round:GetPhase())
     Replication.ReplicateRoundPause(round:IsPaused())
     Replication.ReplicateGamemode(gamemode)
 
