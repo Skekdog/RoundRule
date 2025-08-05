@@ -129,7 +129,7 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
 end
 
 local function GetPhase(round: Types.Round): Types.Phase
-    return round._roundPhase
+    return round._phase
 end
 
 local function destroyRound(round: Types.Round): ()
@@ -172,7 +172,7 @@ local function setAdvanceTime(round: Types.Round, duration: number, callback: ()
 end
 
 local function SetPhase(round: Types.Round, phase: Types.Phase, duration: number): ()
-    round._roundPhase = phase
+    round._phase = phase
 
     local callback: (() -> ()) | false
     if phase == "Waiting" then
@@ -738,7 +738,7 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         ElapsedPhaseTime = 0,
 
         _participants = {},
-        _roundPhase = "Waiting",
+        _phase = "Waiting",
         _isPaused = false,
 
         _eventLog = {},

@@ -786,7 +786,7 @@ export type Round = {
 
     ElapsedPhaseTime: number,
     _heartbeat: RBXScriptConnection?,
-    _roundPhase: Phase,
+    _phase: Phase,
     GetPhase: (Round) -> Phase,
     SetPhase: (Round, phase: Phase, duration: number) -> (),
 
