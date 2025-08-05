@@ -1,5 +1,5 @@
 local Types = require(script.Parent.Types)
-local function GetEventString(event: Types.RoundEvent): string
+local function GetEventString(event: Types.Event): string
     local data = event.Data
     if data.Kind == "StartRoundEvent" then
         return "The round begins."

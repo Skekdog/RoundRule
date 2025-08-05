@@ -116,7 +116,7 @@ function module.ReplicateMap(): ()
 	fireToTargets(remotes.MapLoaded, "All")
 end
 
-function module.AddEvent(event: Types.RoundEvent): ()
+function module.AddEvent(event: Types.Event): ()
 	local value = Instance.new("StringValue")
 	value.Name = tostring(event.Timestamp)
 	value.Value = EventStrings(event)

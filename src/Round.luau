@@ -207,7 +207,7 @@ local function AddEvent(round: Types.Round, data: Types.RoundEventData): ()
     })
 end
 
-local function GetEventLog(round: Types.Round): {Types.RoundEvent}
+local function GetEventLog(round: Types.Round): {Types.Event}
     return round._eventLog
 end
 

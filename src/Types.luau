@@ -440,7 +440,7 @@ export type Role = {
 export type OnMapPropBreak = (prop: MapProp, params: DamageParams) -> ()
 export type OnMapPropDamage = (prop: MapProp, params: DamageParams) -> boolean?
 
-export type RoundEvent = {
+export type Event = {
     Timestamp: number,
     Data: RoundEventData,
 }
@@ -771,9 +771,9 @@ export type Round = {
         StartedAt: number,
     }?,
 
-    _eventLog: {RoundEvent},
+    _eventLog: {Event},
     AddEvent: (Round, data: RoundEventData) -> (),
-    GetEventLog: (Round) -> {RoundEvent},
+    GetEventLog: (Round) -> {Event},
 
     Highlights: {Highlight},
     AddHighlight: (Round, roundHighlight: Highlight) -> (),
