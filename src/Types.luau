@@ -746,21 +746,21 @@ export type Round = {
     GetMap: (Round) -> Map,
 
     _items: {[DataModelItem]: AnyItem?},
-    GetItems: (Round) -> {[DataModelItem]: AnyItem?},
+    GetItems: (Round) -> {[DataModelItem]: AnyItem},
     GetItem: (Round, part: DataModelItem) -> AnyItem?,
 
     LoadItem: (Round, model: DataModelItem) -> ItemProp,
 
     _ammoBoxes: {[DataModelItem]: AmmoBox?},
-    GetAmmoBoxes: (Round) -> {[DataModelItem]: AmmoBox?},
+    GetAmmoBoxes: (Round) -> {[DataModelItem]: AmmoBox},
     GetAmmoBox: (Round, part: DataModelItem) -> AmmoBox?,
 
     _interactables: {[DataModelInteractable]: Interactable?},
-    GetInteractables: (Round) -> {[DataModelInteractable]: Interactable?},
+    GetInteractables: (Round) -> {[DataModelInteractable]: Interactable},
     GetInteractable: (Round, part: DataModelInteractable) -> Interactable?,
 
     _props: {[DataModelProp]: Prop?},
-    GetProps: (Round) -> {[DataModelProp]: Prop?},
+    GetProps: (Round) -> {[DataModelProp]: Prop},
     GetProp: (Round, model: DataModelProp) -> Prop?,
     LoadProp: (Round, model: DataModelProp, kind: "MapProp" | "CorpseProp" | "ItemProp" | "AmmoProp") -> Prop,
 
@@ -768,7 +768,7 @@ export type Round = {
 
     _participants: {[string]: Participant?},
     GetParticipant: (Round, name: string) -> Participant?,
-    GetParticipants: (Round) -> {[string]: Participant?},
+    GetParticipants: (Round) -> {[string]: Participant},
     AddPlayer: (Round, player: Player, karma: number?) -> Participant,
     RemoveParticipant: (Round, participant: Participant, isRejoining: boolean) -> (),
 

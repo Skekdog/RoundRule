@@ -48,8 +48,8 @@ local function GetParticipantFromCharacter(round: Types.Round, character: Instan
     return nil
 end
 
-local function GetParticipants(round: Types.Round): {[string]: Types.Participant?}
-    return round._participants
+local function GetParticipants(round: Types.Round): {[string]: Types.Participant}
+    return round._participants :: {[string]: Types.Participant}
 end
 
 local function spawnParticipant(participant: Types.Participant): ()
@@ -316,8 +316,8 @@ local function EndRound(round: Types.Round, victor: Types.Victor, isTimeout: boo
     round:SetRoundPhase("Highlights", HIGHLIGHTS_TIME)
 end
 
-local function GetProps(round: Types.Round): {[Types.DataModelProp]: Types.Prop?}
-    return round._props
+local function GetProps(round: Types.Round): {[Types.DataModelProp]: Types.Prop}
+    return round._props :: {[Types.DataModelProp]: Types.Prop}
 end
 
 local function GetProp(round: Types.Round, model: Types.DataModelProp): Types.Prop?
@@ -456,24 +456,24 @@ local function LoadProp(round: Types.Round, model: Types.DataModelProp, kind: "M
     return prop
 end
 
-local function GetItems(round: Types.Round): {[Types.DataModelItem]: Types.AnyItem?}
-    return round._items
+local function GetItems(round: Types.Round): {[Types.DataModelItem]: Types.AnyItem}
+    return round._items :: {[Types.DataModelItem]: Types.AnyItem}
 end
 
 local function GetItem(round: Types.Round, model: Types.DataModelItem): Types.AnyItem?
     return round._items[model]
 end
 
-local function GetAmmoBoxes(round: Types.Round): {[Types.DataModelItem]: Types.AmmoBox?}
-    return round._ammoBoxes
+local function GetAmmoBoxes(round: Types.Round): {[Types.DataModelItem]: Types.AmmoBox}
+    return round._ammoBoxes :: {[Types.DataModelItem]: Types.AmmoBox}
 end
 
 local function GetAmmoBox(round: Types.Round, model: Types.DataModelItem): Types.AmmoBox?
     return round._ammoBoxes[model]
 end
 
-local function GetInteractables(round: Types.Round): {[Types.DataModelInteractable]: Types.Interactable?}
-    return round._interactables
+local function GetInteractables(round: Types.Round): {[Types.DataModelInteractable]: Types.Interactable}
+    return round._interactables :: {[Types.DataModelInteractable]: Types.Interactable}
 end
 
 local function GetInteractable(round: Types.Round, model: Types.DataModelInteractable): Types.Interactable?
