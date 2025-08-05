@@ -785,7 +785,6 @@ export type Round = {
 
     Highlights: {Highlight},
     AddHighlight: (Round, roundHighlight: Highlight) -> (),
-    GetHighlights: (Round) -> {Highlight},
 
     ElapsedPhaseTime: number,
     _heartbeat: RBXScriptConnection?,

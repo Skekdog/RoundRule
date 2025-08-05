@@ -215,10 +215,6 @@ local function AddHighlight(round: Types.Round, roundHighlight: Types.Highlight)
     table.insert(round.Highlights, roundHighlight)
 end
 
-local function GetHighlights(round: Types.Round): {Types.Highlight}
-    return round.Highlights
-end
-
 local function GetIsRoundPaused(round: Types.Round): boolean
     return round._isPaused
 end
@@ -288,7 +284,7 @@ local function EndRound(round: Types.Round, victor: Types.Victor, isTimeout: boo
         Replication.AddEvent(v)
     end
 
-    for _, v in round:GetHighlights() do
+    for _, v in round.Highlights do
         Replication.AddHighlight(v)
     end
 
@@ -713,10 +709,6 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
     Replication.ReplicateMap()
 end
 
-local function GetExclamatoryString(role: Types.RoleDefinition): string
-    return if role.IsExclamatory then "!" else "."
-end
-
 local function SendMessage(round: Types.Round, to: {Player} | Player, message: string, kind: Types.MessageKind?): ()
     if typeof(to) == "Instance" then
         to = {to}
@@ -781,9 +773,6 @@ function module.new(gamemode: Types.Gamemode): Types.Round
 
         Highlights = {},
         AddHighlight = AddHighlight,
-        GetHighlights = GetHighlights,
-
-        GetExclamatoryString = GetExclamatoryString,
 
         GetParticipant = GetParticipant,
         GetParticipants = GetParticipants,
