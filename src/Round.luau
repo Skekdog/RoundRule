@@ -179,7 +179,7 @@ local function SetRoundPhase(round: Types.Round, phase: Types.RoundPhase, durati
         callback = false
     elseif phase == "Preparing" then
         callback = function()
-            round:StartRound()
+            round:_start()
         end
     elseif phase == "Playing" then
         callback = function(): ()
@@ -224,7 +224,7 @@ local function Pause(round: Types.Round, paused: boolean): ()
     Replication.ReplicateRoundPause(paused)
 end
 
-local function StartRound(round: Types.Round): ()
+local function _start(round: Types.Round): ()
     assert(round:IsPreGame(), "Round is not in PreGame phase")
 
     local participantList: {Types.Participant} = {}
@@ -782,7 +782,7 @@ function module.new(gamemode: Types.Gamemode): Types.Round
         SetRoundPhase = SetRoundPhase,
         IsPaused = IsPaused,
         Pause = Pause,
-        StartRound = StartRound,
+        _start = _start,
         EndRound = EndRound,
         GetRoleFromRoleName = GetRoleFromRoleName,
         GetParticipantsWithRole = GetParticipantsWithRole,
