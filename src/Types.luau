@@ -4,7 +4,7 @@ export type Victor = Participant | Role
 export type VictorType = {Kind: "Role", Role: string} | {Kind: "Solo"}
 
 export type ScoreTable = {[string]: number?}
-export type EquipmentPurchases = {[string]: number?}
+export type ItemPurchases = {[string]: number?}
 
 export type ItemPurchaseResult = "Success" | "NotEnoughCredits" | "SlotOccupied" | "NotInStock" | "InvalidItemForRole" | "NotInRound"
 
@@ -675,8 +675,8 @@ export type Participant = {
     GetAllAmmo: (Participant) -> {[string]: number},
     HasWeaponOfAmmoType: (Participant, ammoType: string) -> boolean,
 
-    _itemPurchases: EquipmentPurchases,
-    GetItemPurchases: (Participant) -> EquipmentPurchases,
+    _itemPurchases: ItemPurchases,
+    GetItemPurchases: (Participant) -> ItemPurchases,
     PurchaseItem: (Participant, itemDefinition: AnyItemDefinition) -> ItemPurchaseResult,
 
     _status: ParticipantStatus,

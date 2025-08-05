@@ -592,7 +592,7 @@ local function GetItems(participant: Types.Participant): {[string]: Types.AnyIte
     return participant._items
 end
 
-local function GetItemPurchases(participant: Types.Participant): Types.EquipmentPurchases
+local function GetItemPurchases(participant: Types.Participant): Types.ItemPurchases
     return participant._itemPurchases
 end
 
