@@ -412,15 +412,11 @@ local function _addToKillList(participant: Types.Participant, toAdd: Types.Parti
     corpse:UpdateKillList()
 end
 
-local function GetScores(participant: Types.Participant): Types.ScoreTable
-    return participant._scores
-end
-
 local function AddScore(participant: Types.Participant, reason: string, amount: number): ()
     if amount == 0 then
         return
     end
-    participant._scores[reason] = (participant._scores[reason] or 0) + amount
+    participant.Scores[reason] = (participant.Scores[reason] or 0) + amount
 end
 
 local function GetCredits(participant: Types.Participant): number
@@ -957,7 +953,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         _isCharacterLoading = false,
         _selfDefenseList = {},
         KillList = {},
-        _scores = {},
+        Scores = {},
 
         _credits = 0,
         _itemPurchases = {},
@@ -1005,7 +1001,6 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         GetStatus = GetStatus,
         _setStatus = _setStatus,
         _addToKillList = _addToKillList,
-        GetScores = GetScores,
         AddScore = AddScore,
         GetCredits = GetCredits,
         SetCredits = SetCredits,

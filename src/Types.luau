@@ -643,8 +643,7 @@ export type Participant = {
     KillList: {Participant},
     _addToKillList: (Participant, toAdd: Participant) -> (),
 
-    _scores: ScoreTable,
-    GetScores: (Participant) -> ScoreTable,
+    Scores: ScoreTable,
     AddScore: (Participant, reason: string, amount: number) -> (),
 
     _credits: number,

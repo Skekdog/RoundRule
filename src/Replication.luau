@@ -137,7 +137,7 @@ function module.AddScore(participant: Types.Participant): ()
 	local value = Instance.new("StringValue")
 	value.Name = participant.Player.Name
 	
-	for reason, score in participant:GetScores() do
+	for reason, score in participant.Scores do
 		assert(score)
 		value:SetAttribute(reason:gsub(" ", "_"), score)
 	end
