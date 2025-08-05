@@ -90,7 +90,7 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
     participant:_setStatus("Missing")
 
     local corpse = Corpse.new(participant, params, ragdoll, isFreeKill)
-    participant._corpse = corpse
+    participant.Corpse = corpse
 
     if round:IsInProgress() then
         round.Gamemode:OnDeath(participant, deferVictoryCheck)
@@ -138,10 +138,6 @@ end
 
 local function GetCharacter(participant: Types.Participant): Model?
     return participant._character
-end
-
-local function GetCorpse(participant: Types.Participant): Types.Corpse?
-    return participant._corpse
 end
 
 local function GetHumanoid(participant: Types.Participant): Humanoid?
@@ -412,7 +408,7 @@ local function _addToKillList(participant: Types.Participant, toAdd: Types.Parti
     assert(not table.find(participant._killList, toAdd), "Participant already on kill list")
     table.insert(participant._killList, toAdd)
 
-    local corpse = participant:GetCorpse()
+    local corpse = participant.Corpse
     if not corpse then
         return
     end
@@ -758,7 +754,7 @@ end
 local function UnspawnCharacter(participant: Types.Participant): ()
     assert(not participant._isCharacterLoading, "Character is loading")
 
-    local corpse = participant:GetCorpse()
+    local corpse = participant.Corpse
     local char = participant:GetCharacter() or if corpse then corpse.Model else nil
     if not char then
         return print("no char", corpse)
@@ -844,7 +840,7 @@ local function TryAddSlayVote(participant: Types.Participant, other: Types.Parti
         return false
     end
 
-    local corpse = other:GetCorpse()
+    local corpse = other.Corpse
     if not corpse or corpse.WasCorrectKill ~= false then
         return false
     end
@@ -995,8 +991,6 @@ function module.new(player: Player, round: Types.Round): Types.Participant
 
         GetRole = GetRole,
         SetRole = module.SetRole,
-
-        GetCorpse = GetCorpse,
 
         IsBadGuy = IsBadGuy,
 

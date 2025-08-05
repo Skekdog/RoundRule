@@ -122,7 +122,7 @@ function module.AddEvent(event: Types.RoundEvent): ()
 	value.Value = EventStrings(event)
 
 	if event.Data.Kind == "DeathRoundEvent" then
-		local corpse = event.Data.Victim:GetCorpse()
+		local corpse = event.Data.Victim.Corpse
 		assert(corpse, "Victim has no corpse")
 
 		value:SetAttribute("WasSelfDefense", corpse.CorpseView.WasSelfDefense)

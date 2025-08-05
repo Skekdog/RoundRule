@@ -615,8 +615,7 @@ export type Participant = {
 
     GetFormattedName: (Participant) -> string,
 
-    _corpse: Corpse?,
-    GetCorpse: (Participant) -> Corpse?,
+    Corpse: Corpse?,
 
     _additionalCorpseIcons: {CorpseIcon},
     AddCorpseIcon: (Participant, icon: CorpseIcon) -> (),

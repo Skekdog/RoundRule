@@ -139,7 +139,7 @@ local function tryConfirmKillList(corpse: Types.Corpse, searcher: Types.Particip
             continue
         end
 
-        local otherCorpse = v:GetCorpse()
+        local otherCorpse = v.Corpse
         if not otherCorpse then
             continue
         end
