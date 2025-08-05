@@ -617,9 +617,8 @@ export type Participant = {
 
     Corpse: Corpse?,
 
-    _additionalCorpseIcons: {CorpseIcon},
+    ExtraCorpseIcons: {CorpseIcon},
     AddCorpseIcon: (Participant, icon: CorpseIcon) -> (),
-    GetAdditionalCorpseIcons: (Participant) -> {CorpseIcon},
 
     _isCharacterLoading: boolean,
     _character: Model?,

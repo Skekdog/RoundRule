@@ -224,7 +224,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams, 
         Name = participant.Player.Name,
         UserId = participant.Player.UserId,
 
-        AdditionalIcons = participant:GetAdditionalCorpseIcons(),
+        AdditionalIcons = participant.ExtraCorpseIcons,
 
         WasFreeKill = if freeKill == nil then participant:IsFreeKill() else freeKill, 
         WasHeadshot = params.IsHeadshot,

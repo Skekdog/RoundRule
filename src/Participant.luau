@@ -796,7 +796,7 @@ end
 
 local function AddCorpseIcon(participant: Types.Participant, icon: Types.CorpseIcon): ()
     local toRemove: number?
-    for i, v in participant._additionalCorpseIcons do
+    for i, v in participant.ExtraCorpseIcons do
         if v.Name == icon.Name then
             toRemove = i
             break
@@ -804,14 +804,10 @@ local function AddCorpseIcon(participant: Types.Participant, icon: Types.CorpseI
     end
 
     if toRemove then
-        table.remove(participant._additionalCorpseIcons, toRemove)
+        table.remove(participant.ExtraCorpseIcons, toRemove)
     end
 
-    table.insert(participant._additionalCorpseIcons, icon)
-end
-
-local function GetAdditionalCorpseIcons(participant: Types.Participant): {Types.CorpseIcon}
-    return participant._additionalCorpseIcons
+    table.insert(participant.ExtraCorpseIcons, icon)
 end
 
 local function trySlay(participant: Types.Participant): ()
@@ -972,9 +968,8 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         _items = {},
         _ammo = {},
 
-        _additionalCorpseIcons = {},
+        ExtraCorpseIcons = {},
         AddCorpseIcon = AddCorpseIcon,
-        GetAdditionalCorpseIcons = GetAdditionalCorpseIcons,
 
         DropAmmoBoxForCurrentItem = DropAmmoBoxForCurrentItem,
 
