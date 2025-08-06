@@ -252,21 +252,34 @@ local function _start(round: Types.Round): ()
     Random.new():Shuffle(participantList)
     round.Gamemode:AssignRoles(participantList)
 
-    local exclamatoryRoleCounts: {[Types.Role]: number} = {}
-    local numExclamatoryRoles = 0
+    local exclamatoryRoles: {[Types.Role]: {Types.Participant}} = {}
     for _, v in participantList do
         local role = v:GetRole()
         if not role.Definition.IsExclamatory then
             continue
         end
 
-        numExclamatoryRoles += 1
-        exclamatoryRoleCounts[role] = (exclamatoryRoleCounts[role] or 0) + 1
+        exclamatoryRoles[role] = exclamatoryRoles[role] or {}
+        table.insert(exclamatoryRoles[role], v)
     end
 
     local message = "There are"
-    for role, count in exclamatoryRoleCounts do
-        message ..= ` {count} {role:GetFormattedName()}s,`
+    for role, participants in exclamatoryRoles do
+        message ..= ` {#participants} {role:GetFormattedName()}s,`
+
+        local comrades = role:GetFormattedName() .. ", "
+        if #participants == 1 then
+            comrades ..= "you stand alone"
+        else
+            comrades ..= "your comrades this round are: "
+            for i, participant in participants do
+                comrades ..= participant:GetFormattedName() .. if i ~= #participants then ", " else ""
+            end
+        end
+
+        for _, participant in participants do
+            round:SendMessage(participant.Player, comrades, "Team")
+        end
     end
 
     if message ~= "There are" then
