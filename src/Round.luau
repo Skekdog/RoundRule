@@ -323,6 +323,10 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
         Replication.AddEvent(v)
     end
 
+    if round.Gamemode.AddFinishHighlights then
+        round.Gamemode.AddFinishHighlights(round.Gamemode, round)
+    end
+
     for _, v in round.Highlights do
         Replication.AddHighlight(v)
     end

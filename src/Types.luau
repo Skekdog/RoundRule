@@ -143,6 +143,7 @@ export type Gamemode = {
     OnDeath: (Gamemode, Participant, deferVictoryCheck: boolean) -> (),
     OnCharacterAdded: (Gamemode, Participant) -> (),
     OnIdentifyCorpse: (Gamemode, corpse: Corpse, searcher: Participant) -> ()?,
+    AddFinishHighlights: (Gamemode, round: Round) -> ()?,
 }
 
 export type RoleDefinition = {
