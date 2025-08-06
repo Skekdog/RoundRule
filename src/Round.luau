@@ -211,8 +211,10 @@ local function GetEventLog(round: Types.Round): {Types.Event}
     return round._eventLog
 end
 
-local function AddHighlight(round: Types.Round, roundHighlight: Types.Highlight): ()
-    table.insert(round.Highlights, roundHighlight)
+local function AddHighlight(round: Types.Round, highlight: Types.Highlight): ()
+    if not round.Highlights[highlight.Group] or round.Highlights[highlight.Group].Priority < highlight.Priority then
+        round.Highlights[highlight.Group] = highlight
+    end
 end
 
 local function IsPaused(round: Types.Round): boolean

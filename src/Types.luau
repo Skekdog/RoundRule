@@ -33,6 +33,7 @@ export type Highlight = {
     Title: string,
     Description: string,
     Priority: number,
+    Group: string,
 }
 
 export type ExplosionInfo = {
@@ -781,7 +782,7 @@ export type Round = {
     AddEvent: (Round, data: RoundEventData) -> (),
     GetEventLog: (Round) -> {Event},
 
-    Highlights: {Highlight},
+    Highlights: {[string]: Highlight},
     AddHighlight: (Round, roundHighlight: Highlight) -> (),
 
     ElapsedPhaseTime: number,

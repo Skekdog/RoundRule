@@ -145,11 +145,12 @@ function module.AddScore(participant: Types.Participant): ()
 	value.Parent = replicatedData.Scores
 end
 
-function module.AddHighlight(roundHighlight: Types.Highlight): ()
+function module.AddHighlight(highlight: Types.Highlight): ()
 	local value = Instance.new("StringValue")
-	value.Name = roundHighlight.Title
-	value.Value = roundHighlight.Description
-	value:SetAttribute("Priority", roundHighlight.Priority)
+	value.Name = highlight.Title
+	value.Value = highlight.Description
+	value:SetAttribute("Priority", highlight.Priority)
+	value:SetAttribute("Group", highlight.Group)
 
 	value.Parent = replicatedData.Highlights
 end
