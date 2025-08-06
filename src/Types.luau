@@ -129,8 +129,13 @@ export type Gamemode = {
     Duration: (numParticipants: number) -> number,
 
     AssignRoles: (Gamemode, {Participant}) -> (),
-    
+
     Roles: {[string]: RoleDefinition},
+
+    RoleCanCallToCorpse: RoleDefinition?,
+    -- Okay so, this is honestly a stupid property to have
+    -- but there's currently no good way for gamemodes / items / whatever to do UI stuff, so this
+    -- is what we have to do, unless we want a lot more work.
 
     DeathSounds: {string},
 
