@@ -181,6 +181,10 @@ local function searchAsAlive(corpse: Types.Corpse, searcher: Types.Participant, 
 
     updateCorpseInfo(corpse, searcher, covert)
 
+    if corpse.Participant.Round.Gamemode.OnSearchCorpse then
+        corpse.Participant.Round.Gamemode.OnSearchCorpse(corpse.Participant.Round.Gamemode, corpse, searcher, covert)
+    end
+
     return true
 end
 
