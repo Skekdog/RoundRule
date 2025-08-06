@@ -251,6 +251,30 @@ local function _start(round: Types.Round): ()
 
     Random.new():Shuffle(participantList)
     round.Gamemode:AssignRoles(participantList)
+
+    local exclamatoryRoleCounts: {[Types.Role]: number} = {}
+    local numExclamatoryRoles = 0
+    for _, v in participantList do
+        local role = v:GetRole()
+        if not role.Definition.IsExclamatory then
+            continue
+        end
+
+        numExclamatoryRoles += 1
+        exclamatoryRoleCounts[role] = (exclamatoryRoleCounts[role] or 0) + 1
+    end
+
+    local message = "There are"
+    for role, count in exclamatoryRoleCounts do
+        message ..= ` {count} {role:GetFormattedName()}s,`
+    end
+
+    if message ~= "There are" then
+        message = message:sub(1, -1)
+        message ..= " this round."
+
+        round:SendMessage(Players:GetPlayers(), message)
+    end
 end
 
 local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boolean?): ()
