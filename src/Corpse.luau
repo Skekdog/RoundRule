@@ -131,6 +131,11 @@ local function tryMarkIdentified(corpse: Types.Corpse, searcher: Types.Participa
     if char then
         char:SetAttribute("Unidentified", false)
     end
+
+    local gamemode = corpse.Participant.Round.Gamemode
+    if gamemode.OnIdentifyCorpse then
+        gamemode.OnIdentifyCorpse(gamemode, corpse, searcher)
+    end
 end
 
 local function tryConfirmKillList(corpse: Types.Corpse, searcher: Types.Participant): ()
@@ -180,10 +185,6 @@ local function searchAsAlive(corpse: Types.Corpse, searcher: Types.Participant, 
     end
 
     updateCorpseInfo(corpse, searcher, covert)
-
-    if corpse.Participant:GetStatus() == "Dead" and corpse.Participant.Round.Gamemode.OnIdentifyCorpse then
-        corpse.Participant.Round.Gamemode.OnIdentifyCorpse(corpse.Participant.Round.Gamemode, corpse, searcher)
-    end
 
     return true
 end
