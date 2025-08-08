@@ -116,6 +116,7 @@ export type GamemodeDefinition = {
     TimeoutVictor: (GamemodeDefinition, Round) -> Victor,
     
     GetRoundEndMusic: (GamemodeDefinition, Round, victor: Victor, isTimeout: boolean) -> Sound?,
+    GetVictoryEventText: ((GamemodeDefinition, round: Round, victor: Victor, isTimeout: boolean) -> string?)?,
 
     EnableFriendlyFire: boolean?,
     EnableKarma: boolean?,
@@ -159,7 +160,6 @@ export type RoleDefinition = {
 	IsBadGuys: boolean?,
 
     Allegiance: VictorType,
-    VictoryText: string?,
 
     StartingItems: {AnyItemDefinition}?,
     StartingCredits: number?,

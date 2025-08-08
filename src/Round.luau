@@ -323,13 +323,17 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
         victorRole = role
     end
 
-    assert(victorRole.Definition.VictoryText, "Victory role has no VictoryText")
+    local victoryText = if round.Gamemode.GetVictoryEventText then round.Gamemode.GetVictoryEventText(round.Gamemode, round, victor, isTimeout or false) else nil
+    if not victoryText then
+        victoryText = `The {victorRole:FormatString(GetDisplayName(victorRole.Definition) .. "s")} have won the round!`
+    end
+    assert(victoryText)
 
     round:AddEvent({
         Kind = "EndRoundEvent",
-        VictoryText = victorRole.Definition.VictoryText,
+        VictoryText = victoryText,
     })
-    
+
     Replication.ClearEvents()
     Replication.ClearHighlights()
     Replication.ClearScores()
