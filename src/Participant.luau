@@ -437,6 +437,10 @@ local function AddSelfDefenseEntry(participant: Types.Participant, params: Types
         return
     end
 
+    if params.Against:HasSelfDefenseAgainstParticipant(participant) then
+        return
+    end
+
     table.insert(participant._selfDefenseList, {
         Against = params.Against,
         Until = workspace:GetServerTimeNow() + params.Duration
