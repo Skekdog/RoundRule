@@ -83,7 +83,7 @@ local function tryNotifyCorpseFound(corpse: Types.Corpse, searcher: Types.Partic
         msg ..= ` They were a {otherRole:GetFormattedName()}{otherRole:GetExclamatoryString()}`
     end
 
-    searcher.Round:SendMessage(searcher.Player, msg)
+    searcher.Round:SendMessage(Players:GetPlayers(), msg)
 end
 
 local function logEvent(corpse: Types.Corpse, searcher: Types.Participant, isFromKillList: boolean): ()
