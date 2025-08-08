@@ -83,7 +83,9 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
 
         local deathSound = ragdoll:FindFirstChild("DeathSound", true)
         if not params.IsHeadshot and deathSound and deathSound:IsA("Sound") then
-            deathSound:Play()
+            if typeof(params.Source) ~= "table" or (params.Source.Kind == "Gun" and not params.Source.Definition.IsSilent) then
+                deathSound:Play()
+            end
         end
     end
 
@@ -366,7 +368,11 @@ function module.TryTakeDamage(participant: Types.Participant, params: Types.Dama
     end
 
     hum:TakeDamage(damage)
-    Replication.DamageTaken(participant.Player, params.Amount, params.Source)
+
+    if typeof(params.Source) ~= "table" or (params.Source.Kind == "Gun" and not params.Source.Definition.IsSilent) then
+        Replication.DamageTaken(participant.Player, params.Amount, params.Source)
+    end
+
     if dead then
         module.OnDeath(participant, params, deferDeath or false)
     end

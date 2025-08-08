@@ -302,6 +302,8 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
 
     AmmoType: AmmoDefinition,
 
+    IsSilent: boolean?,
+
     AimFOV: number?,
     HasScope: boolean?,
     HasMuzzleFlash: boolean?,
