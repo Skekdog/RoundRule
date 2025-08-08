@@ -213,7 +213,7 @@ local function CallRole(corpse: Types.Corpse, caller: Types.Participant): ()
 
     local role = round:GetRoleFromRoleName(round.Gamemode.RoleCanCallToCorpse.Name)
 
-    round:SendMessage(Players:GetPlayers(), `{caller.Player.Name} has called a {role:GetFormattedName()} to the body of {corpse.Participant:GetFormattedName()}.`, "Chat")
+    round:SendMessage(Players:GetPlayers(), `[PLAYER-{caller.Player.Name}] has called a {role:GetFormattedName()} to the body of {corpse.Participant:GetFormattedName()}.`, "Chat")
 
     for _, v in round:GetParticipantsWithRole(role) do
         Replication.CallRoleToCorpse(v.Player, corpse.Model)
