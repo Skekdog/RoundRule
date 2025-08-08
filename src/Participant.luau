@@ -439,6 +439,10 @@ local function AddCredits(participant: Types.Participant, amount: number): ()
 end
 
 local function AddSelfDefenseEntry(participant: Types.Participant, params: Types.SelfDefenseParams): ()
+    if participant.Round:IsPreGame() then
+        return
+    end
+
     if params.Against == participant then
         return
     end
