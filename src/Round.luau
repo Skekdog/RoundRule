@@ -1,7 +1,9 @@
 local MaterialService = game:GetService("MaterialService")
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
+local GetDisplayName = require(ReplicatedStorage.Shared.RoundRule.Common.GetDisplayName)
 local AmmoBox = require(script.Parent.AmmoBox)
 local Interactable = require(script.Parent.Interactable)
 local Item = require(script.Parent.Item)
@@ -265,9 +267,19 @@ local function _start(round: Types.Round): ()
         table.insert(exclamatoryRoles[role], v)
     end
 
-    local message = "There are"
+    local exclamatoryCount = 0
+    for _ in exclamatoryRoles do
+        exclamatoryCount += 1
+    end
+
+    local index = 0
+    local message = "There "
     for role, participants in exclamatoryRoles do
-        message ..= ` {#participants} {role:GetFormattedName()}s,`
+        index += 1
+        if index == 1 then
+            message ..= if #participants == 1 then "is" else "are"
+        end
+        message ..= ` {#participants} {role:FormatString(GetDisplayName(role.Definition) .. if #participants == 1 then "" else "s")},`
 
         local comrades = role:GetFormattedName() .. ", "
         if #participants == 1 then
@@ -279,13 +291,15 @@ local function _start(round: Types.Round): ()
             end
         end
 
+        comrades ..= "."
+
         for _, participant in participants do
             round:SendMessage(participant.Player, comrades, "Team")
         end
     end
 
-    if message ~= "There are" then
-        message = message:sub(1, -1)
+    if message ~= "There " then
+        message = message:sub(1, -2)
         message ..= " this round."
 
         round:SendMessage(Players:GetPlayers(), message)
