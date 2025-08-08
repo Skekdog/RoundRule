@@ -183,4 +183,8 @@ function module.RunOnHitClient(item: Types.AnyWeapon, participant: Types.Partici
 	remotes.RunOnHitClient:FireClient(participant.Player, item.Definition.Name, hitPart)
 end
 
+function module.CallRoleToCorpse(target: ReplicationTarget, model: Model): ()
+	fireToTargets(remotes.CallToCorpse, target, model)
+end
+
 return module

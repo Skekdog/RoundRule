@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local Defaults = require(script.Parent.Defaults)
 local Replication = require(script.Parent.Replication)
 local Types = require(script.Parent.Types)
@@ -189,6 +190,36 @@ local function SearchAsAlive(corpse: Types.Corpse, searcher: Types.Participant, 
     return true
 end
 
+local function CallRole(corpse: Types.Corpse, caller: Types.Participant): ()
+    local round = caller.Round
+    if not round.Gamemode.RoleCanCallToCorpse then
+        return
+    end
+
+    if not corpse.Model or corpse._hasBeenCalledTo then
+        return
+    end
+
+    if corpse.Participant:GetStatus() ~= "Dead" then
+        return
+    end
+
+    local callerRole = caller:GetRole()
+    if callerRole.Definition == round.Gamemode.RoleCanCallToCorpse then
+        return
+    end
+
+    corpse._hasBeenCalledTo = true
+
+    local role = round:GetRoleFromRoleName(round.Gamemode.RoleCanCallToCorpse.Name)
+
+    round:SendMessage(Players:GetPlayers(), `{caller.Player.Name} has called a {role:GetFormattedName()} to the body of {corpse.Participant:GetFormattedName()}.`, "Chat")
+
+    for _, v in round:GetParticipantsWithRole(role) do
+        Replication.CallRoleToCorpse(v.Player, corpse.Model)
+    end
+end
+
 local function searchAsSpectator(corpse: Types.Corpse, searcher: Types.Participant?, player: Player?): boolean
     updateCorpseForPlayer(corpse, searcher, false, player)
     return true
@@ -255,6 +286,8 @@ function module.new(participant: Types.Participant, params: Types.DamageParams, 
         GetSearchedBy = GetSearchedBy,
 
         UpdateKillList = UpdateKillList,
+
+        CallRole = CallRole,
 
         Search = Search,
         SearchAsAlive = SearchAsAlive,

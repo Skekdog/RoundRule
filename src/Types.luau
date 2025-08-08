@@ -581,6 +581,9 @@ export type Corpse = {
     Search: (Corpse, searcher: Participant?, covert: boolean, player: Player?) -> boolean,
     SearchAsAlive: (Corpse, searcher: Participant, covert: boolean) -> boolean,
 
+    _hasBeenCalledTo: boolean?,
+    CallRole: (Corpse, caller: Participant) -> (),
+
     Killer: Participant?,
 }
 
