@@ -629,7 +629,7 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
     return "Success"
 end
 
-local function onCharacterPartAdded(part: Instance): ()
+function module.OnCharacterPartAdded(part: Instance): ()
     if not part:IsA("BasePart") then
         return
     end
@@ -692,9 +692,9 @@ local function SpawnCharacter(participant: Types.Participant): ()
             task.wait()
         end
 
-        char.DescendantAdded:Connect(onCharacterPartAdded)
+        char.DescendantAdded:Connect(module.OnCharacterPartAdded)
         for _, v in char:GetDescendants() do
-            onCharacterPartAdded(v)
+            module.OnCharacterPartAdded(v)
         end
     
         participant._humanoid = hum
