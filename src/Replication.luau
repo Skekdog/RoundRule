@@ -108,7 +108,7 @@ function module.ReplicateWinner(victor: Types.Victor?): ()
 	replicatedData:SetAttribute("Winner", if victor then if victor.Kind == "Role" then victor.Definition.Name else victor.Player.Name else nil)
 end
 
-function module.ReplicateGamemode(gamemode: Types.Gamemode): ()
+function module.ReplicateGamemode(gamemode: Types.GamemodeDefinition): ()
 	replicatedData:SetAttribute("Gamemode", gamemode.Name)
 end
 

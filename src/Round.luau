@@ -776,7 +776,7 @@ local function SendMessage(round: Types.Round, to: {Player} | Player, message: s
     end
 end
 
-function module.new(gamemode: Types.Gamemode): Types.Round
+function module.new(gamemode: Types.GamemodeDefinition): Types.Round
     local roles: {[string]: Types.Role} = {}
     for _, v in gamemode.Roles do
         roles[v.Name] = Role.fromDefinition(v)

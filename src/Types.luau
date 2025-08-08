@@ -103,7 +103,7 @@ export type DataModelProp = DataModelMapProp | DataModelItem | DataModelCorpse |
 
 export type MessageKind = "Chat" | "Team" | "All"
 
-export type Gamemode = {
+export type GamemodeDefinition = {
     Name: string,
     DisplayName: string?,
     Description: string,
@@ -113,9 +113,9 @@ export type Gamemode = {
     
     RequiredSlayVotes: number?,
 
-    TimeoutVictor: (Gamemode, Round) -> Victor,
+    TimeoutVictor: (GamemodeDefinition, Round) -> Victor,
     
-    GetRoundEndMusic: (Gamemode, Round, victor: Victor, isTimeout: boolean) -> Sound?,
+    GetRoundEndMusic: (GamemodeDefinition, Round, victor: Victor, isTimeout: boolean) -> Sound?,
 
     EnableFriendlyFire: boolean?,
     EnableKarma: boolean?,
@@ -129,7 +129,7 @@ export type Gamemode = {
 
     Duration: (numParticipants: number) -> number,
 
-    AssignRoles: (Gamemode, {Participant}) -> (),
+    AssignRoles: (GamemodeDefinition, {Participant}) -> (),
 
     Roles: {[string]: RoleDefinition},
 
@@ -140,10 +140,10 @@ export type Gamemode = {
 
     DeathSounds: {string},
 
-    OnDeath: (Gamemode, Participant, deferVictoryCheck: boolean) -> (),
-    OnCharacterAdded: (Gamemode, Participant) -> (),
-    OnIdentifyCorpse: (Gamemode, corpse: Corpse, searcher: Participant) -> ()?,
-    AddFinishHighlights: (Gamemode, round: Round) -> ()?,
+    OnDeath: (GamemodeDefinition, Participant, deferVictoryCheck: boolean) -> (),
+    OnCharacterAdded: (GamemodeDefinition, Participant) -> (),
+    OnIdentifyCorpse: (GamemodeDefinition, corpse: Corpse, searcher: Participant) -> ()?,
+    AddFinishHighlights: (GamemodeDefinition, round: Round) -> ()?,
 }
 
 export type RoleDefinition = {
@@ -735,7 +735,7 @@ export type MapProp = {
 export type Prop = CorpseProp | ItemProp | MapProp | AmmoProp
 
 export type Round = {
-    Gamemode: Gamemode,
+    Gamemode: GamemodeDefinition,
 
     Extras: Extras,
 
