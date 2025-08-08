@@ -579,6 +579,7 @@ export type Corpse = {
     UpdateKillList: (Corpse) -> (),
 
     Search: (Corpse, searcher: Participant?, covert: boolean, player: Player?) -> boolean,
+    SearchAsAlive: (Corpse, searcher: Participant, covert: boolean) -> boolean,
 
     Killer: Participant?,
 }

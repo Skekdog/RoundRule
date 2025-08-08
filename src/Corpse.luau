@@ -156,7 +156,7 @@ local function tryConfirmKillList(corpse: Types.Corpse, searcher: Types.Particip
     end
 end
 
-local function searchAsAlive(corpse: Types.Corpse, searcher: Types.Participant, covert: boolean): boolean
+local function SearchAsAlive(corpse: Types.Corpse, searcher: Types.Participant, covert: boolean): boolean
     local searcherChar = searcher:GetCharacter()
     if not searcherChar or not searcherChar.PrimaryPart then
         return false
@@ -200,7 +200,7 @@ local function Search(corpse: Types.Corpse, searcher: Types.Participant?, covert
     end
 
     if searcher and searcher:GetStatus() == "Alive" then
-        return searchAsAlive(corpse, searcher, covert)
+        return corpse:SearchAsAlive(searcher, covert)
     end
 
     return searchAsSpectator(corpse, searcher, player)
@@ -257,6 +257,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams, 
         UpdateKillList = UpdateKillList,
 
         Search = Search,
+        SearchAsAlive = SearchAsAlive,
 
         Killer = params.Attacker,
     }
