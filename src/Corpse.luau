@@ -59,16 +59,16 @@ local function tryStealCredits(corpse: Types.Corpse, searcher: Types.Participant
     return true
 end
 
-local function updateCorpseForPlayer(corpse: Types.Corpse, participant: Types.Participant, covert: boolean): ()
-    if not covert then
+local function updateCorpseForPlayer(corpse: Types.Corpse, participant: Types.Participant?, covert: boolean, player: Player?): ()
+    if not covert and participant then
         addSearchedBy(corpse, participant)
     end
 
-    if participant ~= corpse.Participant then
+    if participant and participant ~= corpse.Participant then
         Replication.ReplicateRole(participant.Player, corpse.Participant, false)
     end
     
-    Replication.ReplicateCorpse(participant.Player, corpse, covert)
+    Replication.ReplicateCorpse(player or (participant or error("Must have either a player or participant")).Player, corpse, covert)
 end
 
 local function tryNotifyCorpseFound(corpse: Types.Corpse, searcher: Types.Participant, isFromKillList: boolean): ()
@@ -189,21 +189,21 @@ local function searchAsAlive(corpse: Types.Corpse, searcher: Types.Participant, 
     return true
 end
 
-local function searchAsSpectator(corpse: Types.Corpse, searcher: Types.Participant): boolean
-    updateCorpseForPlayer(corpse, searcher, false)
+local function searchAsSpectator(corpse: Types.Corpse, searcher: Types.Participant?, player: Player?): boolean
+    updateCorpseForPlayer(corpse, searcher, false, player)
     return true
 end
 
-local function Search(corpse: Types.Corpse, searcher: Types.Participant, covert: boolean): boolean
-    if table.find(corpse:GetSearchedBy(), searcher) then
+local function Search(corpse: Types.Corpse, searcher: Types.Participant?, covert: boolean, player: Player?): boolean
+    if searcher and table.find(corpse:GetSearchedBy(), searcher) then
         return false
     end
 
-    if searcher:GetStatus() == "Alive" then
+    if searcher and searcher:GetStatus() == "Alive" then
         return searchAsAlive(corpse, searcher, covert)
     end
 
-    return searchAsSpectator(corpse, searcher)
+    return searchAsSpectator(corpse, searcher, player)
 end
 
 function module.new(participant: Types.Participant, params: Types.DamageParams, ragdoll: Model?, freeKill: boolean?): Types.Corpse
