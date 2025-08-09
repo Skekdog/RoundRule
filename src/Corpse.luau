@@ -174,7 +174,7 @@ local function SearchAsAlive(corpse: Types.Corpse, searcher: Types.Participant, 
 
     local didSteal = tryStealCredits(corpse, searcher)
 
-    if not covert then
+    if not covert and corpse.Participant:GetStatus() == "Missing" then
         tryAwardScore(corpse, searcher)
         tryNotifyCorpseFound(corpse, searcher, false)
         tryConfirmKillList(corpse, searcher)
