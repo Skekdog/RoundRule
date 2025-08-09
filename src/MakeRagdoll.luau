@@ -41,8 +41,8 @@ local jointInfo: {[string]: Joint} = {
 
 local noCollisionLimbs = {"LeftUpperArm", "RightUpperArm", "LowerTorso", "LeftUpperLeg", "RightUpperLeg"}
 
-local function MakeRagdoll(participant: Types.Participant, parent: Instance): Model?
-	local char = participant:GetCharacter()
+local function MakeRagdoll(participant: Types.Participant, parent: Instance, char: Model?): Model?
+	char = char or participant:GetCharacter()
 	if not char then
 		return
 	end
@@ -124,6 +124,13 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance): Mo
 	local upperTorso = clone:FindFirstChild("UpperTorso")
 	assert(not upperTorso or upperTorso:IsA("BasePart"))
 	clone.PrimaryPart = upperTorso
+
+	if root then
+		local weld = Instance.new("WeldConstraint")
+		weld.Part1 = root
+		weld.Part0 = upperTorso :: BasePart -- WeldConstraint.Part0 is optional but it doesn't think so
+		weld.Parent = root
+	end
 
 	clone.Parent = parent
 	for _, v in clone:GetDescendants() do
