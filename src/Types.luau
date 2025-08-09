@@ -780,11 +780,6 @@ export type Round = {
     AddPlayer: (Round, player: Player, karma: number?) -> Participant,
     RemoveParticipant: (Round, participant: Participant, isRejoining: boolean) -> (),
 
-    RoundEndMusic: {
-        Music: Sound,
-        StartedAt: number,
-    }?,
-
     _eventLog: {Event},
     AddEvent: (Round, data: RoundEventData) -> (),
     GetEventLog: (Round) -> {Event},
@@ -808,6 +803,13 @@ export type Round = {
 
     _start: (Round) -> (),
     Finish: (Round, victor: Victor, isTimeout: boolean?) -> (),
+
+    VictoryData: {
+        Victor: Victor,
+        DidTimeout: boolean,
+        EndedAt: number,
+        Music: Sound?,
+    }?,
 
     _roles: {[string]: Role?},
 

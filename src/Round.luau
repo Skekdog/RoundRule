@@ -329,6 +329,13 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
     end
     assert(victoryText)
 
+    round.VictoryData = {
+        Victor = victor,
+        DidTimeout = isTimeout or false,
+        EndedAt = workspace:GetServerTimeNow(),
+    }
+    assert(round.VictoryData)
+
     round:AddEvent({
         Kind = "EndRoundEvent",
         VictoryText = victoryText,
@@ -362,10 +369,7 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
     
     local chosenMusic = round.Gamemode:GetRoundEndMusic(round, victor, isTimeout or false)
     if chosenMusic then
-        round.RoundEndMusic = {
-            Music = chosenMusic,
-            StartedAt = workspace:GetServerTimeNow(),
-        }
+        round.VictoryData.Music = chosenMusic
         Replication.ReplicateRoundEndMusic("All", chosenMusic, workspace:GetServerTimeNow())
     end
 
