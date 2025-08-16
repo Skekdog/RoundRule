@@ -156,6 +156,8 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance, cha
 		root:SetNetworkOwner()
 	end
 
+	clone:AddTag("Prop")
+
 	participant._character = nil
 	return clone
 end

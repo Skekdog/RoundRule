@@ -3,14 +3,14 @@ local module = {}
 
 -- We always want to use WaitForChild, because if a client is using this script, not all children may be replicated immediately.
 
-local function waitForClass(parent: Instance, name: string, class: string): Instance
+local function waitForClass<T>(parent: Instance, name: string, class: T & Instance): T
     local Instance = assert(parent:WaitForChild(name), "Instance not found")
-    assert(Instance:IsA(class), "Instance is not a " .. class)
-    return Instance
+    assert(Instance:IsA(class.ClassName), "Instance is not a " .. class.ClassName)
+    return Instance :: Instance & T
 end
 
 local function waitForFolder(parent: Instance, name: string): Folder
-    return waitForClass(parent, name, "Folder") :: Folder
+    return waitForClass(parent, name, Instance.new("Folder")) :: Folder
 end
 
 local function validateMapIcons(mapIcons: any): ()
@@ -33,10 +33,6 @@ function module.ValidateDefinition(definition: any): Types.MapDefinition
     assert(typeof(definition.AvailableItems) == "table", "AvailableItems must be a table")
     assert(typeof(definition.AvailableAmmo) == "table", "AvailableAmmo must be a table")
 
-    assert(typeof(definition.InteractableDefinitions) == "table", "InteractableDefinitions must be a table")
-
-    assert(typeof(definition.Gravity) == "number", "Gravity must be a number")
-
     return definition
 end
 
@@ -51,11 +47,11 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
     local lightingSettings = configuration:WaitForChild("LightingSettings")
     local waterSettings = configuration:WaitForChild("WaterSettings")
     local terrainColours = configuration:WaitForChild("TerrainColours")
-    local gravity = waitForClass(configuration, "Gravity", "NumberValue") :: NumberValue
+    local gravity = waitForClass(configuration, "Gravity", Instance.new("NumberValue"))
 
     local materialVariants = configuration:WaitForChild("MaterialVariants")
 
-    local terrainRegion = waitForClass(mapScript, "TerrainRegion", "TerrainRegion") :: TerrainRegion
+    local terrainRegion = waitForClass(mapScript, "TerrainRegion", Instance.new("TerrainRegion"))
 
     return {
         Name = definition.Name,
