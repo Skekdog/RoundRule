@@ -32,12 +32,16 @@ local function TryTakeDamage(prop: Types.MapProp, params: Types.DamageParams, de
     end
     
     local health = prop:GetHealth()
-    if health == nil or health <= 0 then
+    if health and health <= 0 then
         return false
     end
 
     local canDamage = tryRunOnDamage(prop, params)
     if canDamage == false then -- if nil we still want to deal damage
+        return false
+    end
+
+    if health == nil then
         return false
     end
 
