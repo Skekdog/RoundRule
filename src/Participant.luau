@@ -1,5 +1,8 @@
 local InsertService = game:GetService("InsertService")
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ForEachPart = require(ReplicatedStorage.Shared.RoundRule.Common.ForEachPart)
+local GetPrimaryPart = require(ReplicatedStorage.Shared.RoundRule.Common.GetPrimaryPart)
 local AmmoBox = require(script.Parent.AmmoBox)
 local Corpse = require(script.Parent.Corpse)
 local Defaults = require(script.Parent.Defaults)
@@ -78,7 +81,7 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
 
     local ragdoll = MakeRagdoll(participant, corpseFolder)
     if ragdoll then
-        round:LoadProp(ragdoll, "CorpseProp")
+        round:LoadProp(ragdoll)
         ragdoll:SetAttribute("Unidentified", true)
 
         local deathSound = ragdoll:FindFirstChild("DeathSound", true)
@@ -265,12 +268,12 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.AnyIt
     end
 
     if item and item.Model and char then
-        local model = item.Model:Clone()
-        model.Name = "Item"
+        local model = item.Model:Clone();
+        (model :: Instance).Name = "Item"
 
         local motor = Instance.new("Motor6D")
         motor.Part0 = char:FindFirstChild("RightHand") :: BasePart?
-        motor.Part1 = model
+        motor.Part1 = if model:IsA("Model") then model.PrimaryPart else model
 
         local c1 = model:GetAttribute("AnimC1")
         if typeof(c1) == "CFrame" then
@@ -279,11 +282,14 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.AnyIt
 
         motor.Parent = model
 
-        model.Massless = true
-        model.CanCollide = false
-        model.CanTouch = false
-        model.CanQuery = false
-        model.Parent = char
+        ForEachPart(model, function(part)
+            part.Massless = true
+            part.CanCollide = false
+            part.CanTouch = false
+            part.CanQuery = false
+        end);
+        
+        (model :: Instance).Parent = char
     end
 
     participant._equippedItem = item
@@ -479,18 +485,8 @@ local function IsItemSlotOccupied(participant: Types.Participant, slot: number):
 end
 
 local function GiveItemFromItemDefinition(participant: Types.Participant, itemDefinition: Types.AnyItemDefinition): Types.AnyItem
-    local item: Types.AnyItem
-    if itemDefinition.Model then
-        assert(typeof(itemDefinition.Model) == "Instance" and itemDefinition.Model:IsA("BasePart"))
-        local prop = participant.Round:LoadProp(itemDefinition.Model:Clone(), "ItemProp")
-        assert(prop.Kind == "ItemProp")
-        item = prop.Item
-    else
-        item = Item.new(itemDefinition)
-    end
-
+    local item = Item.new(itemDefinition)
     participant:AddItem(item)
-
     return item
 end
 
@@ -508,31 +504,31 @@ function module.DropItem(participant: Types.Participant, item: Types.AnyItem, th
     item.Model:SetAttribute("AmmoType", if item.Kind == "Gun" then item.Definition.AmmoType.Name else nil)
     item.Model:SetAttribute("StoredAmmo", if item.Kind == "Gun" then item.Ammo else nil)
 
-    local parent = participant.Round:GetMap().ItemSpawns
+    local parent = participant.Round:GetMap().Map
     if throwDirection then
-        if participant:TryThrowAssembly(item.Model, 15, parent, nil, throwDirection) then
+        if participant:TryThrowAssembly(GetPrimaryPart(item.Model), 15, parent, nil, throwDirection) then
             participant:RemoveItem(item)
         end
         return
     end
 
     participant:RemoveItem(item)
-    item.Model:PivotTo(char:GetPivot())
-    item.Model.Parent = parent
+    item.Model:PivotTo(char:GetPivot());
+    (item.Model :: Instance).Parent = parent
 end
 
 local function isObscured(participant: Types.Participant, origin: Vector3, target: Vector3): boolean
     local char = assert(participant:GetCharacter())
 
     local params = RaycastParams.new()
-    params.FilterDescendantsInstances = {char, participant.Round:GetMap().Bounds}
+    params.FilterDescendantsInstances = {char}
     params.FilterType = Enum.RaycastFilterType.Exclude
 
     local result = workspace:Raycast(origin, target - origin, params)
     return not not result
 end
 
-local function TryThrowAssembly(participant: Types.Participant, assemblyRoot: BasePart, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?): boolean
+local function TryThrowAssembly(participant: Types.Participant, assembly: Types.MapThing, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?): boolean
     local char = participant:GetCharacter()
     if not char then
         return false
@@ -554,9 +550,10 @@ local function TryThrowAssembly(participant: Types.Participant, assemblyRoot: Ba
     end
 
     if parent then
-        assemblyRoot.Parent = parent
+        (assembly :: PVInstance).Parent = parent
     end
 
+    local assemblyRoot = GetPrimaryPart(assembly)
     assemblyRoot.AssemblyLinearVelocity = Vector3.zero
     assemblyRoot.CFrame = CFrame.lookAlong(startPosition, direction)
 	assemblyRoot:ApplyImpulse(direction * (assemblyRoot.AssemblyMass * force))
@@ -892,8 +889,8 @@ local function DropAmmoBoxForCurrentItem(participant: Types.Participant): ()
     local subtractAmount = math.min(ammo, definition.Capacity)
     item.Ammo -= subtractAmount
 
-    local ammoBox = AmmoBox.new(definition, item.Model, subtractAmount)
-    ammoBox.Model.Parent = participant.Round:GetMap().AmmoSpawns
+    local ammoBox = AmmoBox.new(definition, item.Model, subtractAmount);
+    (ammoBox.Model :: PVInstance).Parent = participant.Round:GetMap().Map
 end
 
 local function tryGetAnimator(participant: Types.Participant): Animator?

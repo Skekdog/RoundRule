@@ -37,12 +37,6 @@ function module.ValidateDefinition(definition: any): Types.MapDefinition
 
     assert(typeof(definition.Gravity) == "number", "Gravity must be a number")
 
-    assert(typeof(definition.WaterSettings) == "table", "WaterSettings must be a table")
-    assert(typeof(definition.TerrainColors) == "table", "TerrainColors must be a table")
-
-    assert(typeof(definition.LightingSettings) == "table", "LightingSettings must be a table")
-    assert(typeof(definition.FutureLightingSettings) == "table", "FutureLightingSettings must be a table")
-
     return definition
 end
 
@@ -51,20 +45,15 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
     local definition = module.ValidateDefinition(maybeDefinition)
 
     local playerSpawns = waitForFolder(mapScript, "PlayerSpawns")
-    local staticMap = waitForFolder(mapScript, "StaticMap")
+    local mapFolder = waitForFolder(mapScript, "Map")
 
-    local lightingModifiers = waitForFolder(mapScript, "LightingModifiers")
+    local configuration = mapScript:WaitForChild("Configuration")
+    local lightingSettings = configuration:WaitForChild("LightingSettings")
+    local waterSettings = configuration:WaitForChild("WaterSettings")
+    local terrainColours = configuration:WaitForChild("TerrainColours")
+    local gravity = waitForClass(configuration, "Gravity", "NumberValue") :: NumberValue
 
-    local bounds = waitForFolder(mapScript, "Bounds")
-
-    local dynamicMap = waitForFolder(mapScript, "DynamicMap")
-    local props = waitForFolder(mapScript, "Props")
-    local windows = waitForFolder(mapScript, "Windows")
-    local itemSpawns = waitForFolder(mapScript, "ItemSpawns")
-    local ammoSpawns = waitForFolder(mapScript, "AmmoSpawns")
-    local interactables = waitForFolder(mapScript, "Interactables")
-
-    local materialVariants = waitForFolder(mapScript, "MaterialVariants")
+    local materialVariants = configuration:WaitForChild("MaterialVariants")
 
     local terrainRegion = waitForClass(mapScript, "TerrainRegion", "TerrainRegion") :: TerrainRegion
 
@@ -82,29 +71,18 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
         AvailableAmmo = definition.AvailableAmmo,
         AvailableItems = definition.AvailableItems,
 
-        InteractableDefinitions = definition.InteractableDefinitions,
-
-        Gravity = definition.Gravity,
-
-        LightingSettings = definition.LightingSettings,
-
-        LightingModifiers = lightingModifiers,
-
-        TerrainColors = definition.TerrainColors,
-        WaterSettings = definition.WaterSettings,
+        Configuration = {
+            LightingSettings = lightingSettings,
+            WaterSettings = waterSettings,
+            TerrainColours = terrainColours,
+            Gravity = gravity.Value,
+            MaterialVariants = materialVariants,
+        },
 
         PlayerSpawns = playerSpawns,
 
         TerrainRegion = terrainRegion,
-        StaticMap = staticMap,
-        Bounds = bounds,
-
-        DynamicMap = dynamicMap,
-        Props = props,
-        Windows = windows,
-        ItemSpawns = itemSpawns,
-        AmmoSpawns = ammoSpawns,
-        Interactables = interactables,
+        Map = mapFolder,
 
         MaterialVariants = materialVariants,
     }

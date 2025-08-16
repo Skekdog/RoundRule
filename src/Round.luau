@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
+local ForEachPart = require(ReplicatedStorage.Shared.RoundRule.Common.ForEachPart)
 local GetDisplayName = require(ReplicatedStorage.Shared.RoundRule.Common.GetDisplayName)
 local AmmoBox = require(script.Parent.AmmoBox)
 local Interactable = require(script.Parent.Interactable)
@@ -377,102 +378,91 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
     round:SetPhase("Highlights", HIGHLIGHTS_TIME)
 end
 
-local function GetProps(round: Types.Round): {[Types.DataModelProp]: Types.Prop}
-    return round._props :: {[Types.DataModelProp]: Types.Prop}
+local function GetProps(round: Types.Round): {[Types.MapThing]: Types.Prop}
+    return round._props :: {[Types.MapThing]: Types.Prop}
 end
 
-local function GetProp(round: Types.Round, model: Types.DataModelProp): Types.Prop?
+local function GetProp(round: Types.Round, model: Types.MapThing): Types.Prop?
     return round._props[model]
 end
 
-local function loadMapProp(round: Types.Round, model: Types.DataModelMapProp): Types.MapProp
+local function loadMapProp(round: Types.Round, model: Types.MapThing): Types.Prop
     local prop = Prop.new(model, round)
     return prop
 end
 
-local function LoadItem(round: Types.Round, model: Types.DataModelItem): Types.ItemProp
-    local itemDefinition = round:GetItemDefinition(model.Name) or error(`Item {model.Name} does not exist in map or gamemode`)
+local function loadItem(round: Types.Round, model: Types.MapThing): ()
+    local definition = round:GetItemDefinition(model.Name) or error(`Item {model.Name} does not exist in map or gamemode`)
 
-    local item = Item.new(itemDefinition, model)
+    local item = Item.new(definition, model)
     round._items[model] = item
 
-    model:SetAttribute("AmmoType", if item.Kind == "Gun" then item.Definition.AmmoType.Name else nil)
     model:SetAttribute("StoredAmmo", if item.Kind == "Gun" then item.Ammo else nil)
-    model.CollisionGroup = "DroppedItems"
 
-    model.Anchored = false
-    model.CanCollide = true
-    model.CanTouch = true
-    model.CanQuery = true
+    ForEachPart(model, function(part)
+        part.Touched:Connect(function(touchPart)
+            local touchModel = touchPart:FindFirstAncestorOfClass("Model")
 
-    model.Touched:Connect(function(touchPart)
-        local touchModel = touchPart:FindFirstAncestorOfClass("Model")
+            if not touchModel then
+                return
+            end
 
-        if not touchModel then
-            return
-        end
+            local participant = round:GetParticipant(touchModel.Name)
+            if not participant or not participant:IsAlive() then
+                return
+            end
 
-        local participant = round:GetParticipant(touchModel.Name)
-        if not participant or not participant:IsAlive() then
-            return
-        end
+            if item.Definition.Slot and participant:IsItemSlotOccupied(item.Definition.Slot) then
+                return
+            end
 
-        if item.Definition.Slot and participant:IsItemSlotOccupied(item.Definition.Slot) then
-            return
-        end
-
-        model.Parent = nil
-        participant:AddItem(item)
+            (model :: PVInstance).Parent = nil
+            participant:AddItem(item)
+        end)
     end)
-
-    return {
-        Kind = "ItemProp",
-        Model = model,
-        Item = item,
-    }
 end
 
-local function loadAmmoBox(round: Types.Round, model: Types.DataModelAmmo): Types.AmmoProp
+local function loadAmmoBox(round: Types.Round, model: Types.MapThing): ()
     local definition = round:GetAmmoDefinition(model.Name) or error(`AmmoBox {model.Name} does not exist in map or gamemode`)
     local ammoBox = AmmoBox.new(definition, model)
     round._ammoBoxes[model] = ammoBox
 
     model:SetAttribute("AmmoType", ammoBox.Definition.Name)
     model:SetAttribute("StoredAmmo", ammoBox.Ammo)
-    model.CollisionGroup = "DroppedItems"
 
-    model.Anchored = false
-    model.CanCollide = true
-    model.CanTouch = true
-    model.CanQuery = true
-
-    model.Touched:Connect(function(touchPart)
-        local touchModel = touchPart:FindFirstAncestorOfClass("Model")
-
-        if not touchModel then
+    ForEachPart(model, function(part)
+        if not part.CanTouch or not part.CanCollide then
             return
         end
 
-        local participant = round:GetParticipant(touchModel.Name)
-        if not participant or not participant:IsAlive() or not participant:HasWeaponOfAmmoType(model.Name) then
-            return
-        end
+        part.Touched:Connect(function(touchPart)
+            local touchModel = touchPart:FindFirstAncestorOfClass("Model")
 
-        local currentAmmo = participant:GetAmmo(model.Name)
+            if not touchModel then
+                return
+            end
 
-        local maxGain = math.min(ammoBox.Definition.ReserveCapacity - currentAmmo, ammoBox.Ammo)
-        if maxGain <= 0 then
-            return
-        end
+            local participant = round:GetParticipant(touchModel.Name)
+            if not participant or not participant:IsAlive() or not participant:HasWeaponOfAmmoType(model.Name) then
+                return
+            end
 
-        ammoBox.Ammo -= maxGain
-        participant:SetAmmo(model.Name, currentAmmo + maxGain)
+            local currentAmmo = participant:GetAmmo(model.Name)
 
-        if ammoBox.Ammo <= 0 then
-            return model:Destroy()
-        end
+            local maxGain = math.min(ammoBox.Definition.ReserveCapacity - currentAmmo, ammoBox.Ammo)
+            if maxGain <= 0 then
+                return
+            end
 
-        model:SetAttribute("StoredAmmo", ammoBox.Ammo)
+            ammoBox.Ammo -= maxGain
+            participant:SetAmmo(model.Name, currentAmmo + maxGain)
+
+            if ammoBox.Ammo <= 0 then
+                return model:Destroy()
+            end
+
+            model:SetAttribute("StoredAmmo", ammoBox.Ammo)
+        end)
     end)
 
     return {
@@ -482,69 +472,59 @@ local function loadAmmoBox(round: Types.Round, model: Types.DataModelAmmo): Type
     }
 end
 
-local function loadCorpse(round: Types.Round, model: Types.DataModelCorpse): Types.CorpseProp
-    local participant = round:GetParticipant(model.Name)
-    assert(participant, "Participant does not exist")
-
-    return {
-        Kind = "CorpseProp",
-        Model = model,
-        Participant = participant,
-    }
+local function loadInteractable(round: Types.Round, model: Types.MapThing): ()
+    local definition = round:GetInteractableDefinition(model.Name) or error(`Interactable {model.Name} does not exist in map or gamemode`)
+    round:AddInteractable(definition, model)
 end
 
-local function LoadProp(round: Types.Round, model: Types.DataModelProp, kind: "MapProp" | "CorpseProp" | "ItemProp" | "AmmoProp"): Types.Prop
+local function LoadProp(round: Types.Round, model: Types.MapThing): Types.Prop
     assert(not round:GetProp(model), "Prop already exists")
+    assert(model:HasTag("Prop"), "Props must have Prop tag")
 
-    local prop: Types.Prop?
-    if kind == "MapProp" then
-        assert(model:IsA("BasePart"), "MapProp must be a BasePart")
-        prop = loadMapProp(round, model)
-    elseif kind == "CorpseProp" then
-        assert(model:IsA("Model"), "CorpseProp must be a Model")
-        prop = loadCorpse(round, model)
-    elseif kind == "ItemProp" then
-        assert(model:IsA("BasePart"), "ItemProp must be a BasePart")
-        prop = round:LoadItem(model)
-    elseif kind == "AmmoProp" then
-        assert(model:IsA("BasePart"), "AmmoProp must be a BasePart")
-        prop = loadAmmoBox(round, model)
+    if model:HasTag("Interactable") then
+        loadInteractable(round, model)
+    elseif model:HasTag("Item") then
+        loadItem(round, model)
+    elseif model:HasTag("AmmoBox") then
+        loadAmmoBox(round, model)
+    elseif model:IsDescendantOf(workspace.Corpses) then
+        
     end
 
-    assert(prop, "Invalid prop type")
+    local prop = loadMapProp(round, model)
 
     round._props[model] = prop
     return prop
 end
 
-local function GetItems(round: Types.Round): {[Types.DataModelItem]: Types.AnyItem}
-    return round._items :: {[Types.DataModelItem]: Types.AnyItem}
+local function GetItems(round: Types.Round): {[Types.MapThing]: Types.AnyItem}
+    return round._items :: {[Types.MapThing]: Types.AnyItem}
 end
 
-local function GetItem(round: Types.Round, model: Types.DataModelItem): Types.AnyItem?
+local function GetItem(round: Types.Round, model: Types.MapThing): Types.AnyItem?
     return round._items[model]
 end
 
-local function GetAmmoBoxes(round: Types.Round): {[Types.DataModelItem]: Types.AmmoBox}
-    return round._ammoBoxes :: {[Types.DataModelItem]: Types.AmmoBox}
+local function GetAmmoBoxes(round: Types.Round): {[Types.MapThing]: Types.AmmoBox}
+    return round._ammoBoxes :: {[Types.MapThing]: Types.AmmoBox}
 end
 
-local function GetAmmoBox(round: Types.Round, model: Types.DataModelItem): Types.AmmoBox?
+local function GetAmmoBox(round: Types.Round, model: Types.MapThing): Types.AmmoBox?
     return round._ammoBoxes[model]
 end
 
-local function GetInteractables(round: Types.Round): {[Types.DataModelInteractable]: Types.Interactable}
-    return round._interactables :: {[Types.DataModelInteractable]: Types.Interactable}
+local function GetInteractables(round: Types.Round): {[Types.MapThing]: Types.Interactable}
+    return round._interactables :: {[Types.MapThing]: Types.Interactable}
 end
 
-local function GetInteractable(round: Types.Round, model: Types.DataModelInteractable): Types.Interactable?
+local function GetInteractable(round: Types.Round, model: Types.MapThing): Types.Interactable?
     return round._interactables[model]
 end
 
-local function AddInteractable(round: Types.Round, definition: Types.InteractableDefinition, object: Types.DataModelInteractable?): Types.Interactable
+local function AddInteractable(round: Types.Round, definition: Types.InteractableDefinition, object: Types.MapThing?): Types.Interactable
     local interactable = Interactable.new(definition, object)
-    interactable.Round = round
-    interactable.Object.Parent = round:GetMap().Interactables
+    interactable.Round = round;
+    (interactable.Object :: PVInstance).Parent = round:GetMap().Map
 
     round._interactables[interactable.Object] = interactable
 
@@ -553,35 +533,6 @@ local function AddInteractable(round: Types.Round, definition: Types.Interactabl
     end
 
     return interactable
-end
-
-local function loadInteractable(round: Types.Round, model: Types.DataModelInteractable): ()
-    local definition = round:GetInteractableDefinition(model.Name) or error(`Interactable {model.Name} does not exist in map or gamemode`)
-    round:AddInteractable(definition, model)
-end
-
-local function loadBound(round: Types.Round, bound: Types.Bound): ()
-    bound.CollisionGroup = "Bounds"
-    
-    local onTouch = bound:FindFirstChild("OnTouch")
-    if onTouch then
-        assert(onTouch:IsA("ModuleScript"), "Invalid OnTouch in Bound")
-        
-        bound.Touched:Connect(function(touchPart)
-            local touchModel = touchPart:FindFirstAncestorOfClass("Model")
-
-            if not touchModel then
-                return
-            end
-    
-            local participant = round:GetParticipant(touchModel.Name)
-            if not participant or not participant:IsAlive() then
-                return
-            end
-
-            (require)(onTouch)(bound, participant)
-        end)
-    end
 end
 
 local function GetRoleFromRoleName(round: Types.Round, name: string): Types.Role
@@ -614,61 +565,7 @@ local function GetItemDefinition(round: Types.Round, item: string): Types.AnyIte
 end
 
 local function GetInteractableDefinition(round: Types.Round, interactable: string): Types.InteractableDefinition?
-    return round:GetMap().InteractableDefinitions[interactable] or round.Gamemode.InteractableDefinitions[interactable]
-end
-
-local function loadProps(round: Types.Round, map: Types.Map): ()
-    if not map.Props then
-        return
-    end
-
-    for _, v in map.Props:GetChildren() do
-        if v:IsA("BasePart") then
-            round:LoadProp(v, "MapProp")
-        elseif v:IsA("Folder") then
-            loadProps(round, map)
-        end
-    end
-end
-
-local function loadItems(round: Types.Round, map: Types.Map): ()
-    if not map.ItemSpawns then
-        return
-    end
-
-    for _, v in map.ItemSpawns:GetChildren() do
-        if v:IsA("BasePart") then
-            round:LoadProp(v, "ItemProp")
-        elseif v:IsA("Folder") then
-            loadItems(round, map)
-        end
-    end
-end
-
-local function loadAmmoBoxes(round: Types.Round, map: Types.Map): ()
-    for _, v in map.AmmoSpawns:GetChildren() do
-        if v:IsA("BasePart") then
-            round:LoadProp(v, "AmmoProp")
-        elseif v:IsA("Folder") then
-            loadAmmoBoxes(round, map)
-        end
-    end
-end
-
-local function loadBounds(round: Types.Round, map: Types.Map): ()
-    for _, v in map.Bounds:GetDescendants() do
-        if v:IsA("BasePart") then
-            loadBound(round, v)
-        end
-    end
-end
-
-local function loadInteractables(round: Types.Round, map: Types.Map): ()
-    for _, v in map.Interactables:GetChildren() do
-        if v:IsA("BasePart") then
-            loadInteractable(round, v)
-        end
-    end
+    return round.Gamemode.InteractableDefinitions[interactable]
 end
 
 local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
@@ -694,13 +591,11 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
             lastMapMaterialVariants:Destroy()
         end
 
-        workspace.Gravity = map.Gravity
-
         for _, v in knownWaterSettings do
             workspace.Terrain:ResetPropertyToDefault(v)
         end
 
-        for i, v in map.WaterSettings do
+        for i, v in map.Configuration.WaterSettings:GetAttributes() do
             if not table.find(knownWaterSettings, i) then
                 table.insert(knownWaterSettings, i)
             end
@@ -711,7 +606,8 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
             workspace.Terrain:SetMaterialColor(i, v)
         end
 
-        for i, v in map.TerrainColors do
+        for i, v in map.Configuration.TerrainColours:GetAttributes() do
+            assert(typeof(v) == "Color3", "Invalid terrain colour")
             local material = (Enum.Material :: any)[i]
             if not knownTerrainColours[material] then
                 knownTerrainColours[material] = workspace.Terrain:GetMaterialColor(material)
@@ -722,7 +618,7 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
         workspace.Terrain:Clear()
         workspace.Terrain:PasteRegion(map.TerrainRegion, Vector3int16.new(-32000, -32000, -32000), true)
 
-        local materialVariants = map.MaterialVariants:Clone()
+        local materialVariants = map.Configuration.MaterialVariants:Clone()
         materialVariants.Name = "MapMaterialVariants"
         materialVariants.Parent = MaterialService
 
@@ -736,32 +632,13 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
             end
         end
 
-        loadBounds(round, map)
-
         mapScript.Name = "Map"
         mapScript.Parent = workspace
     elseif lastMap then
-        lastMap.DynamicMap:Destroy()
-        lastMap.Props:Destroy()
-        lastMap.Windows:Destroy()
-        lastMap.ItemSpawns:Destroy()
-        lastMap.AmmoSpawns:Destroy()
-        lastMap.Interactables:Destroy()
-
-        map.DynamicMap.Parent = lastMapScript
-        map.Props.Parent = lastMapScript
-        map.Windows.Parent = lastMapScript
-        map.ItemSpawns.Parent = lastMapScript
-        map.AmmoSpawns.Parent = lastMapScript
-        map.Interactables.Parent = lastMapScript
+        
     end
 
     round._map = map -- Must be done here otherwise we fail to load everything below
-
-    loadProps(round, map)
-    loadItems(round, map)
-    loadAmmoBoxes(round, map)
-    loadInteractables(round, map)
 
     for _, v in round:GetParticipants() do
         assert(v)
@@ -814,8 +691,6 @@ function module.new(gamemode: Types.GamemodeDefinition): Types.Round
         _items = {},
         GetItems = GetItems,
         GetItem = GetItem,
-
-        LoadItem = LoadItem,
 
         GetAmmoDefinition = GetAmmoDefinition,
         GetItemDefinition = GetItemDefinition,

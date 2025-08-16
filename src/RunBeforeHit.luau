@@ -36,10 +36,6 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
         end
 
         if not prop then
-            prop = round:GetInteractable(hitPart)
-        end
-
-        if not prop then
             return false
         end
 
@@ -57,20 +53,13 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
         end
 
         return beforeHitParticipant(item, round, hitThing, params)
-    elseif hitThing.Kind == "MapProp" or hitThing.Kind == "ItemProp" or hitThing.Kind == "CorpseProp" or hitThing.Kind == "AmmoProp" then
+    elseif hitThing.Kind == "MapProp" then
         local beforeHitProp = if item.Kind == "Grenade" then item.Definition.ExplosionInfo.BeforeHitProp else item.Definition.BeforeHitProp
         if not beforeHitProp then
             return true
         end
 
         return beforeHitProp(item, round, hitThing, params)
-    elseif hitThing.Kind == "Interactable" then
-        local beforeTakeDamage = hitThing.Definition.BeforeTakeDamage
-        if not beforeTakeDamage then
-            return true
-        end
-
-        return beforeTakeDamage(hitThing, params)
     end
 
     error("Unknown hit thing kind: " .. hitThing.Kind)

@@ -41,12 +41,21 @@ local function TryTakeDamage(interactable: Types.Interactable, params: Types.Dam
     return true
 end
 
-function module.new(definition: Types.InteractableDefinition, object: BasePart?): Types.Interactable
+function module.new(definition: Types.InteractableDefinition, object: Types.MapThing?): Types.Interactable
 	object = object or definition.Model:Clone()
-	assert(object)
+	assert(object);
 
-	object.Name = definition.Name
-	object.CollisionGroup = "Interactables"
+	(object :: Instance).Name = definition.Name
+
+	if object:IsA("BasePart") then
+		object.CollisionGroup = "Interactables"
+	else
+		for _, v in (object :: Model):GetDescendants() do
+			if v:IsA("BasePart") then
+				v.CollisionGroup = "Interactables"
+			end
+		end
+	end
 
 	local health = object:GetAttribute("Health")
     assert((typeof(health) == "number") or typeof(health) == "nil")
