@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local MaterialService = game:GetService("MaterialService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -635,7 +636,18 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
         mapScript.Name = "Map"
         mapScript.Parent = workspace
     elseif lastMap then
-        
+        local toClone: {Instance} = {}
+        for _, v in CollectionService:GetTagged("Prop") do
+            if v:IsDescendantOf(lastMap.Map) then
+                v:Destroy()
+            elseif v:IsDescendantOf(map.Map) then
+                table.insert(toClone, v)
+            end
+        end
+
+        for _, v in toClone do
+            v:Clone().Parent = map.Map
+        end
     end
 
     round._map = map -- Must be done here otherwise we fail to load everything below
