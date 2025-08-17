@@ -37,11 +37,14 @@ function module.ValidateDefinition(definition: any): Types.MapDefinition
 end
 
 function module.fromModuleScript(mapScript: ModuleScript): Types.Map
+    mapScript = mapScript:Clone()
     local maybeDefinition: unknown = (require)(mapScript)
     local definition = module.ValidateDefinition(maybeDefinition)
 
     local playerSpawns = waitForFolder(mapScript, "PlayerSpawns")
-    local mapFolder = waitForFolder(mapScript, "Map")
+
+    local staticFolder = waitForFolder(mapScript, "Static")
+    local dynamicFolder = waitForFolder(mapScript, "Dynamic")
 
     local configuration = mapScript:WaitForChild("Configuration")
     local lightingSettings = configuration:WaitForChild("LightingSettings")
@@ -78,7 +81,9 @@ function module.fromModuleScript(mapScript: ModuleScript): Types.Map
         PlayerSpawns = playerSpawns,
 
         TerrainRegion = terrainRegion,
-        Map = mapFolder,
+
+        Static = staticFolder,
+        Dynamic = dynamicFolder,
 
         MaterialVariants = materialVariants,
     }

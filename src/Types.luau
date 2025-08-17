@@ -418,7 +418,8 @@ export type Map = MapDefinition & {
 
     TerrainRegion: TerrainRegion,
 
-    Map: Folder,
+    Static: Folder,
+    Dynamic: Folder,
 }
 
 export type Role = {
@@ -715,7 +716,7 @@ export type Round = {
     GetInteractableDefinition: (Round, interactable: string) -> InteractableDefinition?,
 
     _map: Map?,
-    LoadMap: (Round, mapScript: ModuleScript) -> (),
+    LoadMap: (Round, map: Map) -> (),
     GetMap: (Round) -> Map,
 
     _items: {[MapThing]: AnyItem?},

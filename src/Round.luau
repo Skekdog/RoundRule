@@ -1,4 +1,3 @@
-local CollectionService = game:GetService("CollectionService")
 local MaterialService = game:GetService("MaterialService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -6,10 +5,10 @@ local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 local ForEachPart = require(ReplicatedStorage.Shared.RoundRule.Common.ForEachPart)
 local GetDisplayName = require(ReplicatedStorage.Shared.RoundRule.Common.GetDisplayName)
+local GetTaggedDescendants = require(ReplicatedStorage.Shared.RoundRule.Common.GetTaggedDescendants)
 local AmmoBox = require(script.Parent.AmmoBox)
 local Interactable = require(script.Parent.Interactable)
 local Item = require(script.Parent.Item)
-local Map = require(script.Parent.Map)
 local Participant = require(script.Parent.Participant)
 local Prop = require(script.Parent.MapProp)
 local Replication = require(script.Parent.Replication)
@@ -17,14 +16,10 @@ local Role = require(script.Parent.Role)
 local Types = require(script.Parent.Types)
 local module = {}
 
--- We can get away with this, because if a property is not known, that means no map has overriden it, meaning it's still the default.
-local knownWaterSettings: {string} = {}
-local knownTerrainColours: {[Enum.Material]: Color3} = {}
-
 local HIGHLIGHTS_TIME = 20
 local PREPARING_TIME = 20
 
-local currentMap: Types.Map?
+local lastMap: Types.Map?
 
 local function IsPreGame(round: Types.Round): boolean
     return round:GetPhase() == "Waiting" or round:GetPhase() == "Preparing"
@@ -488,7 +483,7 @@ local function LoadProp(round: Types.Round, model: Types.MapThing): Types.Prop
         loadItem(round, model)
     elseif model:HasTag("AmmoBox") then
         loadAmmoBox(round, model)
-    elseif model:IsDescendantOf(workspace.Corpses) then
+    elseif model:HasTag("Corpse") then
         
     end
 
@@ -524,8 +519,11 @@ end
 
 local function AddInteractable(round: Types.Round, definition: Types.InteractableDefinition, object: Types.MapThing?): Types.Interactable
     local interactable = Interactable.new(definition, object)
-    interactable.Round = round;
-    (interactable.Object :: PVInstance).Parent = round:GetMap().Map
+    interactable.Round = round
+
+    if object then
+        (object :: PVInstance).Parent = round:GetMap().Dynamic
+    end
 
     round._interactables[interactable.Object] = interactable
 
@@ -569,59 +567,56 @@ local function GetInteractableDefinition(round: Types.Round, interactable: strin
     return round.Gamemode.InteractableDefinitions[interactable]
 end
 
-local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
-    mapScript = mapScript:Clone()
-    local map = Map.fromModuleScript(mapScript)
+local knownWaterSettings: {string} = {}
+local knownTerrainColours: {[Enum.Material]: Color3} = {}
+local function LoadMap(round: Types.Round, map: Types.Map): ()
+    round._map = map
 
-    local lastMap: Types.Map?
-
-    local lastMapScript = workspace:FindFirstChild("Map")
-    if lastMapScript then
-        assert(lastMapScript:IsA("ModuleScript"), "Invalid Map in Workspace")
-
-        lastMap = Map.fromModuleScript(lastMapScript)
-    end
-
-    if not lastMap or lastMap and lastMap.Name ~= map.Name then
-        if lastMapScript then
-            lastMapScript:Destroy()
+    if not lastMap or lastMap.Name ~= map.Name then
+        if lastMap then
+            lastMap.Folder:Destroy()
         end
 
-        local lastMapMaterialVariants = MaterialService:FindFirstChild("MapMaterialVariants")
-        if lastMapMaterialVariants then
-            lastMapMaterialVariants:Destroy()
+        local lastVariants = MaterialService:FindFirstChild("MapMaterialVariants")
+        if lastVariants then
+            lastVariants:Destroy()
         end
 
         for _, v in knownWaterSettings do
             workspace.Terrain:ResetPropertyToDefault(v)
         end
 
-        for i, v in map.Configuration.WaterSettings:GetAttributes() do
-            if not table.find(knownWaterSettings, i) then
-                table.insert(knownWaterSettings, i)
-            end
-            (workspace.Terrain :: any)[i] = v
-        end
-
         for i, v in knownTerrainColours do
             workspace.Terrain:SetMaterialColor(i, v)
         end
 
-        for i, v in map.Configuration.TerrainColours:GetAttributes() do
-            assert(typeof(v) == "Color3", "Invalid terrain colour")
-            local material = (Enum.Material :: any)[i]
-            if not knownTerrainColours[material] then
-                knownTerrainColours[material] = workspace.Terrain:GetMaterialColor(material)
-            end
-            workspace.Terrain:SetMaterialColor(material, v)
-        end
-
         workspace.Terrain:Clear()
-        workspace.Terrain:PasteRegion(map.TerrainRegion, Vector3int16.new(-32000, -32000, -32000), true)
 
         local materialVariants = map.Configuration.MaterialVariants:Clone()
         materialVariants.Name = "MapMaterialVariants"
         materialVariants.Parent = MaterialService
+
+        for i, v in map.Configuration.WaterSettings:GetAttributes() do
+            if not table.find(knownWaterSettings, i) then
+                table.insert(knownWaterSettings, i)
+            end
+
+            (workspace.Terrain :: any)[i] = v
+        end
+
+        for i, v in map.Configuration.TerrainColours:GetAttributes() do
+            assert(typeof(v) == "Color3", "Invalid colour for terrain material " .. i)
+            local material = Enum.Material:FromName(i)
+            assert(material, "Invalid material name " .. i)
+
+            if not knownTerrainColours[material] then
+                knownTerrainColours[material] = workspace.Terrain:GetMaterialColor(material)
+            end
+
+            workspace.Terrain:SetMaterialColor(material, v)
+        end
+
+        workspace.Terrain:PasteRegion(map.TerrainRegion, Vector3int16.new(-32000, -32000, -32000), true)
 
         for _, v in map.PlayerSpawns:GetChildren() do
             if v:IsA("BasePart") then
@@ -632,33 +627,30 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
                 v.Anchored = true
             end
         end
+    elseif lastMap and lastMap.Name == map.Name then
+        lastMap.Dynamic:Destroy()
+        map.Dynamic.Parent = lastMap.Folder
+    end
 
-        mapScript.Name = "Map"
-        mapScript.Parent = workspace
-    elseif lastMap then
-        local toClone: {Instance} = {}
-        for _, v in CollectionService:GetTagged("PropLoaded") do
-            if v:IsDescendantOf(lastMap.Map) then
-                v:Destroy()
-            elseif v:IsDescendantOf(map.Map) then
-                table.insert(toClone, v)
-            end
-        end
-
-        for _, v in toClone do
-            v:Clone().Parent = map.Map
+    for _, v in GetTaggedDescendants(map.Folder, "Prop") do
+        if v:IsA("BasePart") or v:IsA("Model") then
+            round:LoadProp(v)
         end
     end
 
-    round._map = map -- Must be done here otherwise we fail to load everything below
+    if not lastMap or lastMap.Name ~= map.Name then
+        map.Folder.Name = "Map"
+        map.Folder.Parent = workspace
+    end
 
     for _, v in round:GetParticipants() do
         assert(v)
         v:MoveToSpawn()
     end
 
-    currentMap = map
-    assert(currentMap)
+    if not lastMap or lastMap.Name ~= map.Name then
+        lastMap = map
+    end
 
     Replication.ReplicateMap()
 end

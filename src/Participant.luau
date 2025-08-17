@@ -504,7 +504,7 @@ function module.DropItem(participant: Types.Participant, item: Types.AnyItem, th
     item.Model:SetAttribute("AmmoType", if item.Kind == "Gun" then item.Definition.AmmoType.Name else nil)
     item.Model:SetAttribute("StoredAmmo", if item.Kind == "Gun" then item.Ammo else nil)
 
-    local parent = participant.Round:GetMap().Map
+    local parent = participant.Round:GetMap().Dynamic
     if throwDirection then
         if participant:TryThrowAssembly(GetPrimaryPart(item.Model), 15, parent, nil, throwDirection) then
             participant:RemoveItem(item)
@@ -890,7 +890,7 @@ local function DropAmmoBoxForCurrentItem(participant: Types.Participant): ()
     item.Ammo -= subtractAmount
 
     local ammoBox = AmmoBox.new(definition, item.Model, subtractAmount);
-    (ammoBox.Model :: PVInstance).Parent = participant.Round:GetMap().Map
+    (ammoBox.Model :: PVInstance).Parent = participant.Round:GetMap().Dynamic
 end
 
 local function tryGetAnimator(participant: Types.Participant): Animator?
