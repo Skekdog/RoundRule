@@ -637,7 +637,7 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
         mapScript.Parent = workspace
     elseif lastMap then
         local toClone: {Instance} = {}
-        for _, v in CollectionService:GetTagged("Prop") do
+        for _, v in CollectionService:GetTagged("PropLoaded") do
             if v:IsDescendantOf(lastMap.Map) then
                 v:Destroy()
             elseif v:IsDescendantOf(map.Map) then
