@@ -141,7 +141,7 @@ end
 
 local function tryConfirmKillList(corpse: Types.Corpse, searcher: Types.Participant): ()
     for _, v in corpse.Participant.KillList do
-        if v:GetStatus() ~= "Missing" then
+        if v == corpse.Participant or v:GetStatus() ~= "Missing" then
             continue
         end
 
