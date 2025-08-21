@@ -369,7 +369,7 @@ function module.TryTakeDamage(participant: Types.Participant, params: Types.Dama
 
     hum:TakeDamage(damage)
 
-    if typeof(params.Source) ~= "table" or (params.Source.Kind == "Gun" and not params.Source.Definition.IsSilent) then
+    if typeof(params.Source) ~= "table" or params.Source.Kind ~= "Gun" or (params.Source.Kind == "Gun" and not params.Source.Definition.IsSilent) then
         Replication.DamageTaken(participant.Player, params.Amount, params.Source)
     end
 
