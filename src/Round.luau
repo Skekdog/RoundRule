@@ -375,6 +375,10 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
 
     Replication.ReplicateWinner(victor)
     round:SetPhase("Highlights", HIGHLIGHTS_TIME)
+
+    if round.Gamemode.OnFinish then
+        round.Gamemode.OnFinish(round.Gamemode, round)
+    end
 end
 
 local function GetProps(round: Types.Round): {[Types.DataModelProp]: Types.Prop}
@@ -747,6 +751,8 @@ local function LoadMap(round: Types.Round, mapScript: ModuleScript): ()
         lastMap.ItemSpawns:Destroy()
         lastMap.AmmoSpawns:Destroy()
         lastMap.Interactables:Destroy()
+
+        map.StaticMap = lastMap.StaticMap
 
         map.DynamicMap.Parent = lastMapScript
         map.Props.Parent = lastMapScript
