@@ -475,6 +475,9 @@ local function loadAmmoBox(round: Types.Round, model: Types.MapThing): ()
 end
 
 local function loadInteractable(round: Types.Round, model: Types.MapThing): ()
+    if model:HasTag("Door") or model:HasTag("Ladder") then
+        return
+    end
     local definition = round:GetInteractableDefinition(model.Name) or error(`Interactable {model.Name} does not exist in map or gamemode`)
     round:AddInteractable(definition, model)
 end
@@ -526,10 +529,6 @@ local function AddInteractable(round: Types.Round, definition: Types.Interactabl
     local interactable = Interactable.new(definition, object)
     interactable.Round = round
 
-    if object then
-        (object :: PVInstance).Parent = round:GetMap().Dynamic
-    end
-
     round._interactables[interactable.Object] = interactable
 
     if interactable.Definition.OnLoadServer then
@@ -569,7 +568,7 @@ local function GetItemDefinition(round: Types.Round, item: string): Types.AnyIte
 end
 
 local function GetInteractableDefinition(round: Types.Round, interactable: string): Types.InteractableDefinition?
-    return round.Gamemode.InteractableDefinitions[interactable]
+    return round:GetMap().Definition.InteractableDefinitions[interactable] or round.Gamemode.InteractableDefinitions[interactable]
 end
 
 local knownWaterSettings: {string} = {}
