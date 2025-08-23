@@ -14,6 +14,15 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
             return false
         end
 
+        if model:HasTag("Corpse") then
+            local prop = round:GetProp(model)
+            if not prop then
+                return false
+            end
+
+            hitThing = prop
+        end
+
         local participant = round:GetParticipant(model.Name)
         if not participant then
             return false
@@ -22,14 +31,6 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
         hitThing = participant
     else
         local prop: Types.Prop | Types.Interactable?
-        if hitPart:IsDescendantOf(workspace.Corpses) then
-            local model = hitPart:FindFirstAncestorOfClass("Model")
-            if not model then
-                return false
-            end
-
-            prop = round:GetProp(model)
-        end
 
         if not prop then
             prop = round:GetProp(hitPart)
