@@ -655,6 +655,13 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
     for _, v in round:GetParticipants() do
         assert(v)
         v:MoveToSpawn()
+
+        for _, item in v:GetItems() do
+            assert(item)
+            if not round:GetItemDefinition(item.Definition.Name) then
+                v:RemoveItem(item)
+            end
+        end
     end
 
     if not lastMap or lastMap.Definition.Name ~= map.Definition.Name then
