@@ -387,6 +387,7 @@ local function GetProp(round: Types.Round, model: Types.MapThing): Types.Prop?
 end
 
 local function loadProp(round: Types.Round, model: Types.MapThing): Types.Prop
+    model:AddTag("Prop")
     local prop = Prop.new(model, round)
     return prop
 end
@@ -636,7 +637,7 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
         map.Dynamic.Parent = lastMap.Folder
     end
 
-    for _, v in GetTaggedDescendants(map.Folder, "Prop") do
+    for _, v in GetTaggedDescendants(map.Folder, Prop.Tags) do
         if v:IsA("BasePart") or v:IsA("Model") then
             round:LoadProp(v)
         end

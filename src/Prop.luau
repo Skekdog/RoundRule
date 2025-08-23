@@ -1,6 +1,8 @@
 local Types = require(script.Parent.Types)
 local module = {}
 
+module.Tags = {"Prop", "Item", "AmmoBox", "Interactable", "Corpse"}
+
 local function destroyProp(prop: Types.Prop, params: Types.DamageParams): ()
     local onBreak = prop.Model:FindFirstChild("OnBreak")
     if onBreak and onBreak:IsA("ModuleScript") then
