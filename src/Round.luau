@@ -474,13 +474,13 @@ local function loadAmmoBox(round: Types.Round, model: Types.MapThing): ()
 end
 
 local function loadInteractable(round: Types.Round, model: Types.MapThing): ()
+    if true then return end
     local definition = round:GetInteractableDefinition(model.Name) or error(`Interactable {model.Name} does not exist in map or gamemode`)
     round:AddInteractable(definition, model)
 end
 
 local function LoadProp(round: Types.Round, model: Types.MapThing): Types.Prop
     assert(not round:GetProp(model), "Prop already exists")
-    assert(model:HasTag("Prop"), "Props must have Prop tag")
 
     if model:HasTag("Interactable") then
         loadInteractable(round, model)
@@ -637,7 +637,7 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
         map.Dynamic.Parent = lastMap.Folder
     end
 
-    for _, v in GetTaggedDescendants(map.Folder, Prop.Tags) do
+    for _, v in GetTaggedDescendants(map.Dynamic, Prop.Tags) do
         if v:IsA("BasePart") or v:IsA("Model") then
             round:LoadProp(v)
         end

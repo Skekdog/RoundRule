@@ -1,11 +1,17 @@
-local GetAllTagged = require(script.Parent.GetAllTagged)
-
 local function GetTaggedDescendants(instance: Instance, tag: string | {string}): {Instance}
 	local tagged: {Instance} = {}
 
-	for _, v in GetAllTagged(tag) do
-		if v:IsDescendantOf(instance) then
-			table.insert(tagged, v)
+	if typeof(tag) == "string" then
+		tag = {tag}
+	end
+	assert(typeof(tag) == "table")
+
+	for _, v in instance:GetDescendants() do
+		for _, tag in tag do
+			if v:HasTag(tag) then
+				table.insert(tagged, v)
+				break
+			end
 		end
 	end
 
