@@ -399,6 +399,7 @@ local function loadItem(round: Types.Round, model: Types.MapThing): ()
     round._items[model] = item
 
     model:SetAttribute("StoredAmmo", if item.Kind == "Gun" then item.Ammo else nil)
+    model:SetAttribute("AmmoType", if item.Kind == "Gun" then item.Definition.AmmoType.Name else nil)
 
     ForEachPart(model, function(part)
         part.Touched:Connect(function(touchPart)
