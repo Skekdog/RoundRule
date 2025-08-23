@@ -475,7 +475,6 @@ local function loadAmmoBox(round: Types.Round, model: Types.MapThing): ()
 end
 
 local function loadInteractable(round: Types.Round, model: Types.MapThing): ()
-    if true then return end
     local definition = round:GetInteractableDefinition(model.Name) or error(`Interactable {model.Name} does not exist in map or gamemode`)
     round:AddInteractable(definition, model)
 end
