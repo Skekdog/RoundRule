@@ -384,11 +384,31 @@ export type AmmoDefinition = {
 
 export type AnyItemDefinition = ItemDefinition | GunWeaponDefinition | GrenadeWeaponDefinition | MeleeWeaponDefinition
 
+export type MapScript = ModuleScript & {
+    Static: Folder,
+    Dynamic: Folder,
+    PlayerSpawns: Folder,
+
+    Terrain: (TerrainRegion & {
+        Clouds: Clouds?,
+    })?,
+
+    Lighting: Folder?,
+
+    MaterialVariants: Folder?,
+}
+
 export type MapDefinition = {
     Name: string,
     DisplayName: string?,
     Description: string,
     Authors: string,
+
+    Gravity: number,
+
+    LightingSettings: {[string]: Color3 | number | string | boolean},
+    WaterSettings: {[string]: number},
+    TerrainColours: {[string]: Color3},
 
     Extras: Extras?,
 
@@ -400,23 +420,15 @@ export type MapDefinition = {
 
     AvailableItems: {[string]: AnyItemDefinition},
     AvailableAmmo: {[string]: AmmoDefinition},
+
+    InteractableDefinitions: {[string]: InteractableDefinition},
+
+    Map: MapScript,
 }
 
-export type Map = MapDefinition & {
-    Folder: ModuleScript,
-    Extras: Extras,
-
-    PlayerSpawns: Folder,
-
-    Configuration: {
-        MaterialVariants: Instance,
-        LightingSettings: Instance,
-        WaterSettings: Instance,
-        TerrainColours: Instance,
-        Gravity: number,
-    },
-
-    TerrainRegion: TerrainRegion,
+export type Map = {
+    Definition: MapDefinition,
+    Map: MapScript,
 
     Static: Folder,
     Dynamic: Folder,

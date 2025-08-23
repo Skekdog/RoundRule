@@ -1,18 +1,6 @@
 local Types = require(script.Parent.Types)
 local module = {}
 
--- We always want to use WaitForChild, because if a client is using this script, not all children may be replicated immediately.
-
-local function waitForClass<T>(parent: Instance, name: string, class: T & Instance): T
-    local Instance = assert(parent:WaitForChild(name), "Instance not found")
-    assert(Instance:IsA(class.ClassName), "Instance is not a " .. class.ClassName)
-    return Instance :: Instance & T
-end
-
-local function waitForFolder(parent: Instance, name: string): Folder
-    return waitForClass(parent, name, Instance.new("Folder")) :: Folder
-end
-
 local function validateMapIcons(mapIcons: any): ()
     assert(typeof(mapIcons) == "table", "MapIcons must be a table")
     assert(mapIcons["16:9"] == nil or typeof(mapIcons["16:9"]) == "string", 'MapIcons["16:9"] must be a string')
@@ -36,56 +24,49 @@ function module.ValidateDefinition(definition: any): Types.MapDefinition
     return definition
 end
 
-function module.fromModuleScript(mapScript: ModuleScript): Types.Map
-    mapScript = mapScript:Clone()
+function module.ValidateMapScript(mapScript: Instance): Types.MapScript
+    assert(mapScript:IsA("ModuleScript"), "MapScript must be a ModuleScript")
+
+    module.ValidateDefinition((require)(mapScript))
+
+    local static = mapScript:FindFirstChild("Static")
+    assert(static and static:IsA("Folder"), "MapScript must have a Static Folder")
+
+    local dynamic = mapScript:FindFirstChild("Dynamic")
+    assert(dynamic and dynamic:IsA("Folder"), "MapScript must have a Dynamic Folder")
+
+    local playerSpawns = mapScript:FindFirstChild("PlayerSpawns")
+    assert(playerSpawns and playerSpawns:IsA("Folder"), "MapScript must have a PlayerSpawns Folder")
+
+    local terrain = mapScript:FindFirstChild("Terrain")
+    assert(not terrain or terrain:IsA("TerrainRegion"), "Terrain must be a TerrainRegion")
+
+    if terrain then
+        local clouds = terrain:FindFirstChild("Clouds")
+        assert(not clouds or clouds:IsA("Clouds"), "Clouds must be a Clouds")
+    end
+
+    local lighting = mapScript:FindFirstChild("Lighting")
+    assert(not lighting or lighting:IsA("Folder"), "Lighting must be a Folder")
+
+    local materialVariants = mapScript:FindFirstChild("MaterialVariants")
+    assert(not materialVariants or materialVariants:IsA("Folder"), "MaterialVariants must be a Folder")
+
+    return mapScript :: Types.MapScript
+end
+
+function module.fromMapScript(mapScript: Types.MapScript): Types.Map
     local maybeDefinition: unknown = (require)(mapScript)
     local definition = module.ValidateDefinition(maybeDefinition)
 
-    local playerSpawns = waitForFolder(mapScript, "PlayerSpawns")
-
-    local staticFolder = waitForFolder(mapScript, "Static")
-    local dynamicFolder = waitForFolder(mapScript, "Dynamic")
-
-    local configuration = mapScript:WaitForChild("Configuration")
-    local lightingSettings = configuration:WaitForChild("LightingSettings")
-    local waterSettings = configuration:WaitForChild("WaterSettings")
-    local terrainColours = configuration:WaitForChild("TerrainColours")
-    local gravity = waitForClass(configuration, "Gravity", Instance.new("NumberValue"))
-
-    local materialVariants = configuration:WaitForChild("MaterialVariants")
-
-    local terrainRegion = waitForClass(mapScript, "TerrainRegion", Instance.new("TerrainRegion"))
-
     return {
-        Name = definition.Name,
-        DisplayName = definition.DisplayName,
-        Description = definition.Description,
-        Authors = definition.Authors,
-        Extras = definition.Extras or {},
+        Definition = definition,
+        Map = definition.Map,
 
-        Folder = mapScript,
+        PlayerSpawns = definition.Map.PlayerSpawns,
 
-        MapIcons = definition.MapIcons,
-
-        AvailableAmmo = definition.AvailableAmmo,
-        AvailableItems = definition.AvailableItems,
-
-        Configuration = {
-            LightingSettings = lightingSettings,
-            WaterSettings = waterSettings,
-            TerrainColours = terrainColours,
-            Gravity = gravity.Value,
-            MaterialVariants = materialVariants,
-        },
-
-        PlayerSpawns = playerSpawns,
-
-        TerrainRegion = terrainRegion,
-
-        Static = staticFolder,
-        Dynamic = dynamicFolder,
-
-        MaterialVariants = materialVariants,
+        Static = definition.Map.Static,
+        Dynamic = definition.Map.Dynamic,
     }
 end
 

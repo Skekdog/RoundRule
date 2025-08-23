@@ -664,7 +664,7 @@ local function MoveToSpawn(participant: Types.Participant, spawnCFrame: CFrame?)
     end
 
     if not spawnCFrame then
-        local spawns = participant.Round:GetMap().PlayerSpawns:GetChildren()
+        local spawns = participant.Round:GetMap().Map.PlayerSpawns:GetChildren()
         local chosenSpawn = spawns[math.random(#spawns)]
 
         assert(chosenSpawn, "No spawn found")

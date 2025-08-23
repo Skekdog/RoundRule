@@ -561,11 +561,11 @@ local function GetMap(round: Types.Round): Types.Map
 end
 
 local function GetAmmoDefinition(round: Types.Round, ammo: string): Types.AmmoDefinition?
-    return round:GetMap().AvailableAmmo[ammo] or round.Gamemode.AvailableAmmo[ammo]
+    return round:GetMap().Definition.AvailableAmmo[ammo] or round.Gamemode.AvailableAmmo[ammo]
 end
 
 local function GetItemDefinition(round: Types.Round, item: string): Types.AnyItemDefinition?
-    return round:GetMap().AvailableItems[item] or round.Gamemode.AvailableItems[item]
+    return round:GetMap().Definition.AvailableItems[item] or round.Gamemode.AvailableItems[item]
 end
 
 local function GetInteractableDefinition(round: Types.Round, interactable: string): Types.InteractableDefinition?
@@ -577,9 +577,9 @@ local knownTerrainColours: {[Enum.Material]: Color3} = {}
 local function LoadMap(round: Types.Round, map: Types.Map): ()
     round._map = map
 
-    if not lastMap or lastMap.Name ~= map.Name then
+    if not lastMap or lastMap.Definition.Name ~= map.Definition.Name then
         if lastMap then
-            lastMap.Folder:Destroy()
+            lastMap.Map:Destroy()
         end
 
         local lastVariants = MaterialService:FindFirstChild("MapMaterialVariants")
@@ -597,11 +597,13 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
 
         workspace.Terrain:Clear()
 
-        local materialVariants = map.Configuration.MaterialVariants:Clone()
-        materialVariants.Name = "MapMaterialVariants"
-        materialVariants.Parent = MaterialService
+        local materialVariants = map.Map:FindFirstChild("MaterialVariants")
+        if materialVariants then
+            materialVariants.Name = "MapMaterialVariants"
+            materialVariants.Parent = MaterialService
+        end
 
-        for i, v in map.Configuration.WaterSettings:GetAttributes() do
+        for i, v in map.Definition.WaterSettings do
             if not table.find(knownWaterSettings, i) then
                 table.insert(knownWaterSettings, i)
             end
@@ -609,7 +611,7 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
             (workspace.Terrain :: any)[i] = v
         end
 
-        for i, v in map.Configuration.TerrainColours:GetAttributes() do
+        for i, v in map.Definition.TerrainColours do
             assert(typeof(v) == "Color3", "Invalid colour for terrain material " .. i)
             local material = Enum.Material:FromName(i)
             assert(material, "Invalid material name " .. i)
@@ -621,9 +623,12 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
             workspace.Terrain:SetMaterialColor(material, v)
         end
 
-        workspace.Terrain:PasteRegion(map.TerrainRegion, Vector3int16.new(-32000, -32000, -32000), true)
+        local terrain = map.Map:FindFirstChild("Terrain") :: TerrainRegion
+        if terrain then
+            workspace.Terrain:PasteRegion(terrain, Vector3int16.new(-32000, -32000, -32000), true)
+        end
 
-        for _, v in map.PlayerSpawns:GetChildren() do
+        for _, v in map.Map.PlayerSpawns:GetChildren() do
             if v:IsA("BasePart") then
                 v.Transparency = 1
                 v.CanCollide = false
@@ -632,9 +637,9 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
                 v.Anchored = true
             end
         end
-    elseif lastMap and lastMap.Name == map.Name then
+    elseif lastMap and lastMap.Definition.Name == map.Definition.Name then
         lastMap.Dynamic:Destroy()
-        map.Dynamic.Parent = lastMap.Folder
+        map.Dynamic.Parent = lastMap.Map
     end
 
     for _, v in GetTaggedDescendants(map.Dynamic, Prop.Tags) do
@@ -643,9 +648,9 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
         end
     end
 
-    if not lastMap or lastMap.Name ~= map.Name then
-        map.Folder.Name = "Map"
-        map.Folder.Parent = workspace
+    if not lastMap or lastMap.Definition.Name ~= map.Definition.Name then
+        map.Map.Name = "Map"
+        map.Map.Parent = workspace
     end
 
     for _, v in round:GetParticipants() do
@@ -653,7 +658,7 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
         v:MoveToSpawn()
     end
 
-    if not lastMap or lastMap.Name ~= map.Name then
+    if not lastMap or lastMap.Definition.Name ~= map.Definition.Name then
         lastMap = map
     end
 
