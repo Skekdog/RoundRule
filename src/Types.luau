@@ -432,8 +432,8 @@ export type Role = {
     FormatString: (Role, str: string) -> string,
 }
 
-export type OnMapPropBreak = (prop: Prop, params: DamageParams) -> ()
-export type OnMapPropDamage = (prop: Prop, params: DamageParams) -> boolean?
+export type OnPropBreak = (prop: Prop, params: DamageParams) -> ()
+export type OnPropDamage = (prop: Prop, params: DamageParams) -> boolean?
 
 export type Event = {
     Timestamp: number,
@@ -693,7 +693,7 @@ export type Participant = {
 }
 
 export type Prop = {
-    Kind: "MapProp",
+    Kind: "Prop",
     Model: MapThing,
     Extras: Extras,
 

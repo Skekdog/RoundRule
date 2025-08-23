@@ -4,7 +4,7 @@ local module = {}
 local function destroyProp(prop: Types.Prop, params: Types.DamageParams): ()
     local onBreak = prop.Model:FindFirstChild("OnBreak")
     if onBreak and onBreak:IsA("ModuleScript") then
-        ((require)(onBreak) :: Types.OnMapPropBreak)(prop, params)
+        ((require)(onBreak) :: Types.OnPropBreak)(prop, params)
     end
 
     prop.Model:Destroy()
@@ -13,7 +13,7 @@ end
 local function tryRunOnDamage(prop: Types.Prop, params: Types.DamageParams): boolean?
     local onDamage = prop.Model:FindFirstChild("OnDamage")
     if onDamage and onDamage:IsA("ModuleScript") then
-        return ((require)(onDamage) :: Types.OnMapPropBreak)(prop, params)
+        return ((require)(onDamage) :: Types.OnPropBreak)(prop, params)
     end
     return true
 end
@@ -63,7 +63,7 @@ function module.new(model: Types.MapThing, round: Types.Round): Types.Prop
     assert((typeof(health) == "number") or typeof(health) == "nil")
 
     return {
-        Kind = "MapProp",
+        Kind = "Prop",
         Model = model,
         Extras = {},
 

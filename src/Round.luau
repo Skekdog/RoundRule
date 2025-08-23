@@ -10,7 +10,7 @@ local AmmoBox = require(script.Parent.AmmoBox)
 local Interactable = require(script.Parent.Interactable)
 local Item = require(script.Parent.Item)
 local Participant = require(script.Parent.Participant)
-local Prop = require(script.Parent.MapProp)
+local Prop = require(script.Parent.Prop)
 local Replication = require(script.Parent.Replication)
 local Role = require(script.Parent.Role)
 local Types = require(script.Parent.Types)
@@ -386,7 +386,7 @@ local function GetProp(round: Types.Round, model: Types.MapThing): Types.Prop?
     return round._props[model]
 end
 
-local function loadMapProp(round: Types.Round, model: Types.MapThing): Types.Prop
+local function loadProp(round: Types.Round, model: Types.MapThing): Types.Prop
     local prop = Prop.new(model, round)
     return prop
 end
@@ -491,7 +491,7 @@ local function LoadProp(round: Types.Round, model: Types.MapThing): Types.Prop
         
     end
 
-    local prop = loadMapProp(round, model)
+    local prop = loadProp(round, model)
 
     round._props[model] = prop
     return prop

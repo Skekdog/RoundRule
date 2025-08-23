@@ -54,7 +54,7 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
         end
 
         return beforeHitParticipant(item, round, hitThing, params)
-    elseif hitThing.Kind == "MapProp" then
+    elseif hitThing.Kind == "Prop" then
         local beforeHitProp = if item.Kind == "Grenade" then item.Definition.ExplosionInfo.BeforeHitProp else item.Definition.BeforeHitProp
         if not beforeHitProp then
             return true
