@@ -121,14 +121,14 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance, cha
 		constraint.Parent = clone:FindFirstChild(v.Part1)
 	end
 
-	local upperTorso = clone:FindFirstChild("UpperTorso")
-	assert(not upperTorso or upperTorso:IsA("BasePart"))
-	clone.PrimaryPart = upperTorso
+	local lowerTorso = clone:FindFirstChild("LowerTorso")
+	assert(not lowerTorso or lowerTorso:IsA("BasePart"))
+	clone.PrimaryPart = lowerTorso
 
 	if root then
 		local weld = Instance.new("WeldConstraint")
 		weld.Part1 = root
-		weld.Part0 = upperTorso :: BasePart -- WeldConstraint.Part0 is optional but it doesn't think so
+		weld.Part0 = lowerTorso :: BasePart -- WeldConstraint.Part0 is optional but it doesn't think so
 		weld.Parent = root
 	end
 

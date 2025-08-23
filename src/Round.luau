@@ -372,6 +372,10 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
 
     Replication.ReplicateWinner(victor)
     round:SetPhase("Highlights", HIGHLIGHTS_TIME)
+
+    if round.Gamemode.OnFinish then
+        round.Gamemode.OnFinish(round.Gamemode, round)
+    end
 end
 
 local function GetProps(round: Types.Round): {[Types.MapThing]: Types.Prop}
