@@ -611,7 +611,7 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
             (workspace.Terrain :: any)[i] = v
         end
 
-        for i, v in map.Definition.TerrainColours do
+        for i, v in map.Definition.TerrainColors do
             assert(typeof(v) == "Color3", "Invalid colour for terrain material " .. i)
             local material = Enum.Material:FromName(i)
             assert(material, "Invalid material name " .. i)

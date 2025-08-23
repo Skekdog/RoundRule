@@ -408,7 +408,7 @@ export type MapDefinition = {
 
     LightingSettings: {[string]: Color3 | number | string | boolean},
     WaterSettings: {[string]: number},
-    TerrainColours: {[string]: Color3},
+    TerrainColors: {[string]: Color3},
 
     Extras: Extras?,
 
