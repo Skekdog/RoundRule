@@ -76,10 +76,7 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
         Victim = participant,
     })
 
-    local corpseFolder = workspace:FindFirstChild("Corpses") :: Folder or Instance.new("Folder", workspace)
-    corpseFolder.Name = "Corpses"
-
-    local ragdoll = MakeRagdoll(participant, corpseFolder)
+    local ragdoll = MakeRagdoll(participant, workspace.Characters)
     if ragdoll then
         round:LoadProp(ragdoll)
         ragdoll:SetAttribute("Unidentified", true)
