@@ -45,6 +45,7 @@ function module.new(definition: Types.InteractableDefinition, object: Types.MapT
 	object = object or definition.Model:Clone()
 	assert(object);
 
+	(object :: Instance):AddTag("Interactable");
 	(object :: Instance).Name = definition.Name
 
 	if object:IsA("BasePart") then
