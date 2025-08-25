@@ -1,3 +1,5 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local GetMapThingWithTag = require(ReplicatedStorage.Shared.RoundRule.Common.GetMapThingWithTag)
 local Types = require(script.Parent.Types)
 
 local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round: Types.Round, hitPart: BasePart, params: Types.DamageParams): boolean
@@ -30,11 +32,12 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
 
         hitThing = participant
     else
-        local prop: Types.Prop | Types.Interactable?
-
-        if not prop then
-            prop = round:GetProp(hitPart)
+        local mapThing = GetMapThingWithTag(hitPart, "Prop")
+        if not mapThing then
+            return false
         end
+
+        local prop: Types.Prop | Types.Interactable? = round:GetInteractable(mapThing) or round:GetProp(mapThing)
 
         if not prop then
             return false
@@ -54,7 +57,7 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
         end
 
         return beforeHitParticipant(item, round, hitThing, params)
-    elseif hitThing.Kind == "Prop" then
+    elseif hitThing.Kind == "Prop" or hitThing.Kind == "Interactable" then
         local beforeHitProp = if item.Kind == "Grenade" then item.Definition.ExplosionInfo.BeforeHitProp else item.Definition.BeforeHitProp
         if not beforeHitProp then
             return true

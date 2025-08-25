@@ -7,7 +7,7 @@ local function destroyInteractable(interactable: Types.Interactable, params: Typ
 		onBreakServer(interactable, params)
 	end
 
-	interactable.Object:Destroy()
+	interactable.Model:Destroy()
 end
 
 local function GetHealth(interactable: Types.Interactable): number?
@@ -64,7 +64,7 @@ function module.new(definition: Types.InteractableDefinition, object: Types.MapT
 		Kind = "Interactable",
 		Definition = definition,
 		HintTextClient = definition.DefaultHintText,
-		Object = object,
+		Model = object,
 		Extras = {},
 
 		_health = health,

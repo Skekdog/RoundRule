@@ -18,7 +18,7 @@ export type Bound = BasePart
 export type ItemBeforeHit = AnyWeapon | ExplosionParams
 export type BeforeHitAnything = (item: ItemBeforeHit, round: Round, hitPart: BasePart, params: DamageParams) -> boolean
 export type BeforeHitParticipant = (item: ItemBeforeHit, round: Round, hitParticipant: Participant, params: DamageParams) -> boolean
-export type BeforeHitProp = (item: ItemBeforeHit, round: Round, hitProp: Prop, params: DamageParams) -> boolean
+export type BeforeHitProp = (item: ItemBeforeHit, round: Round, hitProp: Prop | Interactable, params: DamageParams) -> boolean
 
 export type RunBeforeHit = (item: ItemBeforeHit, round: Round, hitPart: BasePart, params: DamageParams) -> boolean
 
@@ -211,7 +211,7 @@ export type InteractableDefinition = {
 export type Interactable = {
     Kind: "Interactable",
     Definition: InteractableDefinition,
-    Object: MapThing,
+    Model: MapThing,
 
     Round: Round?,
     Extras: Extras,
