@@ -6,6 +6,7 @@ local SoundService = game:GetService("SoundService")
 local ForEachPart = require(ReplicatedStorage.Shared.RoundRule.Common.ForEachPart)
 local GetDisplayName = require(ReplicatedStorage.Shared.RoundRule.Common.GetDisplayName)
 local GetTaggedDescendants = require(ReplicatedStorage.Shared.RoundRule.Common.GetTaggedDescendants)
+local HasTag = require(ReplicatedStorage.Shared.RoundRule.Common.HasAnyTag)
 local AmmoBox = require(script.Parent.AmmoBox)
 local Interactable = require(script.Parent.Interactable)
 local Item = require(script.Parent.Item)
@@ -646,6 +647,12 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
             round:LoadProp(v)
         end
     end
+
+    map.Dynamic.DescendantAdded:Connect(function(descendant)
+        if (descendant:IsA("BasePart") or descendant:IsA("Model")) and not round:GetProp(descendant) and HasTag(descendant, Prop.Tags) then
+            round:LoadProp(descendant)
+        end
+    end)
 
     if not lastMap or lastMap.Definition.Name ~= map.Definition.Name then
         map.Map.Name = "Map"

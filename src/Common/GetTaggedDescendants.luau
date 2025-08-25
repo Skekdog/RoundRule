@@ -1,3 +1,5 @@
+local HasTag = require(script.Parent.HasAnyTag)
+
 local function GetTaggedDescendants(instance: Instance, tag: string | {string}): {Instance}
 	local tagged: {Instance} = {}
 
@@ -7,11 +9,8 @@ local function GetTaggedDescendants(instance: Instance, tag: string | {string}):
 	assert(typeof(tag) == "table")
 
 	for _, v in instance:GetDescendants() do
-		for _, tag in tag do
-			if v:HasTag(tag) then
-				table.insert(tagged, v)
-				break
-			end
+		if HasTag(v, tag) then
+			table.insert(tagged, v)
 		end
 	end
 
