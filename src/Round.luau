@@ -652,10 +652,12 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
         map.Map.Parent = workspace
     end
 
+    task.spawn(function()
+        for _, v in round:GetParticipants() do
+            v:MoveToSpawn()
+        end
+    end)
     for _, v in round:GetParticipants() do
-        assert(v)
-        v:MoveToSpawn()
-
         for _, item in v:GetItems() do
             assert(item)
             if not round:GetItemDefinition(item.Definition.Name) then
