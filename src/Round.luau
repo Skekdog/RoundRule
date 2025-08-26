@@ -522,7 +522,7 @@ local function GetInteractables(round: Types.Round): {[Types.MapThing]: Types.In
     return round._interactables :: {[Types.MapThing]: Types.Interactable}
 end
 
-local function GetInteractable(round: Types.Round, model: Types.MapThing): Types.Interactable?
+function module.GetInteractable(round: Types.Round, model: Types.MapThing): Types.Interactable?
     return round._interactables[model]
 end
 
@@ -743,7 +743,7 @@ function module.new(gamemode: Types.GamemodeDefinition): Types.Round
 
         _interactables = {},
         GetInteractables = GetInteractables,
-        GetInteractable = GetInteractable,
+        GetInteractable = module.GetInteractable,
 
         AddEvent = AddEvent,
         GetEventLog = GetEventLog,
