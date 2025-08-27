@@ -46,6 +46,7 @@ function module.new(definition: Types.InteractableDefinition, object: Types.MapT
 	assert(object);
 
 	(object :: Instance):AddTag("Interactable");
+	(object :: Instance):AddTag("Prop");
 	(object :: Instance).Name = definition.Name
 
 	if object:IsA("BasePart") then
