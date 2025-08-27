@@ -189,6 +189,7 @@ export type InteractableDefinition = {
     DisplayName: string?,
 
     NoActionHint: boolean?,
+    HideName: boolean?,
 
     DefaultHintText: string?,
 
