@@ -667,7 +667,7 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
         map.Map.Parent = workspace
     end
 
-    task.spawn(function()
+    task.delay(1, function()
         for _, v in round:GetParticipants() do
             v:MoveToSpawn()
         end
