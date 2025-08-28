@@ -743,8 +743,9 @@ local function SpawnCharacter(participant: Types.Participant): ()
             end
         end)
 
-        local charsFolder = workspace:FindFirstChild("Characters") :: Folder or Instance.new("Folder", workspace)
-        charsFolder.Name = "Characters"
+        char:AddTag("Character")
+
+        local charsFolder = workspace.Characters
         char.Parent = charsFolder
     end)
     
