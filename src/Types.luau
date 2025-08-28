@@ -240,9 +240,18 @@ export type CommonItemDefinition = {
 
     Slot: number?,
     CanDrop: boolean?,
+    PreventUnequip: boolean?,
 
     CreditCost: number?,
     MaxStock: number?,
+
+    OnPurchase: ((item: AnyItem, participant: Participant) -> ())?,
+
+    OnUnequipClient: ((item: AnyItem) -> ())?,
+    OnUnequipServer: ((item: AnyItem, participant: Participant) -> ())?,
+
+    OnEquipClient: ((item: AnyItem) -> ())?,
+    OnEquipServer: ((item: AnyItem, participant: Participant) -> ())?,
 }
 
 export type CommonWeaponDefinition = CommonItemDefinition & {
@@ -273,14 +282,6 @@ export type ItemDefinition = CommonItemDefinition & {
 
     PrimaryToggled: boolean?,
     AlternateToggled: boolean?,
-
-    OnPurchase: ((item: Item, participant: Participant) -> ())?,
-
-    OnUnequipClient: ((item: Item) -> ())?,
-    OnUnequipServer: ((item: Item, participant: Participant) -> ())?,
-
-    OnEquipClient: ((item: Item) -> ())?,
-    OnEquipServer: ((item: Item, participant: Participant) -> ())?,
 }
 
 export type BeforeGunPrimaryFireClient = (item: GunWeapon, targettedParts: {BasePart}) -> boolean

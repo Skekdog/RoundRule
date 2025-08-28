@@ -245,7 +245,7 @@ end
 
 local function SetEquippedItem(participant: Types.Participant, item: Types.AnyItem?): ()
     local lastItem = participant:GetEquippedItem()
-    if lastItem and lastItem.Kind == "Item" and lastItem.Definition.OnUnequipServer then
+    if lastItem and lastItem.Definition.OnUnequipServer then
         lastItem.Definition.OnUnequipServer(lastItem, participant)
     end
     
@@ -291,7 +291,7 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.AnyIt
 
     participant._equippedItem = item
 
-    if item and item.Kind == "Item" and item.Definition.OnEquipServer then
+    if item and item.Definition.OnEquipServer then
         item.Definition.OnEquipServer(item, participant)
     end
 end
@@ -576,7 +576,7 @@ local function AddItem(participant: Types.Participant, item: Types.AnyItem): ()
 
     participant._items[item.Definition.Name] = item
 
-    if item.Kind == "Item" and not item.Definition.Slot and item.Definition.OnEquipServer then
+    if not item.Definition.Slot and item.Definition.OnEquipServer then
         item.Definition.OnEquipServer(item, participant)
     end
 
@@ -589,7 +589,7 @@ local function RemoveItem(participant: Types.Participant, item: Types.AnyItem): 
         participant:SetEquippedItem()
     end
 
-    if item.Kind == "Item" and not item.Definition.Slot and item.Definition.OnUnequipServer then
+    if not item.Definition.Slot and item.Definition.OnUnequipServer then
         item.Definition.OnUnequipServer(item, participant)
     end
 
@@ -630,7 +630,7 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
 
     local item = participant:GiveItemFromItemDefinition(itemDefinition)
 
-    if itemDefinition.Kind == "Item" and itemDefinition.OnPurchase then
+    if itemDefinition.OnPurchase then
         itemDefinition.OnPurchase(item :: Types.Item, participant)
     end
 
