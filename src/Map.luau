@@ -8,6 +8,16 @@ local function validateMapIcons(mapIcons: any): ()
     assert(mapIcons["1:1"] == nil or typeof(mapIcons["1:1"]) == "string", 'MapIcons["1:1"] must be a string')
 end
 
+local function validateClouds(clouds: any): ()
+    if clouds == nil then
+        return
+    end
+    assert(typeof(clouds) == "table", "CloudsSettings must be nil or a table")
+    assert(typeof(clouds.Cover) == "number", "CloudsSettings.Cover must be a number")
+    assert(typeof(clouds.Density) == "number", "CloudsSettings.Density must be a number")
+    assert(typeof(clouds.Color) == "Color3", "CloudsSettings.Color must be a Color3")
+end
+
 function module.ValidateDefinition(definition: any): Types.MapDefinition
     assert(typeof(definition) == "table", "MapDefinition must be a table")
 
@@ -15,11 +25,13 @@ function module.ValidateDefinition(definition: any): Types.MapDefinition
     assert(definition.DisplayName == nil or typeof(definition.DisplayName) == "string", "DisplayName must be a string")
     assert(typeof(definition.Description) == "string", "Description must be a string")
     assert(typeof(definition.Authors) == "string", "Authors must be a string")
-    
+
     validateMapIcons(definition.MapIcons)
 
     assert(typeof(definition.AvailableItems) == "table", "AvailableItems must be a table")
     assert(typeof(definition.AvailableAmmo) == "table", "AvailableAmmo must be a table")
+
+    validateClouds(definition.CloudsSettings)
 
     return definition
 end
@@ -40,11 +52,6 @@ function module.ValidateMapScript(mapScript: Instance): Types.MapScript
 
     local terrain = mapScript:FindFirstChild("Terrain")
     assert(not terrain or terrain:IsA("TerrainRegion"), "Terrain must be a TerrainRegion")
-
-    if terrain then
-        local clouds = terrain:FindFirstChild("Clouds")
-        assert(not clouds or clouds:IsA("Clouds"), "Clouds must be a Clouds")
-    end
 
     local lighting = mapScript:FindFirstChild("Lighting")
     assert(not lighting or lighting:IsA("Folder"), "Lighting must be a Folder")

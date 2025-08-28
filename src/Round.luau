@@ -630,10 +630,15 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
         local terrain = map.Map:FindFirstChild("Terrain") :: TerrainRegion
         if terrain then
             workspace.Terrain:PasteRegion(terrain, Vector3int16.new(-32000, -32000, -32000), true)
-            local clouds = terrain:FindFirstChildOfClass("Clouds")
-            if clouds then
-                clouds.Parent = workspace.Terrain
-            end
+        end
+
+        local cloudsSettings = map.Definition.CloudsSettings
+        if cloudsSettings then
+            local clouds = Instance.new("Clouds")
+            clouds.Cover = cloudsSettings.Cover
+            clouds.Density = cloudsSettings.Density
+            clouds.Color = cloudsSettings.Color
+            clouds.Parent = workspace.Terrain
         end
 
         for _, v in map.Map.PlayerSpawns:GetChildren() do

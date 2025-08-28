@@ -390,9 +390,7 @@ export type MapScript = ModuleScript & {
     Dynamic: Folder,
     PlayerSpawns: Folder,
 
-    Terrain: (TerrainRegion & {
-        Clouds: Clouds?,
-    })?,
+    Terrain: TerrainRegion?,
 
     Lighting: Folder?,
 
@@ -410,6 +408,7 @@ export type MapDefinition = {
     LightingSettings: {[string]: Color3 | number | string | boolean},
     WaterSettings: {[string]: number | Color3},
     TerrainColors: {[string]: Color3},
+    CloudsSettings: {Cover: number, Density: number, Color: Color3}?,
 
     Extras: Extras?,
 
