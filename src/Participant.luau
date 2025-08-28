@@ -243,8 +243,12 @@ local function GetEquippedItem(participant: Types.Participant): Types.AnyItem?
     return participant._equippedItem
 end
 
-local function SetEquippedItem(participant: Types.Participant, item: Types.AnyItem?): ()
+local function SetEquippedItem(participant: Types.Participant, item: Types.AnyItem?, force: boolean?): ()
     local lastItem = participant:GetEquippedItem()
+    if not force and lastItem and lastItem.Definition.PreventUnequip then
+        return
+    end
+
     if lastItem and lastItem.Definition.OnUnequipServer then
         lastItem.Definition.OnUnequipServer(lastItem, participant)
     end
@@ -586,7 +590,7 @@ end
 local function RemoveItem(participant: Types.Participant, item: Types.AnyItem): ()
     participant._items[item.Definition.Name] = nil
     if participant:GetEquippedItem() == item then
-        participant:SetEquippedItem()
+        participant:SetEquippedItem(nil, true)
     end
 
     if not item.Definition.Slot and item.Definition.OnUnequipServer then

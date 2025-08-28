@@ -669,7 +669,7 @@ export type Participant = {
     DropAmmoBoxForCurrentItem: (Participant) -> (),
 
     GetEquippedItem: (Participant) -> AnyItem?,
-    SetEquippedItem: (Participant, item: AnyItem?) -> (),
+    SetEquippedItem: (Participant, item: AnyItem?, force: boolean?) -> (),
     _equippedItem: AnyItem?,
 
     GetItems: (Participant) -> {[string]: AnyItem?},
