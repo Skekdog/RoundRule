@@ -221,7 +221,7 @@ local function SetHealth(participant: Types.Participant, health: number): ()
         return
     end
 
-    hum.Health = health
+    hum.Health = math.min(health, hum.MaxHealth)
 end
 
 local function GetKarma(participant: Types.Participant): number
