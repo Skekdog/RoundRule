@@ -653,6 +653,7 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
     elseif lastMap and lastMap.Definition.Name == map.Definition.Name then
         lastMap.Dynamic:Destroy()
         map.Dynamic.Parent = lastMap.Map
+        lastMap.Dynamic = map.Dynamic
     end
 
     for _, v in GetTaggedDescendants(map.Dynamic, Prop.Tags) do
