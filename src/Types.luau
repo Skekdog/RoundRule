@@ -193,7 +193,7 @@ export type InteractableDefinition = {
 
     DefaultHintText: string?,
 
-    Model: MapThing,
+    Model: MapThing?,
 
     IsContinuousInteraction: boolean,
     InteractionRange: number,

@@ -42,7 +42,7 @@ local function TryTakeDamage(interactable: Types.Interactable, params: Types.Dam
 end
 
 function module.new(definition: Types.InteractableDefinition, object: Types.MapThing?): Types.Interactable
-	object = object or definition.Model:Clone()
+	object = object or assert(definition.Model, "Interactable must have a model"):Clone()
 	assert(object);
 
 	(object :: Instance):AddTag("Interactable");
