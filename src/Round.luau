@@ -1,3 +1,4 @@
+local Lighting = game:GetService("Lighting")
 local MaterialService = game:GetService("MaterialService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -574,6 +575,7 @@ end
 
 local knownWaterSettings: {string} = {}
 local knownTerrainColours: {[Enum.Material]: Color3} = {}
+local knownLightingSettings: {string} = {}
 local function LoadMap(round: Types.Round, map: Types.Map): ()
     round._map = map
 
@@ -639,6 +641,31 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
             clouds.Density = cloudsSettings.Density
             clouds.Color = cloudsSettings.Color
             clouds.Parent = workspace.Terrain
+        end
+
+        for _, v in knownLightingSettings do
+            Lighting:ResetPropertyToDefault(v)
+        end
+
+        for _, v in Lighting:GetChildren() do
+            if v:HasTag("MapLighting") then
+                v:Destroy()
+            end
+        end
+
+        local lighting = map.Map:FindFirstChild("Lighting")
+        if lighting then
+            for _, v in lighting:GetChildren() do
+                v:AddTag("MapLighting")
+                v.Parent = Lighting
+            end
+        end
+
+        for i, v in map.Definition.LightingSettings do
+            (Lighting :: any)[i] = v
+            if not table.find(knownLightingSettings, i) then
+                table.insert(knownLightingSettings, i)
+            end
         end
 
         for _, v in map.Map.PlayerSpawns:GetChildren() do
