@@ -389,6 +389,9 @@ local function GetProp(round: Types.Round, model: Types.MapThing): Types.Prop?
 end
 
 local function loadProp(round: Types.Round, model: Types.MapThing): Types.Prop
+    if not model.Parent then
+        (model :: Instance).Parent = round:GetMap().Dynamic
+    end
     model:AddTag("Prop")
     local prop = Prop.new(model, round)
     return prop
