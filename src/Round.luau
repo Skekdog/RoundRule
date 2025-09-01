@@ -721,7 +721,11 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
     Replication.ReplicateMap()
 end
 
-local function SendMessage(round: Types.Round, to: {Player} | Player, message: string, kind: Types.MessageKind?): ()
+local function SendMessage(round: Types.Round, to: {Player} | Player?, message: string, kind: Types.MessageKind?): ()
+    if not to then
+        return Replication.SendMessage("All", message, kind)
+    end
+
     if typeof(to) == "Instance" then
         to = {to}
     end

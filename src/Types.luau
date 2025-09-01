@@ -793,7 +793,7 @@ export type Round = {
     GetRoleFromRoleName: (Round, name: string) -> Role,
     GetParticipantsWithRole: (Round, role: Role) -> {Participant},
 
-    SendMessage: (Round, to: {Player} | Player, message: string, kind: MessageKind?) -> (),
+    SendMessage: (Round, to: {Player} | Player?, message: string, kind: MessageKind?) -> (),
 }
 
 return nil
