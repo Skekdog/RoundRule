@@ -531,6 +531,12 @@ function module.GetInteractable(round: Types.Round, model: Types.MapThing): Type
 end
 
 local function AddInteractable(round: Types.Round, definition: Types.InteractableDefinition, object: Types.MapThing?): Types.Interactable
+    if object then
+        local existing = round:GetInteractable(object)
+        if existing then
+            return existing
+        end
+    end
     local interactable = Interactable.new(definition, object)
     interactable.Round = round
 
