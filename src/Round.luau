@@ -488,7 +488,10 @@ local function loadInteractable(round: Types.Round, model: Types.MapThing): ()
 end
 
 local function LoadProp(round: Types.Round, model: Types.MapThing): Types.Prop
-    assert(not round:GetProp(model), "Prop already exists")
+    local existingProp = round:GetProp(model)
+    if existingProp then
+        return existingProp
+    end
 
     if model:HasTag("Interactable") then
         loadInteractable(round, model)
