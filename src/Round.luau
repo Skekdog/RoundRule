@@ -174,6 +174,7 @@ end
 
 local function SetPhase(round: Types.Round, phase: Types.Phase, duration: number): ()
     round._phase = phase
+    round.PhaseLength = duration
 
     local callback: (() -> ()) | false
     if phase == "Waiting" then
@@ -764,6 +765,7 @@ function module.new(gamemode: Types.GamemodeDefinition): Types.Round
         GetMap = GetMap,
 
         ElapsedPhaseTime = 0,
+        PhaseLength = 0,
 
         _participants = {},
         _phase = "Waiting",

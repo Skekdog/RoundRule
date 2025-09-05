@@ -765,6 +765,7 @@ export type Round = {
     AddHighlight: (Round, roundHighlight: Highlight) -> (),
 
     ElapsedPhaseTime: number,
+    PhaseLength: number,
     _heartbeat: RBXScriptConnection?,
     _phase: Phase,
     GetPhase: (Round) -> Phase,
