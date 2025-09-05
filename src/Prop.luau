@@ -26,6 +26,7 @@ end
 
 local function SetHealth(prop: Types.Prop, health: number): ()
     prop._health = health
+    prop.Model:SetAttribute("Health", health)
 end
 
 local function TryTakeDamage(prop: Types.Prop, params: Types.DamageParams, deferDeath: boolean?): boolean
