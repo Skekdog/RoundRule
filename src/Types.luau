@@ -735,6 +735,7 @@ export type Round = {
     _items: {[MapThing]: AnyItem?},
     GetItems: (Round) -> {[MapThing]: AnyItem},
     GetItem: (Round, part: MapThing) -> AnyItem?,
+    LoadItem: (Round, model: MapThing) -> AnyItem,
 
     _ammoBoxes: {[MapThing]: AmmoBox?},
     GetAmmoBoxes: (Round) -> {[MapThing]: AmmoBox},

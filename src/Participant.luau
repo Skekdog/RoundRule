@@ -486,7 +486,7 @@ local function IsItemSlotOccupied(participant: Types.Participant, slot: number):
 end
 
 local function GiveItemFromItemDefinition(participant: Types.Participant, itemDefinition: Types.AnyItemDefinition): Types.AnyItem
-    local item = Item.new(itemDefinition)
+    local item = if itemDefinition.Model then participant.Round:LoadItem(itemDefinition.Model) else Item.new(itemDefinition)
     participant:AddItem(item)
     return item
 end

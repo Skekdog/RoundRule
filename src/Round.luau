@@ -398,7 +398,12 @@ local function loadProp(round: Types.Round, model: Types.MapThing): Types.Prop
     return prop
 end
 
-local function loadItem(round: Types.Round, model: Types.MapThing): ()
+local function LoadItem(round: Types.Round, model: Types.MapThing): Types.AnyItem
+    local existingItem = round:GetItem(model)
+    if existingItem then
+        return existingItem
+    end
+
     local definition = round:GetItemDefinition(model.Name) or error(`Item {model.Name} does not exist in map or gamemode`)
 
     local item = Item.new(definition, model)
@@ -428,6 +433,8 @@ local function loadItem(round: Types.Round, model: Types.MapThing): ()
             participant:AddItem(item)
         end)
     end)
+
+    return item
 end
 
 local function loadAmmoBox(round: Types.Round, model: Types.MapThing): ()
@@ -497,7 +504,7 @@ local function LoadProp(round: Types.Round, model: Types.MapThing): Types.Prop
     if model:HasTag("Interactable") then
         loadInteractable(round, model)
     elseif model:HasTag("Item") then
-        loadItem(round, model)
+        round:LoadItem(model)
     elseif model:HasTag("AmmoBox") then
         loadAmmoBox(round, model)
     elseif model:HasTag("Corpse") then
@@ -779,6 +786,7 @@ function module.new(gamemode: Types.GamemodeDefinition): Types.Round
         _items = {},
         GetItems = GetItems,
         GetItem = GetItem,
+        LoadItem = LoadItem,
 
         GetAmmoDefinition = GetAmmoDefinition,
         GetItemDefinition = GetItemDefinition,
