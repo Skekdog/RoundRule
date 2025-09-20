@@ -105,11 +105,11 @@ export type GamemodeDefinition = {
     Authors: string,
 
     MinimumPlayers: number,
-    
+
     RequiredSlayVotes: number?,
 
     TimeoutVictor: (GamemodeDefinition, Round) -> Victor,
-    
+
     GetRoundEndMusic: (GamemodeDefinition, Round, victor: Victor, isTimeout: boolean) -> Sound?,
     GetVictoryEventText: ((GamemodeDefinition, round: Round, victor: Victor, isTimeout: boolean) -> string?)?,
 
@@ -229,7 +229,7 @@ export type CommonItemDefinition = {
     Name: string,
     DisplayName: string?,
     Description: string?,
-    
+
     Icon: string?,
     IsPixelIcon: boolean?,
 
@@ -312,7 +312,7 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
 
     Projectile: BasePart?,
     ProjectileSpeed: number?,
-    
+
     BulletsPerShot: number?,
 
     Spread: number,
@@ -438,7 +438,7 @@ export type Map = {
 export type Role = {
     Kind: "Role",
     Definition: RoleDefinition,
-    
+
     IsAlliedWith: (Role, other: Role) -> boolean,
     GetFormattedName: (Role) -> string,
     GetExclamatoryString: (Role) -> string,
@@ -463,7 +463,7 @@ export type DeathEventData = {
 
 export type CorpseSearchedEventData = {
     Kind: "CorpseSearchedRoundEvent",
-    
+
     SearchedBy: Participant,
     Victim: Participant,
     FoundCredits: number?,
