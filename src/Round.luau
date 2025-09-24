@@ -157,7 +157,7 @@ local function setAdvanceTime(round: Types.Round, duration: number, callback: ()
             wasPaused = true
             return
         end
-        
+
         if wasPaused then
             wasPaused = false
             Replication.ReplicateAdvanceTime((duration - round.ElapsedPhaseTime) + workspace:GetServerTimeNow())
@@ -304,6 +304,10 @@ local function _start(round: Types.Round): ()
 
         round:SendMessage(Players:GetPlayers(), message)
     end
+
+    if round.Gamemode.OnStart then
+        round.Gamemode.OnStart(round.Gamemode, round)
+    end
 end
 
 local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boolean?): ()
@@ -366,7 +370,7 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
             v:SetKarma(v:GetKarma() + 100)
         end
     end
-    
+
     local chosenMusic = round.Gamemode:GetRoundEndMusic(round, victor, isTimeout or false)
     if chosenMusic then
         round.VictoryData.Music = chosenMusic
@@ -508,7 +512,7 @@ local function LoadProp(round: Types.Round, model: Types.MapThing): Types.Prop
     elseif model:HasTag("AmmoBox") then
         loadAmmoBox(round, model)
     elseif model:HasTag("Corpse") then
-        
+
     end
 
     local prop = loadProp(round, model)
@@ -566,7 +570,7 @@ end
 
 local function GetParticipantsWithRole(round: Types.Round, role: Types.Role): {Types.Participant}
     local participants = {}
-    
+
     for _, v in round:GetParticipants() do
         assert(v)
         if v:GetRole() == role then

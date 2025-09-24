@@ -141,6 +141,7 @@ export type GamemodeDefinition = {
     OnIdentifyCorpse: (GamemodeDefinition, corpse: Corpse, searcher: Participant) -> ()?,
     AddFinishHighlights: (GamemodeDefinition, round: Round) -> ()?,
     OnFinish: (GamemodeDefinition, round: Round) -> ()?,
+    OnStart: (GamemodeDefinition, round: Round) -> ()?,
 }
 
 export type RoleDefinition = {
