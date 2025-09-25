@@ -346,12 +346,13 @@ function module.TryTakeDamage(participant: Types.Participant, params: Types.Dama
         return false
     end
 
+    local round = participant.Round
+
     local hum = participant:GetHumanoid()
     if not hum then
         return false
     end
 
-    local damage = params.Amount
     local attacker = params.Attacker
 
     if attacker then
@@ -366,7 +367,7 @@ function module.TryTakeDamage(participant: Types.Participant, params: Types.Dama
             })
         end
 
-        damage *= attacker:GetKarmaDamageMultiplier()
+        params.Amount *= attacker:GetKarmaDamageMultiplier()
 
         if not params.IgnoreKarma then
             local karma = participant:GetKarma()
@@ -375,15 +376,19 @@ function module.TryTakeDamage(participant: Types.Participant, params: Types.Dama
         end
     end
 
+    if round.Gamemode.BeforeHitParticipant then
+        round.Gamemode.BeforeHitParticipant(round.Gamemode, participant, params)
+    end
+
     local health = participant:GetHealth()
 
-    local dead = health <= damage
+    local dead = health <= params.Amount
 
     if dead then
         participant._wasDeathProcessed = true
     end
 
-    hum:TakeDamage(damage)
+    hum:TakeDamage(params.Amount)
 
     if typeof(params.Source) ~= "table" or params.Source.Kind ~= "Gun" or (params.Source.Kind == "Gun" and not params.Source.Definition.IsSilent) then
         Replication.DamageTaken(participant.Player, params.Amount, params.Source)
