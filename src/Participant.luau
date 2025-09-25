@@ -244,15 +244,20 @@ local function GetEquippedItem(participant: Types.Participant): Types.AnyItem?
 end
 
 local function SetEquippedItem(participant: Types.Participant, item: Types.AnyItem?, force: boolean?): ()
+    local round = participant.Round
     local lastItem = participant:GetEquippedItem()
     if not force and lastItem and lastItem.Definition.PreventUnequip then
         return
     end
 
+    if lastItem and round.Gamemode.OnItemEquipped then
+        round.Gamemode.OnItemEquipped(round.Gamemode, participant, lastItem, false)
+    end
+
     if lastItem and lastItem.Definition.OnUnequipServer then
         lastItem.Definition.OnUnequipServer(lastItem, participant)
     end
-    
+
     participant:TryStopAnimation("HoldItem")
 
     local char = participant:GetCharacter()
@@ -289,11 +294,15 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.AnyIt
             part.CanTouch = false
             part.CanQuery = false
         end);
-        
+
         (model :: Instance).Parent = char
     end
 
     participant._equippedItem = item
+
+    if item and round.Gamemode.OnItemEquipped then
+        round.Gamemode.OnItemEquipped(round.Gamemode, participant, item, true)
+    end
 
     if item and item.Definition.OnEquipServer then
         item.Definition.OnEquipServer(item, participant)
@@ -495,7 +504,7 @@ function module.DropItem(participant: Types.Participant, item: Types.AnyItem, th
     if not item.Definition.CanDrop then
         return
     end
-    
+
     local char = participant:GetCharacter()
 
     if not char or not item.Model then
@@ -608,7 +617,7 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
     if participant:GetStatus() ~= "Alive" then
         return "NotInRound"
     end
-    
+
     local role = participant:GetRole()
 
     if not role.Definition.EquipmentShop or not table.find(role.Definition.EquipmentShop, itemDefinition) then
@@ -708,12 +717,12 @@ local function SpawnCharacter(participant: Types.Participant): ()
         for _, v in char:GetDescendants() do
             module.OnCharacterPartAdded(v)
         end
-    
+
         participant._humanoid = hum
         participant._character = char
 
         participant:MoveToSpawn()
-    
+
         tryAssignHumanoidPropertiesForRole(hum, participant:GetRole())
 
         local healthScript = char:FindFirstChild("Health")
@@ -730,7 +739,7 @@ local function SpawnCharacter(participant: Types.Participant): ()
             deathSound.RollOffMaxDistance = 50
             deathSound.Parent = char.PrimaryPart
         end
-    
+
         participant._isCharacterLoading = false
 
         hum.Died:Once(function()
@@ -748,7 +757,7 @@ local function SpawnCharacter(participant: Types.Participant): ()
         local charsFolder = workspace.Characters
         char.Parent = charsFolder
     end)
-    
+
     participant.Player:LoadCharacter()
 end
 

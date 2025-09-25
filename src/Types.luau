@@ -142,6 +142,8 @@ export type GamemodeDefinition = {
     AddFinishHighlights: (GamemodeDefinition, round: Round) -> ()?,
     OnFinish: (GamemodeDefinition, round: Round) -> ()?,
     OnStart: (GamemodeDefinition, round: Round) -> ()?,
+
+    OnItemEquipped: (GamemodeDefinition, participant: Participant, item: AnyItem, equipped: boolean) -> ()?,
 }
 
 export type RoleDefinition = {
