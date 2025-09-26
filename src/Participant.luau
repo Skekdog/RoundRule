@@ -374,6 +374,12 @@ function module.TryTakeDamage(participant: Types.Participant, params: Types.Dama
         end
     end
 
+    if participant.Round.Gamemode.BeforeDamageParticipant then
+        if not participant.Round.Gamemode.BeforeDamageParticipant(participant.Round.Gamemode, participant, params) then
+            return false
+        end
+    end
+
     local health = participant:GetHealth()
 
     local dead = health <= params.Amount

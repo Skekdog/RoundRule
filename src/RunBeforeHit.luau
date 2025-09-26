@@ -51,11 +51,6 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
     end
 
     if hitThing.Kind == "Participant" then
-        local beforeHitParticipantGamemode = round.Gamemode.BeforeHitParticipant
-        if beforeHitParticipantGamemode and not beforeHitParticipantGamemode(item, round, hitThing, params) then
-            return false
-        end
-
         local beforeHitParticipantItem = if item.Kind == "Grenade" then item.Definition.ExplosionInfo.BeforeHitParticipant else item.Definition.BeforeHitParticipant
         if beforeHitParticipantItem and not beforeHitParticipantItem(item, round, hitThing, params) then
             return false
