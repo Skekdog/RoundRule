@@ -95,7 +95,9 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
     participant.Corpse = corpse
 
     if round:IsInProgress() then
-        round.Gamemode:OnDeath(participant, deferVictoryCheck)
+        if round.Gamemode.OnDeath then
+            round.Gamemode.OnDeath(round.Gamemode, participant, deferVictoryCheck)
+        end
     end
 end
 
