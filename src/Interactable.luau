@@ -41,7 +41,7 @@ local function TryTakeDamage(interactable: Types.Interactable, params: Types.Dam
     return true
 end
 
-function module.new(definition: Types.InteractableDefinition, object: Types.MapThing?): Types.Interactable
+function module.new(definition: Types.InteractableDefinition, object: Types.MapObject?): Types.Interactable
 	object = object or assert(definition.Model, "Interactable must have a model"):Clone()
 	assert(object);
 
@@ -61,7 +61,7 @@ function module.new(definition: Types.InteractableDefinition, object: Types.MapT
 
 	local health = object:GetAttribute("Health")
     assert((typeof(health) == "number") or typeof(health) == "nil")
-	
+
 	return {
 		Kind = "Interactable",
 		Definition = definition,

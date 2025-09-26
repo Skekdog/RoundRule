@@ -1,11 +1,11 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Types = require(ReplicatedStorage.Shared.RoundRule.Types)
 
-local function GetPrimaryPart(mapThing: Types.MapThing): BasePart
-	if mapThing:IsA("BasePart") then
-		return mapThing
+local function GetPrimaryPart(MapObject: Types.MapObject): BasePart
+	if MapObject:IsA("BasePart") then
+		return MapObject
 	end
-	return mapThing.PrimaryPart or mapThing:FindFirstChildWhichIsA("BasePart") or error("MapThing has no primary part")
+	return MapObject.PrimaryPart or MapObject:FindFirstChildWhichIsA("BasePart") or error("MapObject has no primary part")
 end
 
 return GetPrimaryPart

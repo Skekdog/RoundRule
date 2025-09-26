@@ -1,5 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local GetMapThingWithTag = require(ReplicatedStorage.Shared.RoundRule.Common.GetMapThingWithTag)
+local GetMapObjectWithTag = require(ReplicatedStorage.Shared.RoundRule.Common.GetMapObjectWithTag)
 local Types = require(script.Parent.Types)
 
 local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round: Types.Round, hitPart: BasePart, params: Types.DamageParams): boolean
@@ -32,12 +32,12 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
 
         hitThing = participant
     else
-        local mapThing = GetMapThingWithTag(hitPart, "Prop")
-        if not mapThing then
+        local MapObject = GetMapObjectWithTag(hitPart, "Prop")
+        if not MapObject then
             return false
         end
 
-        local prop: Types.Prop | Types.Interactable? = round:GetInteractable(mapThing) or round:GetProp(mapThing)
+        local prop: Types.Prop | Types.Interactable? = round:GetInteractable(MapObject) or round:GetProp(MapObject)
 
         if not prop then
             return false

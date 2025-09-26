@@ -6,7 +6,7 @@ local function SetAmmo(ammoBox: Types.AmmoBox, amount: number): ()
     ammoBox.Model:SetAttribute("StoredAmmo", amount)
 end
 
-function module.new(definition: Types.AmmoDefinition, model: Types.MapThing?, amount: number?): Types.AmmoBox
+function module.new(definition: Types.AmmoDefinition, model: Types.MapObject?, amount: number?): Types.AmmoBox
     return {
         Kind = "AmmoBox",
         Definition = definition,

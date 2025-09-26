@@ -33,7 +33,7 @@ local function TryTakeDamage(prop: Types.Prop, params: Types.DamageParams, defer
     if prop.Round:IsPreGame() then
         return false
     end
-    
+
     local health = prop:GetHealth()
     if health and health <= 0 then
         return false
@@ -61,7 +61,7 @@ local function TryTakeDamage(prop: Types.Prop, params: Types.DamageParams, defer
     return true
 end
 
-function module.new(model: Types.MapThing, round: Types.Round): Types.Prop
+function module.new(model: Types.MapObject, round: Types.Round): Types.Prop
     local health = model:GetAttribute("Health")
     assert((typeof(health) == "number") or typeof(health) == "nil")
 

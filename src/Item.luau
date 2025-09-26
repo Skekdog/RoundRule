@@ -4,7 +4,7 @@ local Types = require(script.Parent.Types)
 
 local module = {}
 
-function module.new(definition: Types.AnyItemDefinition, model: Types.MapThing?): Types.AnyItem
+function module.new(definition: Types.AnyItemDefinition, model: Types.MapObject?): Types.AnyItem
     if not model then
         model = if definition.Model then definition.Model:Clone() else nil
     end

@@ -543,7 +543,7 @@ local function isObscured(participant: Types.Participant, origin: Vector3, targe
     return not not result
 end
 
-local function TryThrowAssembly(participant: Types.Participant, assembly: Types.MapThing, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?): boolean
+local function TryThrowAssembly(participant: Types.Participant, assembly: Types.MapObject, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?): boolean
     local char = participant:GetCharacter()
     if not char then
         return false

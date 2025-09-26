@@ -27,7 +27,7 @@ export type OnHitClient = (item: ItemDefinitionOnHitClient, hitPart: BasePart?) 
 
 export type RunOnHitClient = (item: AnyWeapon, participant: Participant, hitPart: BasePart) -> ()
 
-export type MapThing = BasePart | Model -- type is weird because Model | BasePart will lead to errorneous type errors when doing MapThing.Name = "blah"
+export type MapObject = BasePart | Model -- type is weird because Model | BasePart will lead to errorneous type errors when doing MapObject.Name = "blah"
 
 export type Extras = {[any]: any}
 
@@ -200,7 +200,7 @@ export type InteractableDefinition = {
 
     DefaultHintText: string?,
 
-    Model: MapThing?,
+    Model: MapObject?,
 
     IsContinuousInteraction: boolean,
     InteractionRange: number,
@@ -219,7 +219,7 @@ export type InteractableDefinition = {
 export type Interactable = {
     Kind: "Interactable",
     Definition: InteractableDefinition,
-    Model: MapThing,
+    Model: MapObject,
 
     Round: Round?,
     Extras: Extras,
@@ -242,7 +242,7 @@ export type CommonItemDefinition = {
 
 	IsBadGuyItem: boolean?,
 
-    Model: MapThing?,
+    Model: MapObject?,
     HoldAnimation: string?,
 
     Slot: number?,
@@ -387,7 +387,7 @@ export type AmmoDefinition = {
     DisplayName: string?,
     Capacity: number,
     ReserveCapacity: number,
-    Model: MapThing?,
+    Model: MapObject?,
     CanDrop: boolean,
 }
 
@@ -498,7 +498,7 @@ export type SelfDefenseParams = {
 }
 
 export type BaseWeapon = {
-    Model: MapThing,
+    Model: MapObject,
     Extras: Extras,
 
     RunBeforeHit: RunBeforeHit,
@@ -530,7 +530,7 @@ export type MeleeWeapon = BaseWeapon & {
 export type Item = {
     Kind: "Item",
     Definition: ItemDefinition,
-    Model: MapThing?,
+    Model: MapObject?,
 
     Extras: Extras,
 }
@@ -542,7 +542,7 @@ export type GunMeleeWeapon = GunWeapon | MeleeWeapon
 export type AmmoBox = {
     Kind: "AmmoBox",
     Definition: AmmoDefinition,
-    Model: MapThing,
+    Model: MapObject,
     Ammo: number,
 
     SetAmmo: (AmmoBox, amount: number) -> (),
@@ -710,12 +710,12 @@ export type Participant = {
 
     MoveToSpawn: (Participant, spawnCFrame: CFrame?) -> (),
 
-    TryThrowAssembly: (Participant, assembly: MapThing, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?) -> boolean,
+    TryThrowAssembly: (Participant, assembly: MapObject, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?) -> boolean,
 }
 
 export type Prop = {
     Kind: "Prop",
-    Model: MapThing,
+    Model: MapObject,
     Extras: Extras,
 
     Round: Round,
@@ -740,25 +740,25 @@ export type Round = {
     LoadMap: (Round, map: Map) -> (),
     GetMap: (Round) -> Map,
 
-    _items: {[MapThing]: AnyItem?},
-    GetItems: (Round) -> {[MapThing]: AnyItem},
-    GetItem: (Round, part: MapThing) -> AnyItem?,
-    LoadItem: (Round, model: MapThing) -> AnyItem,
+    _items: {[MapObject]: AnyItem?},
+    GetItems: (Round) -> {[MapObject]: AnyItem},
+    GetItem: (Round, part: MapObject) -> AnyItem?,
+    LoadItem: (Round, model: MapObject) -> AnyItem,
 
-    _ammoBoxes: {[MapThing]: AmmoBox?},
-    GetAmmoBoxes: (Round) -> {[MapThing]: AmmoBox},
-    GetAmmoBox: (Round, part: MapThing) -> AmmoBox?,
+    _ammoBoxes: {[MapObject]: AmmoBox?},
+    GetAmmoBoxes: (Round) -> {[MapObject]: AmmoBox},
+    GetAmmoBox: (Round, part: MapObject) -> AmmoBox?,
 
-    _interactables: {[MapThing]: Interactable?},
-    GetInteractables: (Round) -> {[MapThing]: Interactable},
-    GetInteractable: (Round, part: MapThing) -> Interactable?,
+    _interactables: {[MapObject]: Interactable?},
+    GetInteractables: (Round) -> {[MapObject]: Interactable},
+    GetInteractable: (Round, part: MapObject) -> Interactable?,
 
-    _props: {[MapThing]: Prop?},
-    GetProps: (Round) -> {[MapThing]: Prop},
-    GetProp: (Round, model: MapThing) -> Prop?,
-    LoadProp: (Round, model: MapThing) -> Prop,
+    _props: {[MapObject]: Prop?},
+    GetProps: (Round) -> {[MapObject]: Prop},
+    GetProp: (Round, model: MapObject) -> Prop?,
+    LoadProp: (Round, model: MapObject) -> Prop,
 
-    AddInteractable: (Round, definition: InteractableDefinition, object: MapThing?) -> Interactable,
+    AddInteractable: (Round, definition: InteractableDefinition, object: MapObject?) -> Interactable,
 
     _participants: {[string]: Participant?},
     GetParticipant: (Round, identifier: string | Player | Model) -> Participant?,

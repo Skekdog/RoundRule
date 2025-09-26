@@ -2,18 +2,18 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HasTag = require(script.Parent.HasAnyTag)
 local Types = require(ReplicatedStorage.Shared.RoundRule.Types)
 
-local function GetMapThingWithTag(descendant: Instance, tag: string | {string}): Types.MapThing?
+local function GetMapObjectWithTag(descendant: Instance, tag: string | {string}): Types.MapObject?
 	if HasTag(descendant, tag) then
-		assert(descendant:IsA("BasePart") or descendant:IsA("Model"), "MapThing must be a BasePart or Model")
+		assert(descendant:IsA("BasePart") or descendant:IsA("Model"), "MapObject must be a BasePart or Model")
 		return descendant
 	end
 
 	local thing = descendant.Parent
-	assert(thing, "Can't get MapThing of unparented Instance")
+	assert(thing, "Can't get MapObject of unparented Instance")
 
 	repeat
 		if HasTag(thing, tag) then
-			assert(thing:IsA("BasePart") or thing:IsA("Model"), "MapThing must be a BasePart or Model")
+			assert(thing:IsA("BasePart") or thing:IsA("Model"), "MapObject must be a BasePart or Model")
 			return thing
 		end
 		thing = thing.Parent
@@ -22,4 +22,4 @@ local function GetMapThingWithTag(descendant: Instance, tag: string | {string}):
 	return nil
 end
 
-return GetMapThingWithTag
+return GetMapObjectWithTag

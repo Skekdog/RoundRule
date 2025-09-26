@@ -385,15 +385,15 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
     end
 end
 
-local function GetProps(round: Types.Round): {[Types.MapThing]: Types.Prop}
-    return round._props :: {[Types.MapThing]: Types.Prop}
+local function GetProps(round: Types.Round): {[Types.MapObject]: Types.Prop}
+    return round._props :: {[Types.MapObject]: Types.Prop}
 end
 
-local function GetProp(round: Types.Round, model: Types.MapThing): Types.Prop?
+local function GetProp(round: Types.Round, model: Types.MapObject): Types.Prop?
     return round._props[model]
 end
 
-local function loadProp(round: Types.Round, model: Types.MapThing): Types.Prop
+local function loadProp(round: Types.Round, model: Types.MapObject): Types.Prop
     if not model.Parent then
         (model :: Instance).Parent = round:GetMap().Dynamic
     end
@@ -402,7 +402,7 @@ local function loadProp(round: Types.Round, model: Types.MapThing): Types.Prop
     return prop
 end
 
-local function LoadItem(round: Types.Round, model: Types.MapThing): Types.AnyItem
+local function LoadItem(round: Types.Round, model: Types.MapObject): Types.AnyItem
     local existingItem = round:GetItem(model)
     if existingItem then
         return existingItem
@@ -441,7 +441,7 @@ local function LoadItem(round: Types.Round, model: Types.MapThing): Types.AnyIte
     return item
 end
 
-local function loadAmmoBox(round: Types.Round, model: Types.MapThing): ()
+local function loadAmmoBox(round: Types.Round, model: Types.MapObject): ()
     local definition = round:GetAmmoDefinition(model.Name) or error(`AmmoBox {model.Name} does not exist in map or gamemode`)
     local ammoBox = AmmoBox.new(definition, model)
     round._ammoBoxes[model] = ammoBox
@@ -491,7 +491,7 @@ local function loadAmmoBox(round: Types.Round, model: Types.MapThing): ()
     }
 end
 
-local function loadInteractable(round: Types.Round, model: Types.MapThing): ()
+local function loadInteractable(round: Types.Round, model: Types.MapObject): ()
     if model:HasTag("Door") or model:HasTag("Ladder") then
         return
     end
@@ -499,7 +499,7 @@ local function loadInteractable(round: Types.Round, model: Types.MapThing): ()
     round:AddInteractable(definition, model)
 end
 
-local function LoadProp(round: Types.Round, model: Types.MapThing): Types.Prop
+local function LoadProp(round: Types.Round, model: Types.MapObject): Types.Prop
     local existingProp = round:GetProp(model)
     if existingProp then
         return existingProp
@@ -521,31 +521,31 @@ local function LoadProp(round: Types.Round, model: Types.MapThing): Types.Prop
     return prop
 end
 
-local function GetItems(round: Types.Round): {[Types.MapThing]: Types.AnyItem}
-    return round._items :: {[Types.MapThing]: Types.AnyItem}
+local function GetItems(round: Types.Round): {[Types.MapObject]: Types.AnyItem}
+    return round._items :: {[Types.MapObject]: Types.AnyItem}
 end
 
-local function GetItem(round: Types.Round, model: Types.MapThing): Types.AnyItem?
+local function GetItem(round: Types.Round, model: Types.MapObject): Types.AnyItem?
     return round._items[model]
 end
 
-local function GetAmmoBoxes(round: Types.Round): {[Types.MapThing]: Types.AmmoBox}
-    return round._ammoBoxes :: {[Types.MapThing]: Types.AmmoBox}
+local function GetAmmoBoxes(round: Types.Round): {[Types.MapObject]: Types.AmmoBox}
+    return round._ammoBoxes :: {[Types.MapObject]: Types.AmmoBox}
 end
 
-local function GetAmmoBox(round: Types.Round, model: Types.MapThing): Types.AmmoBox?
+local function GetAmmoBox(round: Types.Round, model: Types.MapObject): Types.AmmoBox?
     return round._ammoBoxes[model]
 end
 
-local function GetInteractables(round: Types.Round): {[Types.MapThing]: Types.Interactable}
-    return round._interactables :: {[Types.MapThing]: Types.Interactable}
+local function GetInteractables(round: Types.Round): {[Types.MapObject]: Types.Interactable}
+    return round._interactables :: {[Types.MapObject]: Types.Interactable}
 end
 
-function module.GetInteractable(round: Types.Round, model: Types.MapThing): Types.Interactable?
+function module.GetInteractable(round: Types.Round, model: Types.MapObject): Types.Interactable?
     return round._interactables[model]
 end
 
-local function AddInteractable(round: Types.Round, definition: Types.InteractableDefinition, object: Types.MapThing?): Types.Interactable
+local function AddInteractable(round: Types.Round, definition: Types.InteractableDefinition, object: Types.MapObject?): Types.Interactable
     if object then
         local existing = round:GetInteractable(object)
         if existing then
