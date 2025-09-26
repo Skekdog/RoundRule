@@ -44,7 +44,7 @@ local function tryStealCredits(corpse: Types.Corpse, searcher: Types.Participant
     if credits <= 0 then
         return false
     end
-    
+
     searcher:AddCredits(credits)
     corpse.Participant:SetCredits(0)
 
@@ -68,7 +68,7 @@ local function updateCorpseForPlayer(corpse: Types.Corpse, participant: Types.Pa
     if participant and participant ~= corpse.Participant then
         Replication.ReplicateRole(participant.Player, corpse.Participant, false)
     end
-    
+
     Replication.ReplicateCorpse(player or (participant or error("Must have either a player or participant")).Player, corpse, covert)
 end
 
@@ -239,7 +239,7 @@ end
 
 function module.new(participant: Types.Participant, params: Types.DamageParams, ragdoll: Model?, freeKill: boolean?): Types.Corpse
     local selfDefense: boolean?
-    if not params.IgnoreSelfDefense and params.Attacker then
+    if not params.IgnoreSelfDefense and params.Attacker and not participant:GetRole().Definition.CorpseHidesSelfDefense then
         selfDefense = params.Attacker:HasSelfDefenseAgainstParticipant(participant)
     end
 
@@ -262,7 +262,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams, 
 
         AdditionalIcons = participant.ExtraCorpseIcons,
 
-        WasFreeKill = if freeKill == nil then participant:IsFreeKill() else freeKill, 
+        WasFreeKill = if freeKill == nil then participant:IsFreeKill() else freeKill,
         WasHeadshot = params.IsHeadshot,
         WasSelfDefense = selfDefense,
 

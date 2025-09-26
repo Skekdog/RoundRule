@@ -173,6 +173,7 @@ export type RoleDefinition = {
     CanTeamChat: boolean?,
 
     AwardCreditsToRolesOnDeath: {[string]: number}?,
+    CorpseHidesSelfDefense: boolean?,
 
     CorpseSearchResultsPublicised: boolean?,
     ScoreForFindingBodies: number?,
