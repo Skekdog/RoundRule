@@ -346,8 +346,6 @@ function module.TryTakeDamage(participant: Types.Participant, params: Types.Dama
         return false
     end
 
-    local round = participant.Round
-
     local hum = participant:GetHumanoid()
     if not hum then
         return false
@@ -374,10 +372,6 @@ function module.TryTakeDamage(participant: Types.Participant, params: Types.Dama
             karma = karma + (params.Amount * (participant:GetRole().Definition.DamageKarmaMultiplier or 1)) * (if attacker:IsDamageJustifiedAgainstParticipant(participant) then 1 else -1)
             participant:SetKarma(karma)
         end
-    end
-
-    if round.Gamemode.BeforeHitParticipant then
-        round.Gamemode.BeforeHitParticipant(round.Gamemode, participant, params)
     end
 
     local health = participant:GetHealth()

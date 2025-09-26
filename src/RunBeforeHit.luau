@@ -3,9 +3,9 @@ local GetMapThingWithTag = require(ReplicatedStorage.Shared.RoundRule.Common.Get
 local Types = require(script.Parent.Types)
 
 local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round: Types.Round, hitPart: BasePart, params: Types.DamageParams): boolean
-    local beforeHitAnything = if item.Kind == "Grenade" then item.Definition.ExplosionInfo.BeforeHitAnything else item.Definition.BeforeHitAnything
-    if beforeHitAnything then
-        beforeHitAnything(item, round, hitPart, params)
+    local beforeHitAnythingItem = if item.Kind == "Grenade" then item.Definition.ExplosionInfo.BeforeHitAnything else item.Definition.BeforeHitAnything
+    if beforeHitAnythingItem then
+        beforeHitAnythingItem(item, round, hitPart, params)
     end
 
     local hitThing: Types.Participant | Types.Prop | Types.Interactable?
@@ -51,12 +51,17 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
     end
 
     if hitThing.Kind == "Participant" then
-        local beforeHitParticipant = if item.Kind == "Grenade" then item.Definition.ExplosionInfo.BeforeHitParticipant else item.Definition.BeforeHitParticipant
-        if not beforeHitParticipant then
-            return true
+        local beforeHitParticipantGamemode = round.Gamemode.BeforeHitParticipant
+        if beforeHitParticipantGamemode and not beforeHitParticipantGamemode(item, round, hitThing, params) then
+            return false
         end
 
-        return beforeHitParticipant(item, round, hitThing, params)
+        local beforeHitParticipantItem = if item.Kind == "Grenade" then item.Definition.ExplosionInfo.BeforeHitParticipant else item.Definition.BeforeHitParticipant
+        if beforeHitParticipantItem and not beforeHitParticipantItem(item, round, hitThing, params) then
+            return false
+        end
+
+        return true
     elseif hitThing.Kind == "Prop" or hitThing.Kind == "Interactable" then
         local beforeHitProp = if item.Kind == "Grenade" then item.Definition.ExplosionInfo.BeforeHitProp else item.Definition.BeforeHitProp
         if not beforeHitProp then
