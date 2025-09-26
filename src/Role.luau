@@ -10,6 +10,10 @@ local function GetFormattedName(role: Types.Role): string
     return role:FormatString(GetDisplayName(role.Definition))
 end
 
+local function GetPluralName(role: Types.Role): string
+    return role.Definition.PluralName or GetDisplayName(role.Definition) .. "s"
+end
+
 local function GetExclamatoryString(role: Types.Role): string
     return if role.Definition.IsExclamatory then "!" else "."
 end
@@ -24,6 +28,7 @@ function module.fromDefinition(roleDefinition: Types.RoleDefinition): Types.Role
         Definition = roleDefinition,
 
         GetFormattedName = GetFormattedName,
+        GetPluralName = GetPluralName,
         GetExclamatoryString = GetExclamatoryString,
         FormatString = FormatString,
         IsAlliedWith = IsAlliedWith,

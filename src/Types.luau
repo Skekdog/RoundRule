@@ -157,6 +157,8 @@ export type RoleDefinition = {
     Sound: string,
     IsExclamatory: boolean?,
 
+    PluralName: string?,
+
 	IsBadGuys: boolean?,
 
     Allegiance: VictorType,
@@ -445,6 +447,7 @@ export type Role = {
 
     IsAlliedWith: (Role, other: Role) -> boolean,
     GetFormattedName: (Role) -> string,
+    GetPluralName: (Role) -> string,
     GetExclamatoryString: (Role) -> string,
     FormatString: (Role, str: string) -> string,
 }
