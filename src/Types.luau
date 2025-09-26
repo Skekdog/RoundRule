@@ -137,7 +137,7 @@ export type GamemodeDefinition = {
     DeathSounds: {string},
 
     OnDeath: (GamemodeDefinition, Participant, deferVictoryCheck: boolean) -> (),
-    OnCharacterAdded: (GamemodeDefinition, Participant) -> (),
+    OnCharacterAdded: (GamemodeDefinition, Participant) -> ()?,
     OnIdentifyCorpse: (GamemodeDefinition, corpse: Corpse, searcher: Participant) -> ()?,
     AddFinishHighlights: (GamemodeDefinition, round: Round) -> ()?,
     OnFinish: (GamemodeDefinition, round: Round) -> ()?,
