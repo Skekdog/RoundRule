@@ -145,6 +145,7 @@ export type GamemodeDefinition = {
 
     OnItemEquipped: (GamemodeDefinition, participant: Participant, item: AnyItem, equipped: boolean) -> ()?,
     BeforeDamageParticipant: (GamemodeDefinition, participant: Participant, params: DamageParams) -> ()?,
+    BeforeDamageProp: (GamemodeDefinition, prop: Prop, params: DamageParams) -> ()?,
 }
 
 export type RoleDefinition = {

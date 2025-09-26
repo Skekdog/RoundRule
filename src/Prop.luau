@@ -39,6 +39,12 @@ local function TryTakeDamage(prop: Types.Prop, params: Types.DamageParams, defer
         return false
     end
 
+    if prop.Round.Gamemode.BeforeDamageProp then
+        if not prop.Round.Gamemode.BeforeDamageProp(prop.Round.Gamemode, prop, params) then
+            return false
+        end
+    end
+
     local canDamage = tryRunOnDamage(prop, params)
     if canDamage == false then -- if nil we still want to deal damage
         return false
