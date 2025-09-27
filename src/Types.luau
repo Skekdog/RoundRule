@@ -125,7 +125,7 @@ export type GamemodeDefinition = {
 
     Duration: (round: Round, numParticipants: number) -> number,
 
-    AssignRoles: (round: Round, {Participant}) -> (),
+    AssignRoles: (round: Round, {Participant}) -> ()?,
 
     Roles: {[string]: RoleDefinition},
 

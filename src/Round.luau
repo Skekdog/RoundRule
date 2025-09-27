@@ -256,7 +256,10 @@ local function _start(round: Types.Round): ()
     round:SetPhase("Playing", round.Gamemode.Duration(round, #participantList))
 
     Random.new():Shuffle(participantList)
-    round.Gamemode.AssignRoles(round, participantList)
+
+    if round.Gamemode.AssignRoles then
+        round.Gamemode.AssignRoles(round, participantList)
+    end
 
     local exclamatoryRoles: {[Types.Role]: {Types.Participant}} = {}
     for _, v in participantList do
