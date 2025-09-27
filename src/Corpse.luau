@@ -135,7 +135,7 @@ local function tryMarkIdentified(corpse: Types.Corpse, searcher: Types.Participa
 
     local gamemode = corpse.Participant.Round.Gamemode
     if gamemode.OnIdentifyCorpse then
-        gamemode.OnIdentifyCorpse(gamemode, corpse, searcher)
+        gamemode.OnIdentifyCorpse(corpse.Participant.Round, corpse, searcher)
     end
 end
 

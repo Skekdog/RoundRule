@@ -113,7 +113,7 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
 
         if round:IsInProgress() then
             if round.Gamemode.OnDeath then
-                round.Gamemode.OnDeath(round.Gamemode, participant, false)
+                round.Gamemode.OnDeath(round, participant, false)
             end
         end
     end
@@ -187,7 +187,7 @@ local function SetPhase(round: Types.Round, phase: Types.Phase, duration: number
         end
     elseif phase == "Playing" then
         callback = function(): ()
-            local victors = round.Gamemode:TimeoutVictor(round)
+            local victors = round.Gamemode.TimeoutVictor(round)
             round:Finish(victors, true)
         end
     elseif phase == "Highlights" then
@@ -253,10 +253,10 @@ local function _start(round: Types.Round): ()
     })
 
     Replication.ReplicateStartTime(workspace:GetServerTimeNow())
-    round:SetPhase("Playing", round.Gamemode.Duration(#participantList))
+    round:SetPhase("Playing", round.Gamemode.Duration(round, #participantList))
 
     Random.new():Shuffle(participantList)
-    round.Gamemode:AssignRoles(participantList)
+    round.Gamemode.AssignRoles(round, participantList)
 
     local exclamatoryRoles: {[Types.Role]: {Types.Participant}} = {}
     for _, v in participantList do
@@ -308,7 +308,7 @@ local function _start(round: Types.Round): ()
     end
 
     if round.Gamemode.OnStart then
-        round.Gamemode.OnStart(round.Gamemode, round)
+        round.Gamemode.OnStart(round)
     end
 end
 
@@ -329,7 +329,7 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
         victorRole = role
     end
 
-    local victoryText = if round.Gamemode.GetVictoryEventText then round.Gamemode.GetVictoryEventText(round.Gamemode, round, victor, isTimeout or false) else nil
+    local victoryText = if round.Gamemode.GetVictoryEventText then round.Gamemode.GetVictoryEventText(round, victor, isTimeout or false) else nil
     if not victoryText then
         victoryText = `The {victorRole:FormatString(GetDisplayName(victorRole.Definition) .. "s")} have won the round!`
     end
@@ -355,7 +355,7 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
     end
 
     if round.Gamemode.AddFinishHighlights then
-        round.Gamemode.AddFinishHighlights(round.Gamemode, round)
+        round.Gamemode.AddFinishHighlights(round)
     end
 
     for _, v in round.Highlights do
@@ -373,7 +373,7 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
         end
     end
 
-    local chosenMusic = round.Gamemode:GetRoundEndMusic(round, victor, isTimeout or false)
+    local chosenMusic = round.Gamemode.GetRoundEndMusic(round, victor, isTimeout or false)
     if chosenMusic then
         round.VictoryData.Music = chosenMusic
         Replication.ReplicateRoundEndMusic("All", chosenMusic, workspace:GetServerTimeNow())
@@ -383,7 +383,7 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
     round:SetPhase("Highlights", HIGHLIGHTS_TIME)
 
     if round.Gamemode.OnFinish then
-        round.Gamemode.OnFinish(round.Gamemode, round)
+        round.Gamemode.OnFinish(round)
     end
 end
 

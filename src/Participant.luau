@@ -96,7 +96,7 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
 
     if round:IsInProgress() then
         if round.Gamemode.OnDeath then
-            round.Gamemode.OnDeath(round.Gamemode, participant, deferVictoryCheck)
+            round.Gamemode.OnDeath(round, participant, deferVictoryCheck)
         end
     end
 end
@@ -253,7 +253,7 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.AnyIt
     end
 
     if lastItem and round.Gamemode.OnItemEquipped then
-        round.Gamemode.OnItemEquipped(round.Gamemode, participant, lastItem, false)
+        round.Gamemode.OnItemEquipped(round, participant, lastItem, false)
     end
 
     if lastItem and lastItem.Definition.OnUnequipServer then
@@ -303,7 +303,7 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.AnyIt
     participant._equippedItem = item
 
     if item and round.Gamemode.OnItemEquipped then
-        round.Gamemode.OnItemEquipped(round.Gamemode, participant, item, true)
+        round.Gamemode.OnItemEquipped(round, participant, item, true)
     end
 
     if item and item.Definition.OnEquipServer then
@@ -377,7 +377,7 @@ function module.TryTakeDamage(participant: Types.Participant, params: Types.Dama
     end
 
     if participant.Round.Gamemode.BeforeDamageParticipant then
-        if not participant.Round.Gamemode.BeforeDamageParticipant(participant.Round.Gamemode, participant, params) then
+        if not participant.Round.Gamemode.BeforeDamageParticipant(participant.Round, participant, params) then
             return false
         end
     end
@@ -765,7 +765,7 @@ local function SpawnCharacter(participant: Types.Participant): ()
         char.Parent = charsFolder
 
         if participant.Round.Gamemode.OnCharacterAdded then
-            participant.Round.Gamemode.OnCharacterAdded(participant.Round.Gamemode, participant)
+            participant.Round.Gamemode.OnCharacterAdded(participant.Round, participant)
         end
     end)
 

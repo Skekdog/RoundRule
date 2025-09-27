@@ -108,10 +108,10 @@ export type GamemodeDefinition = {
 
     RequiredSlayVotes: number?,
 
-    TimeoutVictor: (GamemodeDefinition, Round) -> Victor,
+    TimeoutVictor: (round: Round) -> Victor,
 
-    GetRoundEndMusic: (GamemodeDefinition, Round, victor: Victor, isTimeout: boolean) -> Sound?,
-    GetVictoryEventText: ((GamemodeDefinition, round: Round, victor: Victor, isTimeout: boolean) -> string?)?,
+    GetRoundEndMusic: (round: Round, victor: Victor, isTimeout: boolean) -> Sound?,
+    GetVictoryEventText: ((round: Round, victor: Victor, isTimeout: boolean) -> string?)?,
 
     EnableFriendlyFire: boolean?,
     EnableKarma: boolean?,
@@ -123,9 +123,9 @@ export type GamemodeDefinition = {
 
     StartingItems: {AnyItemDefinition},
 
-    Duration: (numParticipants: number) -> number,
+    Duration: (round: Round, numParticipants: number) -> number,
 
-    AssignRoles: (GamemodeDefinition, {Participant}) -> (),
+    AssignRoles: (round: Round, {Participant}) -> (),
 
     Roles: {[string]: RoleDefinition},
 
@@ -136,16 +136,16 @@ export type GamemodeDefinition = {
 
     DeathSounds: {string},
 
-    OnDeath: (GamemodeDefinition, Participant, deferVictoryCheck: boolean) -> ()?,
-    OnCharacterAdded: (GamemodeDefinition, Participant) -> ()?,
-    OnIdentifyCorpse: (GamemodeDefinition, corpse: Corpse, searcher: Participant) -> ()?,
-    AddFinishHighlights: (GamemodeDefinition, round: Round) -> ()?,
-    OnFinish: (GamemodeDefinition, round: Round) -> ()?,
-    OnStart: (GamemodeDefinition, round: Round) -> ()?,
+    OnDeath: (round: Round, Participant, deferVictoryCheck: boolean) -> ()?,
+    OnCharacterAdded: (round: Round, Participant) -> ()?,
+    OnIdentifyCorpse: (round: Round, corpse: Corpse, searcher: Participant) -> ()?,
+    AddFinishHighlights: (round: Round) -> ()?,
+    OnFinish: (round: Round) -> ()?,
+    OnStart: (round: Round) -> ()?,
 
-    OnItemEquipped: (GamemodeDefinition, participant: Participant, item: AnyItem, equipped: boolean) -> ()?,
-    BeforeDamageParticipant: ((GamemodeDefinition, participant: Participant, params: DamageParams) -> boolean)?,
-    BeforeDamageProp: ((GamemodeDefinition, prop: Prop, params: DamageParams) -> boolean)?,
+    OnItemEquipped: (round: Round, participant: Participant, item: AnyItem, equipped: boolean) -> ()?,
+    BeforeDamageParticipant: ((round: Round, participant: Participant, params: DamageParams) -> boolean)?,
+    BeforeDamageProp: ((round: Round, prop: Prop, params: DamageParams) -> boolean)?,
 }
 
 export type RoleDefinition = {
