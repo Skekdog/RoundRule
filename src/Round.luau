@@ -335,7 +335,7 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
 
     local victoryText = if round.Gamemode.GetVictoryEventText then round.Gamemode.GetVictoryEventText(round, victor, isTimeout or false) else nil
     if not victoryText then
-        victoryText = `The {victorRole:FormatString(GetDisplayName(victorRole.Definition) .. "s")} have won the round!`
+        victoryText = `The {victorRole:FormatString(victorRole:GetPluralName())} have won the round!`
     end
     assert(victoryText)
 
