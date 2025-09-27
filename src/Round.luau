@@ -89,8 +89,6 @@ local function AddPlayer(round: Types.Round, player: Player, karma: number?): Ty
     local participant = Participant.new(player, round)
     round._participants[player.Name] = participant
 
-    participant.DidParticipate = true
-
     if karma then
         participant:SetKarma(karma)
     end
@@ -374,7 +372,7 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
         Replication.ReplicateRole("All", v, false)
         Replication.ReplicatePlayerStatus("All", v, v:GetStatus())
 
-        if v.DidParticipate and round.Gamemode.EnableKarma and not v:IsFreeKill() then
+        if round.Gamemode.EnableKarma and not v:IsFreeKill() then
             v:SetKarma(v:GetKarma() + 100)
         end
     end

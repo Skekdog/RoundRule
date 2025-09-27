@@ -605,8 +605,6 @@ export type Participant = {
     Player: Player,
     Round: Round,
 
-    DidParticipate: boolean,
-
     SlayVotes: {Participant},
     TryAddSlayVote: (Participant, participant: Participant) -> boolean,
 

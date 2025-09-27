@@ -961,8 +961,6 @@ function module.new(player: Player, round: Types.Round): Types.Participant
 
         CorpseSearchDistance = 10,
 
-        DidParticipate = false,
-
         Extras = {},
 
         Player = player,
