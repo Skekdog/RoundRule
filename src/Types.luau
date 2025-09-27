@@ -12,8 +12,6 @@ export type GeneralDamageSource = "Fall" | "Drown" | "Explode" | "Burn" | "Stab"
 export type NamedDamageSource = GeneralDamageSource | string
 export type DamageSource = AnyItem | GeneralDamageSource
 
-export type Bound = BasePart
-
 -- todo: when recursive generic types are supported, do that
 export type ItemBeforeHit = AnyWeapon | ExplosionParams
 export type BeforeHitAnything = (item: ItemBeforeHit, round: Round, hitPart: BasePart, params: DamageParams) -> boolean
