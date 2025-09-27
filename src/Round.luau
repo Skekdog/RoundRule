@@ -18,6 +18,9 @@ local Role = require(script.Parent.Role)
 local Types = require(script.Parent.Types)
 local module = {}
 
+module.Config = {}
+module.Config.DeathSounds = {}
+
 local HIGHLIGHTS_TIME = 20
 local PREPARING_TIME = 20
 
@@ -771,6 +774,7 @@ function module.new(gamemode: Types.GamemodeDefinition): Types.Round
     end
 
     local round: Types.Round = {
+        Config = module.Config,
         Gamemode = gamemode,
 
         AddInteractable = AddInteractable,

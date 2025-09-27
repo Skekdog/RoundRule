@@ -737,7 +737,7 @@ local function SpawnCharacter(participant: Types.Participant): ()
             healthScript:Destroy()
         end
 
-        local deathSoundId = randomElementFromArray(participant.Round.Gamemode.DeathSounds)
+        local deathSoundId = randomElementFromArray(participant.Round.Config.DeathSounds)
         if deathSoundId then
             local deathSound = Instance.new("Sound")
             deathSound.Name = "DeathSound"

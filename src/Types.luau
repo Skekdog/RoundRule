@@ -134,8 +134,6 @@ export type GamemodeDefinition = {
     -- but there's currently no good way for gamemodes / items / whatever to do UI stuff, so this
     -- is what we have to do, unless we want a lot more work.
 
-    DeathSounds: {string},
-
     OnDeath: (round: Round, Participant, deferVictoryCheck: boolean) -> ()?,
     OnCharacterAdded: (round: Round, Participant) -> ()?,
     OnIdentifyCorpse: (round: Round, corpse: Corpse, searcher: Participant) -> ()?,
@@ -728,7 +726,12 @@ export type Prop = {
     TryTakeDamage: (Prop, params: DamageParams, deferDeath: boolean?) -> boolean,
 }
 
+export type GameConfig = {
+    DeathSounds: {string},
+}
+
 export type Round = {
+    Config: GameConfig,
     Gamemode: GamemodeDefinition,
 
     Extras: Extras,
