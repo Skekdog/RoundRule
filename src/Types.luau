@@ -160,7 +160,7 @@ export type RoleDefinition = {
 
     PluralName: string?,
 
-	IsBadGuys: boolean?,
+	IsEvil: boolean?,
 
     Allegiance: VictorType,
 
@@ -241,7 +241,7 @@ export type CommonItemDefinition = {
     Icon: string?,
     IsPixelIcon: boolean?,
 
-	IsBadGuyItem: boolean?,
+	IsEvilItem: boolean?,
 
     Model: MapObject?,
     HoldAnimation: string?,
@@ -629,7 +629,7 @@ export type Participant = {
     GetRole: (Participant) -> Role,
     SetRole: (Participant, role: RoleDefinition?) -> (),
 
-    IsBadGuy: (Participant) -> boolean,
+    IsEvil: (Participant) -> boolean,
 
     IsAlliedWithParticipant: (Participant, other: Participant) -> boolean,
     IsDamageJustifiedAgainstParticipant: (Participant, other: Participant) -> boolean,

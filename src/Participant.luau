@@ -325,8 +325,8 @@ local function IsFreeKill(participant: Types.Participant): boolean
     end
 
     local item = participant:GetEquippedItem()
-    if item and item.Definition.IsBadGuyItem then
-        if not participant:GetRole().Definition.IsBadGuys then
+    if item and item.Definition.IsEvilItem then
+        if not participant:GetRole().Definition.IsEvil then
             return true
         end
     end
@@ -339,8 +339,8 @@ local function SetFreeKill(participant: Types.Participant, reason: string?): ()
     Replication.InformFreeKill(participant.Player, reason)
 end
 
-local function IsBadGuy(participant: Types.Participant): boolean
-    return participant:GetRole().Definition.IsBadGuys or false
+local function IsEvil(participant: Types.Participant): boolean
+    return participant:GetRole().Definition.IsEvil or false
 end
 
 function module.TryTakeDamage(participant: Types.Participant, params: Types.DamageParams, deferDeath: boolean?): boolean
@@ -1008,7 +1008,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         GetRole = GetRole,
         SetRole = module.SetRole,
 
-        IsBadGuy = IsBadGuy,
+        IsEvil = IsEvil,
 
         IsFreeKill = IsFreeKill,
         SetFreeKill = SetFreeKill,
