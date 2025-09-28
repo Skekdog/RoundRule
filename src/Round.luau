@@ -119,7 +119,7 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
     end
 
     if participant:IsAlive() then
-        participant:UnspawnCharacter()
+        participant:DespawnCharacter()
 
         if round:IsInProgress() then
             if round.Gamemode.OnDeath then
@@ -149,7 +149,7 @@ local function destroyRound(round: Types.Round): ()
     for _, v in round:GetParticipants() do
         assert(v)
         v:SetRole(nil)
-        v:UnspawnCharacter()
+        v:DespawnCharacter()
     end
 end
 

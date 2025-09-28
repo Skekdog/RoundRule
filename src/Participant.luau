@@ -691,7 +691,7 @@ local function SpawnCharacter(participant: Types.Participant): ()
     if participant._isCharacterLoading then
         return
     end
-    participant:UnspawnCharacter()
+    participant:DespawnCharacter()
 
     participant._isCharacterLoading = true
 
@@ -771,7 +771,7 @@ local function SpawnCharacter(participant: Types.Participant): ()
     participant.Player:LoadCharacter()
 end
 
-local function UnspawnCharacter(participant: Types.Participant): ()
+local function DespawnCharacter(participant: Types.Participant): ()
     if participant._isCharacterLoading then
         return
     end
@@ -1013,7 +1013,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         SetFreeKill = SetFreeKill,
 
         SpawnCharacter = SpawnCharacter,
-        UnspawnCharacter = UnspawnCharacter,
+        DespawnCharacter = DespawnCharacter,
 
         IsAlliedWithParticipant = IsAlliedWithParticipant,
         IsDamageJustifiedAgainstParticipant = IsDamageJustifiedAgainstParticipant,
