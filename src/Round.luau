@@ -175,30 +175,33 @@ local function setAdvanceTime(round: Types.Round, duration: number, callback: ()
     end)
 end
 
-local function SetPhase(round: Types.Round, phase: Types.Phase, duration: number): ()
+local function SetPhase(round: Types.Round, phase: Types.Phase, duration: number, callback: false | () -> ()?): ()
     round._phase = phase
     round.PhaseLength = duration
 
-    local callback: (() -> ()) | false
-    if phase == "Waiting" then
-        callback = false
-    elseif phase == "Preparing" then
-        callback = function()
-            round:_start()
+    if callback == nil then
+        if phase == "Waiting" then
+            callback = false
+        elseif phase == "Preparing" then
+            callback = function()
+                round:_start()
+            end
+        elseif phase == "Playing" then
+            callback = function(): ()
+                local victors = round.Gamemode.TimeoutVictor(round)
+                round:Finish(victors, true)
+            end
+        elseif phase == "Highlights" then
+            callback = function(): ()
+                round:SetPhase("Intermission", 0)
+                destroyRound(round)
+            end
+        elseif phase == "Intermission" then
+            callback = false
         end
-    elseif phase == "Playing" then
-        callback = function(): ()
-            local victors = round.Gamemode.TimeoutVictor(round)
-            round:Finish(victors, true)
-        end
-    elseif phase == "Highlights" then
-        callback = function(): ()
-            round:SetPhase("Intermission", 0)
-            destroyRound(round)
-        end
-    elseif phase == "Intermission" then
-        callback = false
     end
+
+    assert(callback ~= nil, "Callback cannot be nil")
 
     Replication.ReplicateRoundPhase(phase)
 

@@ -778,7 +778,7 @@ export type Round = {
     _heartbeat: RBXScriptConnection?,
     _phase: Phase,
     GetPhase: (Round) -> Phase,
-    SetPhase: (Round, phase: Phase, duration: number) -> (),
+    SetPhase: (Round, phase: Phase, duration: number, callback: false | () -> ()?) -> (),
 
     IsPreGame: (Round) -> boolean,
     IsPostGame: (Round) -> boolean,
