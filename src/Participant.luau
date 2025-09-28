@@ -692,20 +692,10 @@ local function MoveToSpawn(participant: Types.Participant, spawnCFrame: CFrame?)
 end
 
 local function SpawnCharacter(participant: Types.Participant): ()
-    assert(not participant._isCharacterLoading, "Character is already loading")
-
-    participant.Round:SendMessage(participant.Player, "The round will begin soon. Prepare yourself.", "All")
-
-    if participant.Round.Gamemode.EnableKarma then
-        local msg: string
-        local dmgMult = participant:GetKarmaDamageMultiplier()
-        if dmgMult == 1 then
-            msg = "Your karma is 100%. You will deal full damage this round."
-        else
-            msg = string.format("Your karma is %d. You will deal %.1f%% damage this round.", participant:GetKarma(), dmgMult * 100)
-        end
-        participant.Round:SendMessage(participant.Player, msg, "All")
+    if participant._isCharacterLoading then
+        return
     end
+    participant:UnspawnCharacter()
 
     participant._isCharacterLoading = true
 
@@ -773,12 +763,14 @@ local function SpawnCharacter(participant: Types.Participant): ()
 end
 
 local function UnspawnCharacter(participant: Types.Participant): ()
-    assert(not participant._isCharacterLoading, "Character is loading")
+    if participant._isCharacterLoading then
+        return
+    end
 
     local corpse = participant.Corpse
     local char = participant:GetCharacter() or if corpse then corpse.Model else nil
     if not char then
-        return print("no char", corpse)
+        return
     end
 
     for _, v in participant:GetItems() do

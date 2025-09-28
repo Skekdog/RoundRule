@@ -95,6 +95,21 @@ local function AddPlayer(round: Types.Round, player: Player, karma: number?): Ty
 
     spawnParticipant(participant)
 
+    if round.Gamemode.EnableKarma then
+        local msg: string
+        local dmgMult = participant:GetKarmaDamageMultiplier()
+        if dmgMult == 1 then
+            msg = "Your karma is 100%. You will deal full damage this round."
+        else
+            msg = string.format("Your karma is %d. You will deal %.1f%% damage this round.", participant:GetKarma(), dmgMult * 100)
+        end
+        round:SendMessage(participant.Player, msg, "All")
+    end
+
+    if round:IsPreGame() then
+        round:SendMessage(participant.Player, "The round will begin soon. Prepare yourself.", "All")
+    end
+
     return participant
 end
 
