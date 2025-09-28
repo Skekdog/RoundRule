@@ -1,13 +1,6 @@
 local Types = require(script.Parent.Types)
 local module = {}
 
-local function validateMapIcons(mapIcons: any): ()
-    assert(typeof(mapIcons) == "table", "MapIcons must be a table")
-    assert(mapIcons["16:9"] == nil or typeof(mapIcons["16:9"]) == "string", 'MapIcons["16:9"] must be a string')
-    assert(mapIcons["4:3"] == nil or typeof(mapIcons["4:3"]) == "string", 'MapIcons["4:3"] must be a string')
-    assert(mapIcons["1:1"] == nil or typeof(mapIcons["1:1"]) == "string", 'MapIcons["1:1"] must be a string')
-end
-
 local function validateClouds(clouds: any): ()
     if clouds == nil then
         return
@@ -18,18 +11,16 @@ local function validateClouds(clouds: any): ()
     assert(typeof(clouds.Color) == "Color3", "CloudsSettings.Color must be a Color3")
 end
 
-function module.ValidateDefinition(definition: any): Types.MapDefinition
+function module.ValidateDefinition(mapScript: Instance, definition: any): Types.MapDefinition
     assert(typeof(definition) == "table", "MapDefinition must be a table")
 
-    assert(typeof(definition.Name) == "string", "Name must be a string")
-    assert(definition.DisplayName == nil or typeof(definition.DisplayName) == "string", "DisplayName must be a string")
-    assert(typeof(definition.Description) == "string", "Description must be a string")
-    assert(typeof(definition.Authors) == "string", "Authors must be a string")
+    for i, v in definition.AvailableAmmo do
+		assert(i == v.Name, "Ammo name in AvailableAmmo must match index")
+	end
 
-    validateMapIcons(definition.MapIcons)
-
-    assert(typeof(definition.AvailableItems) == "table", "AvailableItems must be a table")
-    assert(typeof(definition.AvailableAmmo) == "table", "AvailableAmmo must be a table")
+	for i, v in definition.AvailableItems do
+		assert(i == v.Name, "Item name in AvailableItems must match index")
+	end
 
     validateClouds(definition.CloudsSettings)
 
@@ -39,7 +30,7 @@ end
 function module.ValidateMapScript(mapScript: Instance): Types.MapScript
     assert(mapScript:IsA("ModuleScript"), "MapScript must be a ModuleScript")
 
-    module.ValidateDefinition((require)(mapScript))
+    module.ValidateDefinition(mapScript, (require)(mapScript))
 
     local static = mapScript:FindFirstChild("Static")
     assert(static and static:IsA("Folder"), "MapScript must have a Static Folder")
@@ -64,7 +55,7 @@ end
 
 function module.fromMapScript(mapScript: Types.MapScript): Types.Map
     local maybeDefinition: unknown = (require)(mapScript)
-    local definition = module.ValidateDefinition(maybeDefinition)
+    local definition = module.ValidateDefinition(mapScript, maybeDefinition)
 
     return {
         Definition = definition,
