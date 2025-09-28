@@ -458,7 +458,12 @@ export type Event = {
     Data: RoundEventData,
 }
 
-export type RoundEventData = DeathEventData | CorpseSearchedEventData | StartRoundEventData | EndRoundEventData | DeathConfirmedEventData
+export type RoundEventData = GenericEventData | DeathEventData | CorpseSearchedEventData | StartRoundEventData | EndRoundEventData | DeathConfirmedEventData
+
+export type GenericEventData = {
+    Kind: "GenericRoundEvent",
+    Text: string,
+}
 
 export type DeathEventData = {
     Kind: "DeathRoundEvent",

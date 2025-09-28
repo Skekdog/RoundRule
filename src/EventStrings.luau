@@ -53,6 +53,8 @@ local function GetEventString(event: Types.Event): string
         return msg
     elseif data.Kind == "DeathConfirmedRoundEvent" then
         return `{data.ConfirmedBy:GetFormattedName()} confirmed the death of {data.Victim:GetFormattedName()}.`
+    elseif data.Kind == "GenericRoundEvent" then
+        return data.Text
     end
 
     error("Unknown event kind: " .. data.Kind)
