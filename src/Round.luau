@@ -59,12 +59,6 @@ end
 local function spawnParticipant(participant: Types.Participant): ()
     local round = participant.Round
 
-    participant:_setStatus("Alive")
-
-    for _, v in round.Gamemode.StartingItems do
-        participant:AddItem(Item.new(v))
-    end
-
     if not round._heartbeat or not round._heartbeat.Connected then
         local count = 0
         for _, v in round:GetParticipants() do

@@ -16,11 +16,6 @@ local SELF_DEFENSE_DURATION = 15
 
 local module = {}
 
-local function rejoinRound(participant: Types.Participant): ()
-    participant.Round:RemoveParticipant(participant, true)
-    participant.Round:AddPlayer(participant.Player, participant:GetKarma())
-end
-
 local function randomElementFromArray<T>(array: {T}): T?
     if #array == 0 then
         return nil
@@ -32,7 +27,8 @@ end
 function module.OnDeath(participant: Types.Participant, params: Types.DamageParams, deferVictoryCheck: boolean): ()
     local round = participant.Round
     if round:IsPreGame() then
-        return rejoinRound(participant)
+        participant:SpawnCharacter()
+        return
     end
 
     local attacker = params.Attacker
@@ -698,6 +694,19 @@ local function SpawnCharacter(participant: Types.Participant): ()
     participant:UnspawnCharacter()
 
     participant._isCharacterLoading = true
+
+    participant:_setStatus("Alive")
+
+    for _, v in participant.Round.Gamemode.StartingItems do
+        participant:GiveItemFromItemDefinition(v)
+    end
+
+    local startingItems = participant:GetRole().Definition.StartingItems
+    if startingItems then
+        for _, v in startingItems do
+            participant:GiveItemFromItemDefinition(v)
+        end
+    end
 
     participant.Player.CharacterAppearanceLoaded:Once(function(char)
         local hum = char:WaitForChild("Humanoid")
