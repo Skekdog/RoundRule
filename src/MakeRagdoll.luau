@@ -117,7 +117,7 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance, cha
 			hingeConstraint.LowerAngle = v.LowerAngle
 			hingeConstraint.UpperAngle = v.UpperAngle
 		end
-		
+
 		constraint.Parent = clone:FindFirstChild(v.Part1)
 	end
 
@@ -158,6 +158,7 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance, cha
 
 	clone:AddTag("Prop")
 	clone:AddTag("Corpse")
+	clone:RemoveTag("Character")
 
 	participant._character = nil
 	return clone
