@@ -352,7 +352,7 @@ function module.TryTakeDamage(participant: Types.Participant, params: Types.Dama
     local attacker = params.Attacker
 
     if attacker then
-        if not participant.Round.Gamemode.EnableFriendlyFire and participant:IsAlliedWithParticipant(attacker) then
+        if attacker ~= participant and not participant.Round.Gamemode.EnableFriendlyFire and participant:IsAlliedWithParticipant(attacker) then
             return false
         end
 
