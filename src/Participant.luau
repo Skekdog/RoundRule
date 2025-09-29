@@ -694,6 +694,12 @@ local function SpawnCharacter(participant: Types.Participant): ()
     participant:DespawnCharacter()
 
     participant._isCharacterLoading = true
+    participant._wasDeathProcessed = false
+
+    participant._selfDefenseList = {}
+    participant.SlayVotes = {}
+    participant.KillList = {}
+    participant:SetFreeKill()
 
     participant:_setStatus("Alive")
 
@@ -786,6 +792,8 @@ local function DespawnCharacter(participant: Types.Participant): ()
         assert(v)
         participant:TryDropItem(v)
     end
+
+    participant._ammo = {}
 
     participant._humanoid = nil
     participant._character = nil
