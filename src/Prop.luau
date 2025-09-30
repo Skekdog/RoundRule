@@ -30,10 +30,6 @@ local function SetHealth(prop: Types.Prop, health: number): ()
 end
 
 local function TryTakeDamage(prop: Types.Prop, params: Types.DamageParams, deferDeath: boolean?): boolean
-    if prop.Round:IsPreGame() then
-        return false
-    end
-
     local health = prop:GetHealth()
     if health and health <= 0 then
         return false
