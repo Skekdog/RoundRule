@@ -318,6 +318,8 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
     Projectile: BasePart?,
     ProjectileSpeed: number?,
 
+    ImpulseForce: number?,
+
     BulletsPerShot: number?,
 
     Spread: number,
@@ -365,6 +367,8 @@ export type MeleeWeaponDefinition = CommonWeaponDefinition & {
     AttackSound: Sound?,
 
     Damage: DamageInfo,
+
+    ImpulseForce: number?,
 
     MaxDistance: number,
 
