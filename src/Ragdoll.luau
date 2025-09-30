@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 
 type HingeJoint = {
 	Kind: "Hinge",
@@ -38,15 +39,19 @@ local jointInfo: {[string]: Joint} = {
 	Waist = {Kind = "Hinge", Part0 = "LowerTorso", Part1 = "UpperTorso", LowerAngle = -45, UpperAngle = 45},
 }
 
-local noCollisionLimbs = {"LeftUpperArm", "RightUpperArm", "LowerTorso", "LeftUpperLeg", "RightUpperLeg"}
+local noCollisionLimbs = {"LeftUpperArm", "RightUpperArm", "LowerTorso", "LeftUpperLeg", "RightUpperLeg", "HumanoidRootPart"}
 
-local function Ragdoll(char: Model): ()
-	if not char then
-		return
+local function Ragdoll(char: Model, inPlace: boolean?): Model
+	if not char:IsDescendantOf(workspace) then
+		return char
 	end
 
-	if not char:IsDescendantOf(workspace) then
-		return
+	local plr = Players:GetPlayerFromCharacter(char)
+	if plr and not inPlace then
+		char.Archivable = true
+		char = char:Clone()
+		char.Parent = workspace.Characters
+		plr.Character = nil
 	end
 
 	local root = char:FindFirstChild("HumanoidRootPart") :: BasePart?
@@ -60,7 +65,6 @@ local function Ragdoll(char: Model): ()
 		root.CanCollide = false
 		root.CanTouch = false
 		root.CanQuery = false
-		root:SetNetworkOwner(nil)
 	end
 
 	for i, v in jointInfo do
@@ -115,11 +119,13 @@ local function Ragdoll(char: Model): ()
 	assert(not lowerTorso or lowerTorso:IsA("BasePart"))
 	char.PrimaryPart = lowerTorso
 
-	if root then
-		local weld = Instance.new("WeldConstraint")
-		weld.Part1 = root
-		weld.Part0 = lowerTorso :: BasePart -- WeldConstraint.Part0 is optional but it doesn't think so
-		weld.Parent = root
+	if lowerTorso then
+		if root then
+			local weld = Instance.new("WeldConstraint")
+			weld.Part1 = root
+			weld.Part0 = lowerTorso
+			weld.Parent = root
+		end
 	end
 
 	for _, v in char:GetDescendants() do
@@ -127,23 +133,15 @@ local function Ragdoll(char: Model): ()
 			v:Destroy()
 		elseif v:IsA("BasePart") and not v:FindFirstAncestorOfClass("Accessory") then
 			v.CollisionGroup = "Corpses"
+			v.CanCollide = table.find(noCollisionLimbs, v.Name) == nil
 		end
 	end
-
-	task.spawn(function()
-		while char.Parent do
-			for _, v in char:GetChildren() do
-				if v:IsA("BasePart") and v.Name ~= "HumanoidRootPart" then
-					v.CanCollide = not table.find(noCollisionLimbs, v.Name)
-				end
-			end
-			task.wait()
-		end
-	end)
 
 	char:AddTag("Prop")
 	char:AddTag("Corpse")
 	char:RemoveTag("Character")
+
+	return char
 end
 
 return Ragdoll

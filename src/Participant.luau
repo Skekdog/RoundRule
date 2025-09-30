@@ -74,7 +74,7 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
 
     local char = participant:GetCharacter()
     if char then
-        Ragdoll(char)
+        char = Ragdoll(char)
         participant._character = nil
         round:LoadProp(char)
         char:SetAttribute("Unidentified", true)
