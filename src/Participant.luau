@@ -8,7 +8,7 @@ local Corpse = require(script.Parent.Corpse)
 local Defaults = require(script.Parent.Defaults)
 local IsPassiveDamageSource = require(script.Parent.IsPassiveDamageSource)
 local Item = require(script.Parent.Item)
-local MakeRagdoll = require(script.Parent.MakeRagdoll)
+local Ragdoll = require(script.Parent.Ragdoll)
 local Replication = require(script.Parent.Replication)
 local Types = require(script.Parent.Types)
 
@@ -72,12 +72,14 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
         Victim = participant,
     })
 
-    local ragdoll = MakeRagdoll(participant, workspace.Characters)
-    if ragdoll then
-        round:LoadProp(ragdoll)
-        ragdoll:SetAttribute("Unidentified", true)
+    local char = participant:GetCharacter()
+    if char then
+        Ragdoll(char)
+        participant._character = nil
+        round:LoadProp(char)
+        char:SetAttribute("Unidentified", true)
 
-        local deathSound = ragdoll:FindFirstChild("DeathSound", true)
+        local deathSound = char:FindFirstChild("DeathSound", true)
         if not params.IsHeadshot and deathSound and deathSound:IsA("Sound") then
             if typeof(params.Source) ~= "table" or (params.Source.Kind == "Gun" and not params.Source.Definition.IsSilent) then
                 deathSound:Play()
@@ -87,7 +89,7 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
 
     participant:_setStatus("Missing")
 
-    local corpse = Corpse.new(participant, params, ragdoll, isFreeKill)
+    local corpse = Corpse.new(participant, params, char, isFreeKill)
     participant.Corpse = corpse
 
     if round:IsInProgress() then

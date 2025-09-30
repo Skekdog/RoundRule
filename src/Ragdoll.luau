@@ -1,4 +1,3 @@
-local Types = require(script.Parent.Types)
 
 type HingeJoint = {
 	Kind: "Hinge",
@@ -41,23 +40,17 @@ local jointInfo: {[string]: Joint} = {
 
 local noCollisionLimbs = {"LeftUpperArm", "RightUpperArm", "LowerTorso", "LeftUpperLeg", "RightUpperLeg"}
 
-local function MakeRagdoll(participant: Types.Participant, parent: Instance, char: Model?): Model?
-	char = char or participant:GetCharacter()
+local function Ragdoll(char: Model): ()
 	if not char then
 		return
 	end
-
-	local plr = participant.Player
 
 	if not char:IsDescendantOf(workspace) then
 		return
 	end
 
-	char.Archivable = true
-	local clone = char:Clone()
-
-	local root = clone:FindFirstChild("HumanoidRootPart") :: BasePart?
-	local hum = clone:FindFirstChildOfClass("Humanoid")
+	local root = char:FindFirstChild("HumanoidRootPart") :: BasePart?
+	local hum = char:FindFirstChildOfClass("Humanoid")
 
 	if hum then
 		hum:ChangeState(Enum.HumanoidStateType.Physics)
@@ -67,15 +60,12 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance, cha
 		root.CanCollide = false
 		root.CanTouch = false
 		root.CanQuery = false
+		root:SetNetworkOwner(nil)
 	end
-
-	plr.Character = nil
-	char:Destroy()
-	clone:SetAttribute("Unidentified", true)
 
 	for i, v in jointInfo do
 		local constraint = Instance.new(if v.Kind == "Ball" then "BallSocketConstraint" else "HingeConstraint") :: Constraint
-		local part0 = clone:FindFirstChild(v.Part0)
+		local part0 = char:FindFirstChild(v.Part0)
 		if not part0 then
 			continue
 		end
@@ -87,7 +77,7 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance, cha
 		constraint.Attachment0 = attachment0
 		attachment0.Name = i .. "RigAttach"
 
-		local part1 = clone:FindFirstChild(v.Part1)
+		local part1 = char:FindFirstChild(v.Part1)
 		if not part1 then
 			continue
 		end
@@ -118,12 +108,12 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance, cha
 			hingeConstraint.UpperAngle = v.UpperAngle
 		end
 
-		constraint.Parent = clone:FindFirstChild(v.Part1)
+		constraint.Parent = char:FindFirstChild(v.Part1)
 	end
 
-	local lowerTorso = clone:FindFirstChild("LowerTorso")
+	local lowerTorso = char:FindFirstChild("LowerTorso")
 	assert(not lowerTorso or lowerTorso:IsA("BasePart"))
-	clone.PrimaryPart = lowerTorso
+	char.PrimaryPart = lowerTorso
 
 	if root then
 		local weld = Instance.new("WeldConstraint")
@@ -132,9 +122,8 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance, cha
 		weld.Parent = root
 	end
 
-	clone.Parent = parent
-	for _, v in clone:GetDescendants() do
-		if v:IsA("Motor6D") or v:IsA("BaseScript") or v:IsA("Fire") or (v.Name == "Item" and v.Parent == clone) then
+	for _, v in char:GetDescendants() do
+		if v:IsA("Motor6D") or v:IsA("BaseScript") or v:IsA("Fire") or (v.Name == "Item" and v.Parent == char) then
 			v:Destroy()
 		elseif v:IsA("BasePart") and not v:FindFirstAncestorOfClass("Accessory") then
 			v.CollisionGroup = "Corpses"
@@ -142,8 +131,8 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance, cha
 	end
 
 	task.spawn(function()
-		while clone.Parent do
-			for _, v in clone:GetChildren() do
+		while char.Parent do
+			for _, v in char:GetChildren() do
 				if v:IsA("BasePart") and v.Name ~= "HumanoidRootPart" then
 					v.CanCollide = not table.find(noCollisionLimbs, v.Name)
 				end
@@ -152,16 +141,9 @@ local function MakeRagdoll(participant: Types.Participant, parent: Instance, cha
 		end
 	end)
 
-	if root then
-		root:SetNetworkOwner()
-	end
-
-	clone:AddTag("Prop")
-	clone:AddTag("Corpse")
-	clone:RemoveTag("Character")
-
-	participant._character = nil
-	return clone
+	char:AddTag("Prop")
+	char:AddTag("Corpse")
+	char:RemoveTag("Character")
 end
 
-return MakeRagdoll
+return Ragdoll
