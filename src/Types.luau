@@ -103,7 +103,7 @@ export type GamemodeDefinition = {
     Description: string,
     Authors: string,
 
-    MinimumPlayers: number,
+    MinimumPlayers: number | () -> number,
 
     RequiredSlayVotes: number?,
 
@@ -739,6 +739,8 @@ export type GameConfig = {
 export type Round = {
     Config: GameConfig,
     Gamemode: GamemodeDefinition,
+
+    MinimumRequiredPlayers: number,
 
     Extras: Extras,
 

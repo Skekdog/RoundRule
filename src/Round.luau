@@ -64,7 +64,7 @@ local function spawnParticipant(participant: Types.Participant): ()
         for _, v in round:GetParticipants() do
             assert(v)
             count += 1
-            if count == round.Gamemode.MinimumPlayers then
+            if count == round.MinimumRequiredPlayers then
                 round:SetPhase("Preparing", PREPARING_TIME)
                 break
             end
@@ -133,7 +133,7 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
         participant:RemoveItem(v)
     end
 
-    if not isRejoining and count < round.Gamemode.MinimumPlayers and round:IsPreGame() then
+    if not isRejoining and count < round.MinimumRequiredPlayers and round:IsPreGame() then
         round:SetPhase("Waiting", 0)
         assert(round._heartbeat):Disconnect()
     end
@@ -253,7 +253,7 @@ local function _start(round: Types.Round): ()
         table.insert(participantList, v)
     end
 
-    assert(#participantList >= round.Gamemode.MinimumPlayers, "Not enough players to start round")
+    assert(#participantList >= round.MinimumRequiredPlayers, "Not enough players to start round")
 
     for _, v in participantList do
         while not v:GetCharacter() and v.Player:IsDescendantOf(Players) do
@@ -791,6 +791,8 @@ function module.new(gamemode: Types.GamemodeDefinition): Types.Round
         Config = module.Config,
         Gamemode = gamemode,
 
+        MinimumRequiredPlayers = if typeof(gamemode.MinimumPlayers) == "number" then gamemode.MinimumPlayers else gamemode.MinimumPlayers(),
+
         AddInteractable = AddInteractable,
 
         Extras = {},
@@ -856,6 +858,8 @@ function module.new(gamemode: Types.GamemodeDefinition): Types.Round
 
         SendMessage = SendMessage,
     }
+
+    print(round.MinimumRequiredPlayers)
 
     Replication.ReplicateRoundPhase(round:GetPhase())
     Replication.ReplicateRoundPause(round:IsPaused())
