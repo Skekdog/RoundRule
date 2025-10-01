@@ -859,8 +859,6 @@ function module.new(gamemode: Types.GamemodeDefinition): Types.Round
         SendMessage = SendMessage,
     }
 
-    print(round.MinimumRequiredPlayers)
-
     Replication.ReplicateRoundPhase(round:GetPhase())
     Replication.ReplicateRoundPause(round:IsPaused())
     Replication.ReplicateGamemode(gamemode)
