@@ -25,12 +25,14 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
             hitThing = prop
         end
 
-        local participant = round:GetParticipant(model.Name)
-        if not participant then
-            return false
-        end
+        if not hitThing then
+            local participant = round:GetParticipant(model.Name)
+            if not participant then
+                return false
+            end
 
-        hitThing = participant
+            hitThing = participant
+        end
     else
         local MapObject = GetMapObjectWithTag(hitPart, "Prop")
         if not MapObject then
