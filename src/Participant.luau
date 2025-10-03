@@ -774,6 +774,9 @@ local function SpawnCharacter(participant: Types.Participant): ()
         local charsFolder = workspace.Characters
         char.Parent = charsFolder
 
+        if participant.Round.Config.OnCharacterAdded then
+            participant.Round.Config.OnCharacterAdded(participant.Round, participant)
+        end
         if participant.Round.Gamemode.OnCharacterAdded then
             participant.Round.Gamemode.OnCharacterAdded(participant.Round, participant)
         end

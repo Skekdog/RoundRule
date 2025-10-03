@@ -735,6 +735,7 @@ export type Prop = {
 export type GameConfig = {
     DeathSounds: {string},
     OnDeath: (Round, Participant, boolean) -> ()?,
+    OnCharacterAdded: (Round, Participant) -> ()?,
 }
 
 export type Round = {
