@@ -18,7 +18,7 @@ local Role = require(script.Parent.Role)
 local Types = require(script.Parent.Types)
 local module = {}
 
-module.Config = {}
+module.Config = {} :: Types.GameConfig
 module.Config.DeathSounds = {}
 
 local HIGHLIGHTS_TIME = 20
