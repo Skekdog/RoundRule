@@ -451,7 +451,7 @@ local function LoadItem(round: Types.Round, model: Types.MapObject): Types.AnyIt
                 return
             end
 
-            if item.Definition.ItemGroup and not round.Gamemode.IsSlotless and participant:IsItemGroupOccupied(item.Definition.ItemGroup) then
+            if participant:IsItemGroupOccupied(item.Definition.ItemGroup) then
                 return
             end
 
