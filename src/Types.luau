@@ -741,6 +741,7 @@ export type GameConfig = {
     DeathSounds: {string},
     OnDeath: (Round, Participant, boolean) -> ()?,
     OnCharacterAdded: (Round, Participant) -> ()?,
+    BeforeDamageProp: ((Round, Prop, DamageParams) -> boolean)?,
 }
 
 export type Round = {

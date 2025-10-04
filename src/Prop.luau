@@ -35,6 +35,12 @@ local function TryTakeDamage(prop: Types.Prop, params: Types.DamageParams, defer
         return false
     end
 
+    if prop.Round.Config.BeforeDamageProp then
+        if not prop.Round.Config.BeforeDamageProp(prop.Round, prop, params) then
+            return false
+        end
+    end
+
     if prop.Round.Gamemode.BeforeDamageProp then
         if not prop.Round.Gamemode.BeforeDamageProp(prop.Round, prop, params) then
             return false
