@@ -250,7 +250,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams, 
         local definition = participant.Round:GetItemDefinition(i)
         assert(definition)
 
-        if definition.Slot then
+        if definition.ItemGroup then
             continue
         end
         table.insert(equipmentList, i)

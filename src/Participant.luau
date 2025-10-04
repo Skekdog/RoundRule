@@ -166,9 +166,6 @@ function module.SetRole(participant: Types.Participant, role: Types.RoleDefiniti
     participant:AddCredits(role.StartingCredits or 0)
     if role.StartingItems then
         for _, v in role.StartingItems do
-            if v.Slot and participant:IsItemSlotOccupied(v.Slot) then
-                continue
-            end
             participant:GiveItemFromItemDefinition(v)
         end
     end
@@ -491,11 +488,18 @@ local function HasSelfDefenseAgainstParticipant(participant: Types.Participant, 
     return false
 end
 
-local function IsItemSlotOccupied(participant: Types.Participant, slot: number): boolean
+local function IsItemGroupOccupied(participant: Types.Participant, group: Types.ItemGroup?): boolean
+    if not group then
+        return false
+    end
+
     for _, v in participant:GetItems() do
         assert(v)
-        if v.Definition.Slot == slot then
-            return true
+        local vGroup = v.Definition.ItemGroup
+        if vGroup then
+            if vGroup == group or (not participant.Round.Gamemode.IsSlotless and vGroup.PreferredSlot == group.PreferredSlot) then
+                return true
+            end
         end
     end
 
@@ -590,14 +594,13 @@ local function TryDropItem(participant: Types.Participant, item: Types.AnyItem, 
 end
 
 local function AddItem(participant: Types.Participant, item: Types.AnyItem): ()
-    if item.Definition.Slot then
-        assert(typeof(item.Definition.Slot) == "number")
-        assert(not participant:IsItemSlotOccupied(item.Definition.Slot), "Item slot already occupied")
+    if item.Definition.ItemGroup and participant:IsItemGroupOccupied(item.Definition.ItemGroup) then
+        return
     end
 
     participant._items[item.Definition.Name] = item
 
-    if not item.Definition.Slot and item.Definition.OnEquipServer then
+    if not item.Definition.ItemGroup and item.Definition.OnEquipServer then
         item.Definition.OnEquipServer(item, participant)
     end
 
@@ -610,7 +613,7 @@ local function RemoveItem(participant: Types.Participant, item: Types.AnyItem): 
         participant:SetEquippedItem(nil, true)
     end
 
-    if not item.Definition.Slot and item.Definition.OnUnequipServer then
+    if not item.Definition.ItemGroup and item.Definition.OnUnequipServer then
         item.Definition.OnUnequipServer(item, participant)
     end
 
@@ -642,7 +645,7 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
         return "NotInStock"
     end
 
-    if itemDefinition.Slot and participant:IsItemSlotOccupied(itemDefinition.Slot) then
+    if itemDefinition.ItemGroup and participant:IsItemGroupOccupied(itemDefinition.ItemGroup) then
         return "SlotOccupied"
     end
 
@@ -1057,7 +1060,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         DropItem = module.DropItem,
         GetItems = GetItems,
         PurchaseItem = PurchaseItem,
-        IsItemSlotOccupied = IsItemSlotOccupied,
+        IsItemGroupOccupied = IsItemGroupOccupied,
         TryDropItem = TryDropItem,
 
         TryThrowAssembly = TryThrowAssembly,

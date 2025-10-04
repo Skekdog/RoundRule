@@ -115,6 +115,7 @@ export type GamemodeDefinition = {
     EnableFriendlyFire: boolean?,
     EnableKarma: boolean?,
 
+    IsSlotless: boolean?,
     AvailableItems: {[string]: AnyItemDefinition},
     AvailableAmmo: {[string]: AmmoDefinition},
 
@@ -230,6 +231,10 @@ export type Interactable = {
     TryTakeDamage: (Interactable, params: DamageParams, deferDeath: boolean?) -> boolean,
 }
 
+export type ItemGroup = {
+    PreferredSlot: number?,
+}
+
 export type CommonItemDefinition = {
     Name: string,
     DisplayName: string?,
@@ -243,7 +248,7 @@ export type CommonItemDefinition = {
     Model: MapObject?,
     HoldAnimation: string?,
 
-    Slot: number?,
+    ItemGroup: ItemGroup?,
     CanDrop: boolean?,
     PreventUnequip: boolean?,
 
@@ -693,7 +698,7 @@ export type Participant = {
     RemoveItem: (Participant, item: AnyItem) -> (),
     TryDropItem: (Participant, item: AnyItem, throw: boolean?) -> boolean,
 
-    IsItemSlotOccupied: (Participant, slot: number) -> boolean,
+    IsItemGroupOccupied: (Participant, group: ItemGroup?) -> boolean,
 
     GetAmmo: (Participant, kind: string) -> number,
     SetAmmo: (Participant, kind: string, amount: number) -> (),
