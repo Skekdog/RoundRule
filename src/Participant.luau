@@ -428,7 +428,10 @@ local function _setStatus(participant: Types.Participant, status: Types.Particip
 end
 
 local function _addToKillList(participant: Types.Participant, toAdd: Types.Participant): ()
-    assert(not table.find(participant.KillList, toAdd), "Participant already on kill list")
+    if table.find(participant.KillList, toAdd) then
+        return
+    end
+
     table.insert(participant.KillList, toAdd)
 
     local corpse = participant.Corpse
