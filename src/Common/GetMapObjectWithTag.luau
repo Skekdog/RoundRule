@@ -17,7 +17,7 @@ local function GetMapObjectWithTag(descendant: Instance, tag: string | {string})
 			return thing
 		end
 		thing = thing.Parent
-	until thing == game
+	until thing == game or not thing
 
 	return nil
 end
