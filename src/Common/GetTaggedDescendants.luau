@@ -1,16 +1,19 @@
-local HasTag = require(script.Parent.HasAnyTag)
+local CollectionService = game:GetService("CollectionService")
 
-local function GetTaggedDescendants(instance: Instance, tag: string | {string}): {Instance}
+local function GetTaggedDescendants(instance: Instance, tags: string | {string}): {Instance}
+	assert(instance:IsDescendantOf(game), "GetTaggedDescendants must be called on a descendant of game")
 	local tagged: {Instance} = {}
 
-	if typeof(tag) == "string" then
-		tag = {tag}
+	if typeof(tags) == "string" then
+		tags = {tags}
 	end
-	assert(typeof(tag) == "table")
+	assert(typeof(tags) == "table")
 
-	for _, v in instance:GetDescendants() do
-		if HasTag(v, tag) then
-			table.insert(tagged, v)
+	for _, tag in tags do
+		for _, v in CollectionService:GetTagged(tag) do
+			if v:IsDescendantOf(instance) then
+				table.insert(tagged, v)
+			end
 		end
 	end
 

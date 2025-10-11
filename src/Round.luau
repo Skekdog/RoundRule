@@ -729,6 +729,11 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
         lastMap.Dynamic = map.Dynamic
     end
 
+    if not lastMap or lastMap.Definition.Name ~= map.Definition.Name then
+        map.Map.Name = "Map"
+        map.Map.Parent = workspace
+    end
+
     for _, v in GetTaggedDescendants(map.Dynamic, Prop.Tags) do
         if v:IsA("BasePart") or v:IsA("Model") then
             round:LoadProp(v)
@@ -740,11 +745,6 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
             round:LoadProp(descendant)
         end
     end)
-
-    if not lastMap or lastMap.Definition.Name ~= map.Definition.Name then
-        map.Map.Name = "Map"
-        map.Map.Parent = workspace
-    end
 
     task.delay(1, function()
         for _, v in round:GetParticipants() do
