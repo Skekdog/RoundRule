@@ -838,6 +838,16 @@ local function IsAlliedWithParticipant(participant: Types.Participant, other: Ty
     return role1:IsAlliedWith(role2)
 end
 
+local function HasCorpseIcon(participant: Types.Participant, name: string): boolean
+    for _, v in participant.ExtraCorpseIcons do
+        if v.Name == name then
+            return true
+        end
+    end
+
+    return false
+end
+
 local function AddCorpseIcon(participant: Types.Participant, icon: Types.CorpseIcon): ()
     local toRemove: number?
     for i, v in participant.ExtraCorpseIcons do
@@ -1012,6 +1022,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
 
         ExtraCorpseIcons = {},
         AddCorpseIcon = AddCorpseIcon,
+        HasCorpseIcon = HasCorpseIcon,
 
         DropAmmoBoxForCurrentItem = DropAmmoBoxForCurrentItem,
 
