@@ -170,6 +170,10 @@ function module.SetRole(participant: Types.Participant, role: Types.RoleDefiniti
         end
     end
 
+    if participant.Round.Config.OnRoleAssigned then
+        participant.Round.Config.OnRoleAssigned(participant.Round, participant)
+    end
+
     if not participant.Round:IsInProgress() then
         Replication.ReplicateRole("All", participant, false)
     else

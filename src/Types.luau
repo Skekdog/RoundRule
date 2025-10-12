@@ -743,6 +743,7 @@ export type GameConfig = {
     OnDeath: (Round, Participant, boolean) -> ()?,
     OnCharacterAdded: (Round, Participant) -> ()?,
     BeforeDamageProp: ((Round, Prop, DamageParams) -> boolean)?,
+    OnRoleAssigned: (Round, Participant) -> ()?,
 }
 
 export type Round = {
