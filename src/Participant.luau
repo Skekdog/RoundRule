@@ -584,8 +584,10 @@ local function TryThrowAssembly(participant: Types.Participant, assembly: Types.
 
     local assemblyRoot = GetPrimaryPart(assembly)
     assemblyRoot.AssemblyLinearVelocity = Vector3.zero
+    assemblyRoot.AssemblyAngularVelocity = Vector3.zero
     assemblyRoot.CFrame = CFrame.lookAlong(startPosition, direction)
 	assemblyRoot:ApplyImpulse(direction * (assemblyRoot.AssemblyMass * force))
+    assemblyRoot:ApplyAngularImpulse(direction * (assemblyRoot.AssemblyMass * force) / 10)
 
     return true
 end
