@@ -451,7 +451,7 @@ local function LoadItem(round: Types.Round, model: Types.MapObject): Types.AnyIt
                 return
             end
 
-            if participant:IsItemGroupOccupied(item.Definition.ItemGroup) then
+            if participant:GetItemOccupyingGroup(item.Definition.ItemGroup) then
                 return
             end
 
@@ -514,10 +514,15 @@ local function loadAmmoBox(round: Types.Round, model: Types.MapObject): ()
 end
 
 local function loadInteractable(round: Types.Round, model: Types.MapObject): ()
-    if model:HasTag("Door") or model:HasTag("Ladder") then
-        return
+    local name = model.Name
+    if model:HasTag("Door") then
+        name = "Door"
+    elseif model:HasTag("Ladder") then
+        name = "Ladder"
+    elseif model:HasTag("Item") then
+        name = "Item"
     end
-    local definition = round:GetInteractableDefinition(model.Name) or error(`Interactable {model.Name} does not exist in map or gamemode`)
+    local definition = round:GetInteractableDefinition(name) or error(`Interactable {name} does not exist in map or gamemode`)
     round:AddInteractable(definition, model)
 end
 
@@ -531,10 +536,10 @@ local function LoadProp(round: Types.Round, model: Types.MapObject): Types.Prop
         loadInteractable(round, model)
     elseif model:HasTag("Item") then
         round:LoadItem(model)
+        model:AddTag("Interactable")
+        loadInteractable(round, model)
     elseif model:HasTag("AmmoBox") then
         loadAmmoBox(round, model)
-    elseif model:HasTag("Corpse") then
-
     end
 
     local prop = loadProp(round, model)

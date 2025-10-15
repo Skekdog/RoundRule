@@ -699,7 +699,7 @@ export type Participant = {
     RemoveItem: (Participant, item: AnyItem) -> (),
     TryDropItem: (Participant, item: AnyItem, throw: boolean?) -> boolean,
 
-    IsItemGroupOccupied: (Participant, group: ItemGroup?) -> boolean,
+    GetItemOccupyingGroup: (Participant, group: ItemGroup?) -> AnyItem?,
 
     GetAmmo: (Participant, kind: string) -> number,
     SetAmmo: (Participant, kind: string, amount: number) -> (),

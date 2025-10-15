@@ -495,9 +495,9 @@ local function HasSelfDefenseAgainstParticipant(participant: Types.Participant, 
     return false
 end
 
-local function IsItemGroupOccupied(participant: Types.Participant, group: Types.ItemGroup?): boolean
+local function GetItemOccupyingGroup(participant: Types.Participant, group: Types.ItemGroup?): Types.AnyItem?
     if not group then
-        return false
+        return nil
     end
 
     for _, v in participant:GetItems() do
@@ -505,12 +505,12 @@ local function IsItemGroupOccupied(participant: Types.Participant, group: Types.
         local vGroup = v.Definition.ItemGroup
         if vGroup then
             if vGroup == group or (not participant.Round.Gamemode.IsSlotless and vGroup.PreferredSlot == group.PreferredSlot) then
-                return true
+                return v
             end
         end
     end
 
-    return false
+    return nil
 end
 
 local function GiveItemFromItemDefinition(participant: Types.Participant, itemDefinition: Types.AnyItemDefinition): Types.AnyItem
@@ -601,8 +601,12 @@ local function TryDropItem(participant: Types.Participant, item: Types.AnyItem, 
 end
 
 local function AddItem(participant: Types.Participant, item: Types.AnyItem): ()
-    if item.Definition.ItemGroup and participant:IsItemGroupOccupied(item.Definition.ItemGroup) then
+    if item.Definition.ItemGroup and participant:GetItemOccupyingGroup(item.Definition.ItemGroup) then
         return
+    end
+
+    if item.Model then
+        (item.Model :: Instance).Parent = nil
     end
 
     participant._items[item.Definition.Name] = item
@@ -652,7 +656,7 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
         return "NotInStock"
     end
 
-    if itemDefinition.ItemGroup and participant:IsItemGroupOccupied(itemDefinition.ItemGroup) then
+    if itemDefinition.ItemGroup and participant:GetItemOccupyingGroup(itemDefinition.ItemGroup) then
         return "SlotOccupied"
     end
 
@@ -1078,7 +1082,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         DropItem = module.DropItem,
         GetItems = GetItems,
         PurchaseItem = PurchaseItem,
-        IsItemGroupOccupied = IsItemGroupOccupied,
+        GetItemOccupyingGroup = GetItemOccupyingGroup,
         TryDropItem = TryDropItem,
 
         TryThrowAssembly = TryThrowAssembly,
