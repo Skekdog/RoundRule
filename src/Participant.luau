@@ -546,7 +546,7 @@ function module.DropItem(participant: Types.Participant, item: Types.AnyItem, th
     (item.Model :: Instance).Parent = parent
 end
 
-local function isObscured(participant: Types.Participant, origin: Vector3, target: Vector3): boolean
+local function isObscured(participant: Types.Participant, origin: Vector3, target: Vector3): number?
     local char = assert(participant:GetCharacter())
 
     local params = RaycastParams.new()
@@ -554,7 +554,7 @@ local function isObscured(participant: Types.Participant, origin: Vector3, targe
     params.FilterType = Enum.RaycastFilterType.Exclude
 
     local result = workspace:Raycast(origin, target - origin, params)
-    return not not result
+    return if result then result.Distance else nil
 end
 
 local function TryThrowAssembly(participant: Types.Participant, assembly: Types.MapObject, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?): boolean
@@ -574,8 +574,9 @@ local function TryThrowAssembly(participant: Types.Participant, assembly: Types.
     assert(position and direction)
 
     local startPosition = if noForward then position else position + (direction * 5.5)
-    if isObscured(participant, position, startPosition) then
-        startPosition = position
+    local result = isObscured(participant, startPosition, position)
+    if result and not noForward then
+        startPosition = position + (direction * math.max(result - 1, 0))
     end
 
     if parent then
