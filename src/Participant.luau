@@ -575,7 +575,7 @@ local function TryThrowAssembly(participant: Types.Participant, assembly: Types.
 
     local startPosition = if noForward then position else position + (direction * 5.5)
     if isObscured(participant, position, startPosition) then
-        return false
+        startPosition = position
     end
 
     if parent then
