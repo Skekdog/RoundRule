@@ -47,7 +47,6 @@ function module.new(definition: Types.InteractableDefinition, object: Types.MapO
 
 	(object :: Instance):AddTag("Interactable");
 	(object :: Instance):AddTag("Prop");
-	(object :: Instance).Name = definition.Name
 
 	if object:IsA("BasePart") then
 		object.CollisionGroup = "Interactables"
