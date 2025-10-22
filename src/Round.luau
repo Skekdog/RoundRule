@@ -532,14 +532,15 @@ local function LoadProp(round: Types.Round, model: Types.MapObject): Types.Prop
         return existingProp
     end
 
-    if model:HasTag("Interactable") then
-        loadInteractable(round, model)
-    elseif model:HasTag("Item") then
+    if model:HasTag("Item") then
         round:LoadItem(model)
         model:AddTag("Interactable")
-        loadInteractable(round, model)
     elseif model:HasTag("AmmoBox") then
         loadAmmoBox(round, model)
+    end
+
+    if model:HasTag("Interactable") then
+        loadInteractable(round, model)
     end
 
     local prop = loadProp(round, model)
