@@ -747,6 +747,15 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
         end
     end
 
+    for _, sound in map.Map:GetDescendants() do
+        if sound:IsA("Sound") then
+            local id = sound:GetAttribute("RobloxAvoidSoundId")
+            if typeof(id) == "string" then
+                sound.SoundId = id
+            end
+        end
+    end
+
     map.Dynamic.DescendantAdded:Connect(function(descendant)
         if (descendant:IsA("BasePart") or descendant:IsA("Model")) and not round:GetProp(descendant) and HasTag(descendant, Prop.Tags) then
             round:LoadProp(descendant)

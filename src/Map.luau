@@ -33,22 +33,16 @@ function module.ValidateMapScript(mapScript: Instance): Types.MapScript
     module.ValidateDefinition(mapScript, (require)(mapScript))
 
     local static = mapScript:FindFirstChild("Static")
-    assert(static and static:IsA("Folder"), "MapScript must have a Static Folder")
+    assert(static, "MapScript must have a Static Folder")
 
     local dynamic = mapScript:FindFirstChild("Dynamic")
-    assert(dynamic and dynamic:IsA("Folder"), "MapScript must have a Dynamic Folder")
+    assert(dynamic, "MapScript must have a Dynamic Folder")
 
     local playerSpawns = mapScript:FindFirstChild("PlayerSpawns")
-    assert(playerSpawns and playerSpawns:IsA("Folder"), "MapScript must have a PlayerSpawns Folder")
+    assert(playerSpawns, "MapScript must have a PlayerSpawns Folder")
 
     local terrain = mapScript:FindFirstChild("Terrain")
     assert(not terrain or terrain:IsA("TerrainRegion"), "Terrain must be a TerrainRegion")
-
-    local lighting = mapScript:FindFirstChild("Lighting")
-    assert(not lighting or lighting:IsA("Folder"), "Lighting must be a Folder")
-
-    local materialVariants = mapScript:FindFirstChild("MaterialVariants")
-    assert(not materialVariants or materialVariants:IsA("Folder"), "MaterialVariants must be a Folder")
 
     return mapScript :: Types.MapScript
 end
