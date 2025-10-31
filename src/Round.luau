@@ -735,10 +735,10 @@ local function loadStatic(structure: Types.MapStructure): ()
         end
     end
 
+    lastMap = map
+
     structure.Name = "Map"
     structure.Parent = workspace
-
-    lastMap = map
 end
 
 local function reloadDynamic(structure: Types.MapStructure): ()
