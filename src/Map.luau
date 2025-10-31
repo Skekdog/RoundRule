@@ -39,7 +39,7 @@ function Map.new(structure: Types.MapStructure): Types.Map
     if interactablesFolder then
         for _, module in interactablesFolder:GetChildren() do
             if module:IsA("ModuleScript") then
-                local definition: Types.InteractableDefinition = (require :: any)(module)
+                local definition: Types.InteractableDefinition = (require :: any)(module).Definition
                 interactables[definition.Name] = definition
             end
         end
@@ -50,7 +50,7 @@ function Map.new(structure: Types.MapStructure): Types.Map
     if itemsFolder then
         for _, module in itemsFolder:GetChildren() do
             if module:IsA("ModuleScript") then
-                local definition: Types.ItemDefinition = (require :: any)(module)
+                local definition: Types.ItemDefinition = (require :: any)(module).Definition
                 items[definition.Name] = definition
             end
         end
@@ -61,7 +61,7 @@ function Map.new(structure: Types.MapStructure): Types.Map
     if ammoFolder then
         for _, module in ammoFolder:GetChildren() do
             if module:IsA("ModuleScript") then
-                local definition: Types.AmmoDefinition = (require :: any)(module)
+                local definition: Types.AmmoDefinition = (require :: any)(module).Definition
                 ammo[definition.Name] = definition
             end
         end
