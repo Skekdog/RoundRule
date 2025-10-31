@@ -669,6 +669,8 @@ local function loadStatic(structure: Types.MapStructure): ()
     local terrainColors = structure:FindFirstChild("TerrainColors")
     if terrainColors then
         for k, v in terrainColors:GetAttributes() do
+            assert(typeof(v) == "Color3", "Terrain color must be a Color3")
+
             local material = Enum.Material:FromName(k)
             assert(material, "Invalid material name " .. k)
 
@@ -676,7 +678,7 @@ local function loadStatic(structure: Types.MapStructure): ()
                 knownTerrainColours[material] = workspace.Terrain:GetMaterialColor(material)
             end
 
-            (workspace.Terrain :: any)[k] = v
+            workspace.Terrain:SetMaterialColor(material, v)
         end
     end
 
