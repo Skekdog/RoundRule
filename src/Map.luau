@@ -70,10 +70,16 @@ function Map.new(structure: Types.MapStructure): Types.Map
         end
     end
 
+    local name = structure.Name
+    local originalNameAttr = structure:GetAttribute("OriginalName")
+    if typeof(originalNameAttr) == "string" then
+        name = originalNameAttr
+    end
+
     return {
         Structure = structure,
 
-        Name = structure.Name,
+        Name = name,
         DisplayName = structure:GetAttribute("DisplayName") :: string?,
         Description = structure:GetAttribute("Description") :: string,
         Authors = structure:GetAttribute("Authors") :: string,
