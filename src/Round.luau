@@ -11,6 +11,7 @@ local HasTag = require(ReplicatedStorage.Shared.RoundRule.Common.HasAnyTag)
 local AmmoBox = require(script.Parent.AmmoBox)
 local Interactable = require(script.Parent.Interactable)
 local Item = require(script.Parent.Item)
+local Map = require(script.Parent.Map)
 local Participant = require(script.Parent.Participant)
 local Prop = require(script.Parent.Prop)
 local Replication = require(script.Parent.Replication)
@@ -417,7 +418,7 @@ end
 
 local function loadProp(round: Types.Round, model: Types.MapObject): Types.Prop
     if not model.Parent then
-        (model :: Instance).Parent = round:GetMap().Dynamic
+        (model :: Instance).Parent = round:GetMap().Structure.Dynamic
     end
     model:AddTag("Prop")
     local prop = Prop.new(model, round)
@@ -614,140 +615,158 @@ local function GetMap(round: Types.Round): Types.Map
 end
 
 local function GetAmmoDefinition(round: Types.Round, ammo: string): Types.AmmoDefinition?
-    return round:GetMap().Definition.AvailableAmmo[ammo] or round.Gamemode.AvailableAmmo[ammo]
+    return round:GetMap().AmmoDefinitions[ammo] or round.Gamemode.AvailableAmmo[ammo]
 end
 
 local function GetItemDefinition(round: Types.Round, item: string): Types.AnyItemDefinition?
-    return round:GetMap().Definition.AvailableItems[item] or round.Gamemode.AvailableItems[item]
+    return round:GetMap().ItemDefinitions[item] or round.Gamemode.AvailableItems[item]
 end
 
 local function GetInteractableDefinition(round: Types.Round, interactable: string): Types.InteractableDefinition?
-    return round:GetMap().Definition.InteractableDefinitions[interactable] or round.Gamemode.InteractableDefinitions[interactable]
+    return round:GetMap().InteractableDefinitions[interactable] or round.Gamemode.InteractableDefinitions[interactable]
 end
 
 local knownWaterSettings: {string} = {}
 local knownTerrainColours: {[Enum.Material]: Color3} = {}
 local knownLightingSettings: {string} = {}
-local function LoadMap(round: Types.Round, map: Types.Map): ()
-    round._map = map
 
-    if not lastMap or lastMap.Definition.Name ~= map.Definition.Name then
-        if lastMap then
-            lastMap.Map:Destroy()
-        end
+local function loadStatic(structure: Types.MapStructure): ()
+    local map = Map.new(structure)
 
-        local lastVariants = MaterialService:FindFirstChild("MapMaterialVariants")
-        if lastVariants then
-            lastVariants:Destroy()
-        end
+    if lastMap then
+        lastMap.Structure:Destroy()
+    end
 
-        for _, v in knownWaterSettings do
-            workspace.Terrain:ResetPropertyToDefault(v)
-        end
+    local lastVariants = MaterialService:FindFirstChild("MapMaterialVariants")
+    if lastVariants then
+        lastVariants:Destroy()
+    end
 
-        for i, v in knownTerrainColours do
-            workspace.Terrain:SetMaterialColor(i, v)
-        end
+    local materialVariants = structure:FindFirstChild("MaterialVariants")
+    if materialVariants then
+        materialVariants.Name = "MapMaterialVariants"
+        materialVariants.Parent = MaterialService
+    end
 
-        workspace.Terrain:Clear()
-        local oldClouds = workspace.Terrain:FindFirstChildOfClass("Clouds")
-        if oldClouds then
-            oldClouds:Destroy()
-        end
+    for _, v in knownWaterSettings do
+        workspace.Terrain:ResetPropertyToDefault(v)
+    end
 
-        local materialVariants = map.Map:FindFirstChild("MaterialVariants")
-        if materialVariants then
-            materialVariants.Name = "MapMaterialVariants"
-            materialVariants.Parent = MaterialService
-        end
-
-        for i, v in map.Definition.WaterSettings do
-            if not table.find(knownWaterSettings, i) then
-                table.insert(knownWaterSettings, i)
+    local waterSettings = structure:FindFirstChild("WaterSettings")
+    if waterSettings then
+        for k, v in waterSettings:GetAttributes() do
+            if not table.find(knownWaterSettings, k) then
+                table.insert(knownWaterSettings, k)
             end
-
-            (workspace.Terrain :: any)[i] = v
+            (workspace.Terrain :: any)[k] = v
         end
+    end
 
-        for i, v in map.Definition.TerrainColors do
-            assert(typeof(v) == "Color3", "Invalid colour for terrain material " .. i)
-            local material = Enum.Material:FromName(i)
-            assert(material, "Invalid material name " .. i)
+    for i, v in knownTerrainColours do
+        workspace.Terrain:SetMaterialColor(i, v)
+    end
+
+    local terrainColors = structure:FindFirstChild("TerrainColors")
+    if terrainColors then
+        for k, v in terrainColors:GetAttributes() do
+            local material = Enum.Material:FromName(k)
+            assert(material, "Invalid material name " .. k)
 
             if not knownTerrainColours[material] then
                 knownTerrainColours[material] = workspace.Terrain:GetMaterialColor(material)
             end
 
-            workspace.Terrain:SetMaterialColor(material, v)
+            (workspace.Terrain :: any)[k] = v
         end
-
-        local terrain = map.Map:FindFirstChild("Terrain") :: TerrainRegion
-        if terrain then
-            workspace.Terrain:PasteRegion(terrain, Vector3int16.new(-32000, -32000, -32000), true)
-        end
-
-        local cloudsSettings = map.Definition.CloudsSettings
-        if cloudsSettings then
-            local clouds = Instance.new("Clouds")
-            clouds.Cover = cloudsSettings.Cover
-            clouds.Density = cloudsSettings.Density
-            clouds.Color = cloudsSettings.Color
-            clouds.Parent = workspace.Terrain
-        end
-
-        for _, v in knownLightingSettings do
-            Lighting:ResetPropertyToDefault(v)
-        end
-
-        for _, v in Lighting:GetChildren() do
-            if v:HasTag("MapLighting") then
-                v:Destroy()
-            end
-        end
-
-        local lighting = map.Map:FindFirstChild("Lighting")
-        if lighting then
-            for _, v in lighting:GetChildren() do
-                v:AddTag("MapLighting")
-                v.Parent = Lighting
-            end
-        end
-
-        for i, v in map.Definition.LightingSettings do
-            (Lighting :: any)[i] = v
-            if not table.find(knownLightingSettings, i) then
-                table.insert(knownLightingSettings, i)
-            end
-        end
-
-        for _, v in map.Map.PlayerSpawns:GetChildren() do
-            if v:IsA("BasePart") then
-                v.Transparency = 1
-                v.CanCollide = false
-                v.CanQuery = false
-                v.CanTouch = false
-                v.Anchored = true
-            end
-        end
-    elseif lastMap and lastMap.Definition.Name == map.Definition.Name then
-        lastMap.Dynamic:Destroy()
-        map.Dynamic.Parent = lastMap.Map
-        map.Map = lastMap.Map
-        lastMap.Dynamic = map.Dynamic
     end
 
-    if not lastMap or lastMap.Definition.Name ~= map.Definition.Name then
-        map.Map.Name = "Map"
-        map.Map.Parent = workspace
+    local oldClouds = workspace.Terrain:FindFirstChildOfClass("Clouds")
+    if oldClouds then
+        oldClouds:Destroy()
     end
 
-    for _, v in GetTaggedDescendants(map.Dynamic, Prop.Tags) do
+    local clouds = structure:FindFirstChild("Clouds")
+    if clouds then
+        clouds.Parent = workspace.Terrain
+    end
+
+    workspace.Terrain:Clear()
+    local terrain = structure:FindFirstChild("Terrain") :: TerrainRegion
+    if terrain then
+        workspace.Terrain:PasteRegion(terrain, Vector3int16.new(-32000, -32000, -32000), true)
+    end
+
+    for _, v in knownLightingSettings do
+        Lighting:ResetPropertyToDefault(v)
+    end
+
+    for _, v in Lighting:GetChildren() do
+        if v:HasTag("MapLighting") then
+            v:Destroy()
+        end
+    end
+
+    local lighting = structure:FindFirstChild("LightingSettings")
+    if lighting then
+        for _, v in lighting:GetChildren() do
+            v:AddTag("MapLighting")
+            v.Parent = Lighting
+        end
+
+        for k, v in lighting:GetAttributes() do
+            if not table.find(knownLightingSettings, k) then
+                table.insert(knownLightingSettings, k)
+            end
+            (Lighting :: any)[k] = v
+        end
+    end
+
+    for _, v in structure.PlayerSpawns:GetChildren() do
+        if v:IsA("BasePart") then
+            v.Transparency = 1
+            v.CanCollide = false
+            v.CanQuery = false
+            v.CanTouch = false
+            v.Anchored = true
+        end
+    end
+
+    structure.Name = "Map"
+    structure.Parent = workspace
+
+    lastMap = map
+end
+
+local function reloadDynamic(structure: Types.MapStructure): ()
+    assert(lastMap)
+
+    lastMap.Structure.Dynamic:Destroy()
+    structure.Dynamic.Parent = lastMap.Structure
+end
+
+local function LoadMap(round: Types.Round, structure: Types.MapStructure): ()
+    structure = structure:Clone()
+
+    if not lastMap or lastMap.Name ~= structure.Name then
+        loadStatic(structure)
+    elseif lastMap and lastMap.Name == structure.Name then
+        reloadDynamic(structure)
+    else
+        error("what")
+    end
+
+    assert(lastMap)
+    round._map = lastMap
+
+    structure = lastMap.Structure
+
+    for _, v in GetTaggedDescendants(structure.Dynamic, Prop.Tags) do
         if v:IsA("BasePart") or v:IsA("Model") then
             round:LoadProp(v)
         end
     end
 
-    for _, sound in map.Map:GetDescendants() do
+    for _, sound in structure:GetDescendants() do
         if sound:IsA("Sound") then
             local id = sound:GetAttribute("RobloxAvoidSoundId")
             if typeof(id) == "string" then
@@ -756,7 +775,7 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
         end
     end
 
-    map.Dynamic.DescendantAdded:Connect(function(descendant)
+    structure.Dynamic.DescendantAdded:Connect(function(descendant)
         if (descendant:IsA("BasePart") or descendant:IsA("Model")) and not round:GetProp(descendant) and HasTag(descendant, Prop.Tags) then
             round:LoadProp(descendant)
         end
@@ -774,10 +793,6 @@ local function LoadMap(round: Types.Round, map: Types.Map): ()
                 v:RemoveItem(item)
             end
         end
-    end
-
-    if not lastMap or lastMap.Definition.Name ~= map.Definition.Name then
-        lastMap = map
     end
 
     Replication.ReplicateMap()

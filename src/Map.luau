@@ -1,65 +1,85 @@
 local Types = require(script.Parent.Types)
-local module = {}
 
-local function validateClouds(clouds: any): ()
-    if clouds == nil then
-        return
-    end
-    assert(typeof(clouds) == "table", "CloudsSettings must be nil or a table")
-    assert(typeof(clouds.Cover) == "number", "CloudsSettings.Cover must be a number")
-    assert(typeof(clouds.Density) == "number", "CloudsSettings.Density must be a number")
-    assert(typeof(clouds.Color) == "Color3", "CloudsSettings.Color must be a Color3")
-end
+local Map = {}
 
-function module.ValidateDefinition(mapScript: Instance, definition: any): Types.MapDefinition
-    assert(typeof(definition) == "table", "MapDefinition must be a table")
+function Map.ValidateStructure(structure: Instance): Types.MapStructure
+    local static = structure:FindFirstChild("Static")
+    assert(static, "Map must have Static")
 
-    for i, v in definition.AvailableAmmo do
-		assert(i == v.Name, "Ammo name in AvailableAmmo must match index")
-	end
+    local dynamic = structure:FindFirstChild("Dynamic")
+    assert(dynamic, "Map must have Dynamic")
 
-	for i, v in definition.AvailableItems do
-		assert(i == v.Name, "Item name in AvailableItems must match index")
-	end
+    local playerSpawns = structure:FindFirstChild("PlayerSpawns")
+    assert(playerSpawns, "Map must have PlayerSpawns")
 
-    validateClouds(definition.CloudsSettings)
-
-    return definition
-end
-
-function module.ValidateMapScript(mapScript: Instance): Types.MapScript
-    assert(mapScript:IsA("ModuleScript"), "MapScript must be a ModuleScript")
-
-    module.ValidateDefinition(mapScript, (require)(mapScript))
-
-    local static = mapScript:FindFirstChild("Static")
-    assert(static, "MapScript must have a Static Folder")
-
-    local dynamic = mapScript:FindFirstChild("Dynamic")
-    assert(dynamic, "MapScript must have a Dynamic Folder")
-
-    local playerSpawns = mapScript:FindFirstChild("PlayerSpawns")
-    assert(playerSpawns, "MapScript must have a PlayerSpawns Folder")
-
-    local terrain = mapScript:FindFirstChild("Terrain")
+    local terrain = structure:FindFirstChild("Terrain")
     assert(not terrain or terrain:IsA("TerrainRegion"), "Terrain must be a TerrainRegion")
 
-    return mapScript :: Types.MapScript
+    local clouds = structure:FindFirstChild("Clouds")
+    assert(not clouds or clouds:IsA("Clouds"), "Clouds must be a Clouds")
+
+    local displayName = structure:GetAttribute("DisplayName")
+    assert(displayName == nil or typeof(displayName) == "string", "DisplayName must be a string")
+
+    local description = structure:GetAttribute("Description")
+    assert(typeof(description) == "string", "Description must be a string")
+
+    local authors = structure:GetAttribute("Authors")
+    assert(typeof(authors) == "string", "Authors must be a string")
+
+    local icon = structure:GetAttribute("Icon")
+    assert(typeof(icon) == "string", "Icon must be a string")
+
+    return structure :: Types.MapStructure
 end
 
-function module.fromMapScript(mapScript: Types.MapScript): Types.Map
-    local maybeDefinition: unknown = (require)(mapScript)
-    local definition = module.ValidateDefinition(mapScript, maybeDefinition)
+function Map.new(structure: Types.MapStructure): Types.Map
+    local interactables: {[string]: Types.InteractableDefinition} = {}
+    local interactablesFolder = structure:FindFirstChild("InteractableDefinitions")
+    if interactablesFolder then
+        for _, module in interactablesFolder:GetChildren() do
+            if module:IsA("ModuleScript") then
+                local definition: Types.InteractableDefinition = (require :: any)(module)
+                interactables[definition.Name] = definition
+            end
+        end
+    end
+
+    local items: {[string]: Types.ItemDefinition} = {}
+    local itemsFolder = structure:FindFirstChild("ItemDefinitions")
+    if itemsFolder then
+        for _, module in itemsFolder:GetChildren() do
+            if module:IsA("ModuleScript") then
+                local definition: Types.ItemDefinition = (require :: any)(module)
+                items[definition.Name] = definition
+            end
+        end
+    end
+
+    local ammo: {[string]: Types.AmmoDefinition} = {}
+    local ammoFolder = structure:FindFirstChild("AmmoDefinitions")
+    if ammoFolder then
+        for _, module in ammoFolder:GetChildren() do
+            if module:IsA("ModuleScript") then
+                local definition: Types.AmmoDefinition = (require :: any)(module)
+                ammo[definition.Name] = definition
+            end
+        end
+    end
 
     return {
-        Definition = definition,
-        Map = definition.Map,
+        Structure = structure,
 
-        PlayerSpawns = definition.Map.PlayerSpawns,
+        Name = structure.Name,
+        DisplayName = structure:GetAttribute("DisplayName") :: string?,
+        Description = structure:GetAttribute("Description") :: string,
+        Authors = structure:GetAttribute("Authors") :: string,
+        Icon = structure:GetAttribute("Icon") :: string,
 
-        Static = definition.Map.Static,
-        Dynamic = definition.Map.Dynamic,
+        InteractableDefinitions = interactables,
+        ItemDefinitions = items,
+        AmmoDefinitions = ammo,
     }
 end
 
-return module
+return Map

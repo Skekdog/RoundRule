@@ -400,53 +400,37 @@ export type AmmoDefinition = {
 
 export type AnyItemDefinition = ItemDefinition | GunWeaponDefinition | GrenadeWeaponDefinition | MeleeWeaponDefinition
 
-export type MapScript = ModuleScript & {
-    Static: Folder,
-    Dynamic: Folder,
-    PlayerSpawns: Folder,
+export type MapStructure = Instance & {
+    Static: Instance,
+    Dynamic: Instance,
+    PlayerSpawns: Instance,
 
     Terrain: TerrainRegion?,
+    Clouds: Clouds?,
 
-    Lighting: Folder?,
+    LightingSettings: Instance?,
+    WaterSettings: Instance?,
+    TerrainColors: Instance?,
 
-    MaterialVariants: Folder?,
+    InteractableDefinitions: Instance?,
+    ItemDefinitions: Instance?,
+    AmmoDefinitions: Instance?,
+
+    MaterialVariants: Instance?,
 }
 
-export type MapDefinition = {
+export type Map = {
+    Structure: MapStructure,
+
     Name: string,
     DisplayName: string?,
     Description: string,
     Authors: string,
-
-    Gravity: number,
-
-    LightingSettings: {[string]: Color3 | number | string | boolean},
-    WaterSettings: {[string]: number | Color3},
-    TerrainColors: {[string]: Color3},
-    CloudsSettings: {Cover: number, Density: number, Color: Color3}?,
-
-    Extras: Extras?,
-
-    MapIcons: {
-        ["16:9"]: string?,
-        ["4:3"]: string?,
-        ["1:1"]: string?,
-    },
-
-    AvailableItems: {[string]: AnyItemDefinition},
-    AvailableAmmo: {[string]: AmmoDefinition},
+    Icon: string,
 
     InteractableDefinitions: {[string]: InteractableDefinition},
-
-    Map: MapScript,
-}
-
-export type Map = {
-    Definition: MapDefinition,
-    Map: MapScript,
-
-    Static: Folder,
-    Dynamic: Folder,
+    ItemDefinitions: {[string]: AnyItemDefinition},
+    AmmoDefinitions: {[string]: AmmoDefinition},
 }
 
 export type Role = {
@@ -759,7 +743,7 @@ export type Round = {
     GetInteractableDefinition: (Round, interactable: string) -> InteractableDefinition?,
 
     _map: Map?,
-    LoadMap: (Round, map: Map) -> (),
+    LoadMap: (Round, structure: MapStructure) -> (),
     GetMap: (Round) -> Map,
 
     _items: {[MapObject]: AnyItem?},
