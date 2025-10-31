@@ -633,6 +633,8 @@ local knownLightingSettings: {string} = {}
 local function loadStatic(structure: Types.MapStructure): ()
     local map = Map.new(structure)
 
+    workspace.Gravity = map.Gravity
+
     if lastMap then
         lastMap.Structure:Destroy()
     end

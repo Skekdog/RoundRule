@@ -30,6 +30,9 @@ function Map.ValidateStructure(structure: Instance): Types.MapStructure
     local icon = structure:GetAttribute("Icon")
     assert(typeof(icon) == "string", "Icon must be a string")
 
+    local gravity = structure:GetAttribute("Gravity")
+    assert(gravity == nil or typeof(gravity) == "number", "Gravity must be a number")
+
     return structure :: Types.MapStructure
 end
 
@@ -75,6 +78,8 @@ function Map.new(structure: Types.MapStructure): Types.Map
         Description = structure:GetAttribute("Description") :: string,
         Authors = structure:GetAttribute("Authors") :: string,
         Icon = structure:GetAttribute("Icon") :: string,
+
+        Gravity = structure:GetAttribute("Gravity") :: number? or 80,
 
         InteractableDefinitions = interactables,
         ItemDefinitions = items,

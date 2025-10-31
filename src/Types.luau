@@ -428,6 +428,8 @@ export type Map = {
     Authors: string,
     Icon: string,
 
+    Gravity: number,
+
     InteractableDefinitions: {[string]: InteractableDefinition},
     ItemDefinitions: {[string]: AnyItemDefinition},
     AmmoDefinitions: {[string]: AmmoDefinition},
