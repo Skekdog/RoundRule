@@ -737,6 +737,7 @@ local function loadStatic(structure: Types.MapStructure): ()
 
     lastMap = map
 
+    structure:SetAttribute("OriginalName", structure.Name)
     structure.Name = "Map"
     structure.Parent = workspace
 end
