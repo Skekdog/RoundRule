@@ -28,7 +28,7 @@ function Map.ValidateStructure(structure: Instance): Types.MapStructure
     assert(typeof(authors) == "string", "Authors must be a string")
 
     local icon = structure:GetAttribute("Icon")
-    assert(typeof(icon) == "string", "Icon must be a string")
+    assert(icon == nil or typeof(icon) == "string", "Icon must be a string")
 
     local gravity = structure:GetAttribute("Gravity")
     assert(gravity == nil or typeof(gravity) == "number", "Gravity must be a number")
