@@ -630,7 +630,7 @@ local knownWaterSettings: {string} = {}
 local knownTerrainColours: {[Enum.Material]: Color3} = {}
 local knownLightingSettings: {string} = {}
 
-local function loadStatic(structure: Types.MapStructure): ()
+local function loadStatic(round: Types.Round, structure: Types.MapStructure): ()
     local map = Map.new(structure)
 
     workspace.Gravity = map.Gravity
@@ -736,9 +736,11 @@ local function loadStatic(structure: Types.MapStructure): ()
     end
 
     lastMap = map
+    round._map = lastMap
 
     structure:SetAttribute("OriginalName", structure.Name)
     structure.Name = "Map"
+
     structure.Parent = workspace
 end
 
@@ -753,7 +755,7 @@ local function LoadMap(round: Types.Round, structure: Types.MapStructure): ()
     structure = structure:Clone()
 
     if not lastMap or lastMap.Name ~= structure.Name then
-        loadStatic(structure)
+        loadStatic(round, structure)
     elseif lastMap and lastMap.Name == structure.Name then
         reloadDynamic(structure)
     else
@@ -761,7 +763,6 @@ local function LoadMap(round: Types.Round, structure: Types.MapStructure): ()
     end
 
     assert(lastMap)
-    round._map = lastMap
 
     structure = lastMap.Structure
 
