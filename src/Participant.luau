@@ -597,9 +597,9 @@ local function TryThrowAssembly(participant: Types.Participant, assembly: Types.
     return true
 end
 
-local function TryDropItem(participant: Types.Participant, item: Types.AnyItem, throw: boolean?): boolean
+local function TryDropItem(participant: Types.Participant, item: Types.AnyItem, throw: Vector3?): boolean
     if item.Definition.CanDrop then
-        participant:DropItem(item)
+        participant:DropItem(item, throw)
         return true
     end
 
