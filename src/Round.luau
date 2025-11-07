@@ -744,8 +744,10 @@ local function loadStatic(round: Types.Round, structure: Types.MapStructure): ()
     structure.Parent = workspace
 end
 
-local function reloadDynamic(structure: Types.MapStructure): ()
+local function reloadDynamic(round: Types.Round, structure: Types.MapStructure): ()
     assert(lastMap)
+
+    round._map = lastMap
 
     lastMap.Structure.Dynamic:Destroy()
     structure.Dynamic.Parent = lastMap.Structure
@@ -757,7 +759,7 @@ local function LoadMap(round: Types.Round, structure: Types.MapStructure): ()
     if not lastMap or lastMap.Name ~= structure.Name then
         loadStatic(round, structure)
     elseif lastMap and lastMap.Name == structure.Name then
-        reloadDynamic(structure)
+        reloadDynamic(round, structure)
     else
         error("what")
     end
