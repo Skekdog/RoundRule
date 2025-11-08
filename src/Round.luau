@@ -574,7 +574,7 @@ function module.GetInteractable(round: Types.Round, model: Types.MapObject): Typ
     return round._interactables[model]
 end
 
-local function AddInteractable(round: Types.Round, definition: Types.InteractableDefinition, object: Types.MapObject?): Types.Interactable
+local function AddInteractable(round: Types.Round, definition: Types.InteractableDefinition, object: Types.MapObject?, deferLoad: boolean?): Types.Interactable
     if object then
         local existing = round:GetInteractable(object)
         if existing then
@@ -587,7 +587,11 @@ local function AddInteractable(round: Types.Round, definition: Types.Interactabl
     round._interactables[interactable.Model] = interactable
 
     if interactable.Definition.OnLoadServer then
-        interactable.Definition.OnLoadServer(interactable)
+        if deferLoad then
+            task.defer(interactable.Definition.OnLoadServer, interactable)
+        else
+            interactable.Definition.OnLoadServer(interactable)
+        end
     end
 
     return interactable

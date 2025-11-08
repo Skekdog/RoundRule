@@ -766,7 +766,7 @@ export type Round = {
     GetProp: (Round, model: MapObject) -> Prop?,
     LoadProp: (Round, model: MapObject) -> Prop,
 
-    AddInteractable: (Round, definition: InteractableDefinition, object: MapObject?) -> Interactable,
+    AddInteractable: (Round, definition: InteractableDefinition, object: MapObject?, deferLoad: boolean?) -> Interactable,
 
     _participants: {[string]: Participant?},
     GetParticipant: (Round, identifier: string | Player | Model) -> Participant?,
