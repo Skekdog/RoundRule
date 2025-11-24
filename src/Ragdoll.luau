@@ -129,7 +129,7 @@ local function Ragdoll(char: Model, inPlace: boolean?): Model
 	end
 
 	for _, v in char:GetDescendants() do
-		if v:IsA("Motor6D") or v:IsA("BaseScript") or v:IsA("Fire") or (v.Name == "Item" and v.Parent == char) then
+		if v:IsA("Motor6D") or v:IsA("BaseScript") or v:IsA("ParticleEmitter") or (v.Name == "Item" and v.Parent == char) then
 			v:Destroy()
 		elseif v:IsA("BasePart") and not v:FindFirstAncestorOfClass("Accessory") then
 			v.CollisionGroup = "Corpses"
