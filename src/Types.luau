@@ -323,6 +323,8 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
     Projectile: BasePart?,
     ProjectileSpeed: number?,
 
+    IsPhysicallySimulated: boolean?,
+
     ImpulseForce: number?,
 
     BulletsPerShot: number?,
