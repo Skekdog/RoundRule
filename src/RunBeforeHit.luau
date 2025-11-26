@@ -33,7 +33,7 @@ local function RunBeforeHit(item: Types.AnyWeapon | Types.ExplosionParams, round
 
             hitThing = participant
         end
-    else
+    elseif hitPart:IsDescendantOf(game) then
         local MapObject = GetMapObjectWithTag(hitPart, "Prop")
         if not MapObject then
             return false
