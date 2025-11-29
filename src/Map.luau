@@ -85,7 +85,7 @@ function Map.new(structure: Types.MapStructure): Types.Map
         Authors = structure:GetAttribute("Authors") :: string,
         Icon = structure:GetAttribute("Icon") :: string,
 
-        Gravity = structure:GetAttribute("Gravity") :: number? or 80,
+        Gravity = structure:GetAttribute("Gravity") :: number? or 50,
 
         InteractableDefinitions = interactables,
         ItemDefinitions = items,
