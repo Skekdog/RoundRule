@@ -729,10 +729,6 @@ local function SpawnCharacter(participant: Types.Participant): ()
 
     participant:_setStatus("Alive")
 
-    for _, v in participant.Round.Gamemode.StartingItems do
-        participant:GiveItemFromItemDefinition(v)
-    end
-
     participant.Player.CharacterAppearanceLoaded:Once(function(char)
         local hum = char:WaitForChild("Humanoid")
         assert(hum:IsA("Humanoid"), "Humanoid is not a Humanoid!?")
@@ -787,6 +783,10 @@ local function SpawnCharacter(participant: Types.Participant): ()
 
         local charsFolder = workspace.Characters
         char.Parent = charsFolder
+
+        for _, v in participant.Round.Gamemode.StartingItems do
+            participant:GiveItemFromItemDefinition(v)
+        end
 
         local startingItems = participant:GetRole().Definition.StartingItems
         if startingItems then
