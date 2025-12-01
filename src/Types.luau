@@ -356,7 +356,6 @@ export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
     AttackSound: Sound?,
 
     Projectile: BasePart,
-    ProjectileForce: number,
 
     ExplosionInfo: ExplosionInfo,
 
