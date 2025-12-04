@@ -58,9 +58,12 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
         end
     end
 
-    local isFreeKill = participant:IsFreeKill()
+    local isFreeKill = participant:IsFreeKill(params.Attacker)
     -- important to do here, otherwise someone holding a free kill item will not be a free kill
     -- because now the item is unequipped.
+
+    local corpse = Corpse.new(participant, params, nil, isFreeKill)
+    participant.Corpse = corpse
 
     for _, v in participant:GetItems() do
         assert(v)
@@ -87,10 +90,9 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
         end
     end
 
-    participant:_setStatus("Missing")
+    corpse.Model = char
 
-    local corpse = Corpse.new(participant, params, char, isFreeKill)
-    participant.Corpse = corpse
+    participant:_setStatus("Missing")
 
     if round:IsInProgress() then
         if round.Config.OnDeath then
@@ -318,17 +320,19 @@ local function GetKarmaDamageMultiplier(participant: Types.Participant): number
 end
 
 local function IsDamageJustifiedAgainstParticipant(participant: Types.Participant, other: Types.Participant): boolean
-    return participant.Player == other.Player or other:IsFreeKill() or participant:HasSelfDefenseAgainstParticipant(other) or not participant:IsAlliedWithParticipant(other)
+    return participant.Player == other.Player or other:IsFreeKill(participant) or participant:HasSelfDefenseAgainstParticipant(other) or not participant:IsAlliedWithParticipant(other)
 end
 
-local function IsFreeKill(participant: Types.Participant): boolean
+local function IsFreeKill(participant: Types.Participant, attacker: Types.Participant?): boolean
     if participant._isFreeKill then
         return true
     end
 
     local item = participant:GetEquippedItem()
-    if item and item.Definition.IsEvilItem then
-        if not participant:GetRole().Definition.IsEvil then
+    local role = participant:GetRole().Definition
+    if item and item.Definition.IsEvilItem and not role.IsEvil then
+        local attackerRole = if attacker then attacker:GetRole().Definition else nil
+        if not attackerRole or not table.find(attackerRole.RevealedRoles or {}, role.Name) or not table.find(attackerRole.Allies or {}, role.Name) then
             return true
         end
     end

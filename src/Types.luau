@@ -616,7 +616,7 @@ export type Participant = {
     SetKarma: (Participant, karma: number) -> (),
 
     _isFreeKill: boolean,
-    IsFreeKill: (Participant) -> boolean,
+    IsFreeKill: (Participant, attacker: Participant?) -> boolean,
     SetFreeKill: (Participant, reason: string?) -> (),
 
     GetKarmaDamageMultiplier: (Participant) -> number,

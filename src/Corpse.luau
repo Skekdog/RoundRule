@@ -262,7 +262,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams, 
 
         AdditionalIcons = participant.ExtraCorpseIcons,
 
-        WasFreeKill = if freeKill == nil then participant:IsFreeKill() else freeKill,
+        WasFreeKill = if freeKill == nil then participant:IsFreeKill(params.Attacker) else freeKill,
         WasHeadshot = params.IsHeadshot,
         WasSelfDefense = selfDefense,
 
