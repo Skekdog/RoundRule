@@ -262,6 +262,9 @@ export type CommonItemDefinition = {
 
     OnEquipClient: ((item: AnyItem) -> ())?,
     OnEquipServer: ((item: AnyItem, participant: Participant) -> ())?,
+
+    OnActivateClient: ((item: AnyItem) -> ())?,
+    OnDeactivateClient: ((item: AnyItem) -> ())?,
 }
 
 export type CommonWeaponDefinition = CommonItemDefinition & {
@@ -289,6 +292,9 @@ export type ItemDefinition = CommonItemDefinition & {
 
     PrimaryFireServer: FireActionServer?,
     AlternateFireServer: FireActionServer?,
+
+    OnAlternateActivateClient: ((item: AnyItem) -> ())?,
+    OnAlternateDeactivateClient: ((item: AnyItem) -> ())?,
 
     PrimaryToggled: boolean?,
     AlternateToggled: boolean?,
@@ -387,6 +393,9 @@ export type MeleeWeaponDefinition = CommonWeaponDefinition & {
     AlternateFireServer: (item: MeleeWeapon, _: never, origin: Vector3, direction: Vector3, attacker: Participant) -> ()?,
     AlternateFireClient: (item: MeleeWeapon, _: never, origin: Vector3, direction: Vector3) -> ()?,
     AlternateToggled: boolean?,
+
+    OnAlternateActivateClient: ((item: AnyItem) -> ())?,
+    OnAlternateDeactivateClient: ((item: AnyItem) -> ())?,
 }
 
 export type AmmoDefinition = {
