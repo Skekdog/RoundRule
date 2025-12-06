@@ -43,6 +43,8 @@ function module.MakeSound(sound: SoundId | {SoundId}, props: SoundProperties?): 
         soundObject.SoundId = soundId
     end
 
+	props.RollOffMinDistance = if props.RollOffMinDistance then math.max(1, props.RollOffMinDistance) else 1
+
 	soundObject.RollOffMode = Enum.RollOffMode.InverseTapered
 	if props.RollOffMinDistance then
 		soundObject.RollOffMinDistance = props.RollOffMinDistance
