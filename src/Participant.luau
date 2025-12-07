@@ -252,7 +252,7 @@ end
 local function SetEquippedItem(participant: Types.Participant, item: Types.AnyItem?, force: boolean?): ()
     local round = participant.Round
     local lastItem = participant:GetEquippedItem()
-    if not force and lastItem and lastItem.Definition.PreventUnequip then
+    if not force and lastItem and lastItem.PreventUnequip then
         return
     end
 

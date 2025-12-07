@@ -15,6 +15,8 @@ function module.new(definition: Types.AnyItemDefinition, model: Types.MapObject?
             Definition = definition,
             Model = model,
 
+            PreventUnequip = definition.PreventUnequip,
+
             Extras = {},
         }
     elseif definition.Kind == "Gun" then
@@ -22,6 +24,8 @@ function module.new(definition: Types.AnyItemDefinition, model: Types.MapObject?
             Kind = "Gun",
             Definition = definition,
             Model = model :: BasePart,
+
+            PreventUnequip = definition.PreventUnequip,
 
             Ammo = definition.AmmoType.Capacity,
             LastAttackTime = 0,
@@ -39,6 +43,8 @@ function module.new(definition: Types.AnyItemDefinition, model: Types.MapObject?
             Definition = definition,
             Model = model :: BasePart,
 
+            PreventUnequip = definition.PreventUnequip,
+
             Extras = {},
 
             RunBeforeHit = RunBeforeHit,
@@ -49,6 +55,8 @@ function module.new(definition: Types.AnyItemDefinition, model: Types.MapObject?
             Kind = "Melee",
             Definition = definition,
             Model = model :: BasePart,
+
+            PreventUnequip = definition.PreventUnequip,
 
             LastAttackTime = 0,
 
