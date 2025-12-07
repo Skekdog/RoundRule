@@ -510,6 +510,8 @@ export type BaseWeapon = {
     Extras: Extras,
 
     PreventUnequip: boolean?,
+    PreventPrimaryFire: boolean?,
+    PreventAlternateFire: boolean?,
 
     RunBeforeHit: RunBeforeHit,
     RunOnHitClient: RunOnHitClient,
@@ -543,6 +545,8 @@ export type Item = {
     Model: MapObject?,
 
     PreventUnequip: boolean?,
+    PreventPrimaryFire: boolean?,
+    PreventAlternateFire: boolean?,
 
     Extras: Extras,
 }
