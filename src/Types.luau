@@ -330,6 +330,7 @@ export type GunWeaponDefinition = CommonWeaponDefinition & {
     ProjectileSpeed: number?,
 
     IsPhysicallySimulated: boolean?,
+    MaxBounces: number?,
 
     ImpulseForce: number?,
 
@@ -364,6 +365,8 @@ export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
     Projectile: BasePart,
 
     ExplosionInfo: ExplosionInfo,
+
+    MaxBounces: number?,
 
     OnExplode: ((item: GrenadeWeapon, attacker: Participant, projectile: BasePart) -> ())?,
     OnHitClient: OnHitClient?,
