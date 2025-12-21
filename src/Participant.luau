@@ -976,10 +976,10 @@ local function tryGetAnimator(participant: Types.Participant): Animator?
     return hum:FindFirstChildOfClass("Animator")
 end
 
-local function TryPlayAnimation(participant: Types.Participant, id: number, name: string): ()
+local function TryPlayAnimation(participant: Types.Participant, id: number, name: string): AnimationTrack?
     local animator = tryGetAnimator(participant)
     if not animator then
-        return
+        return nil
     end
 
     local animation = Instance.new("Animation")
@@ -989,6 +989,8 @@ local function TryPlayAnimation(participant: Types.Participant, id: number, name
     track.Name = name
 
     track:Play()
+
+    return track
 end
 
 local function TryStopAnimation(participant: Types.Participant, name: string): ()
