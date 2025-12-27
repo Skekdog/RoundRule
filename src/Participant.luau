@@ -807,7 +807,7 @@ local function SpawnCharacter(participant: Types.Participant): ()
         end
     end)
 
-    participant.Player:LoadCharacter()
+    participant.Player:LoadCharacterAsync()
 end
 
 local function DespawnCharacter(participant: Types.Participant): ()
