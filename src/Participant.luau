@@ -1001,6 +1001,10 @@ local function TryStopAnimation(participant: Types.Participant, name: string): (
 
     for _, v in animator:GetPlayingAnimationTracks() do
         if v.Name == name and v.IsPlaying then
+            -- Otherwise Animation tracks remain loaded :/
+            v.Ended:Once(function()
+                v:Destroy()
+            end)
             v:Stop()
         end
     end
