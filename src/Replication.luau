@@ -21,7 +21,7 @@ local function fireToTargets(remote: RemoteEvent, target: ReplicationTarget, ...
 	end
 end
 
-local function canInstanceReplicate(instance: Instance): boolean
+function module.CanInstanceReplicate(instance: Instance): boolean
 	-- note: instances under ReplicatedFirst will not be nil if passed to the client, but they will not replicated either. That is, updating their properties on the server will have no effect on the client.
 	return instance:IsDescendantOf(ReplicatedStorage) or instance:IsDescendantOf(workspace)
 end
@@ -46,7 +46,7 @@ function module.ReplicateCorpse(target: ReplicationTarget, corpse: Types.Corpse,
 end
 
 function module.ReplicateRoundEndMusic(target: ReplicationTarget, music: Sound, startedAtServerTime: number): ()
-	assert(canInstanceReplicate(music), "Music must be parented to a replicatable service")
+	assert(module.CanInstanceReplicate(music), "Music must be parented to a replicatable service")
 	fireToTargets(remotes.RoundEndMusic, target, music, startedAtServerTime)
 end
 
@@ -136,7 +136,7 @@ end
 function module.AddScore(participant: Types.Participant): ()
 	local value = Instance.new("StringValue")
 	value.Name = participant.Player.Name
-	
+
 	for reason, score in participant.Scores do
 		assert(score)
 		value:SetAttribute(reason:gsub(" ", "_"), score)

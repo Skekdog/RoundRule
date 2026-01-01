@@ -1,5 +1,7 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
+local Replication = require(ReplicatedStorage.Shared.RoundRule.Replication)
 local CreateEmptyPart = require(script.Parent.CreateEmptyPart)
 
 export type SoundId = number | Sound | string
@@ -87,6 +89,17 @@ function module.PlaySound(sound: SoundId | {SoundId}, position: Vector3?, parent
 
 	if to then
 		assert(RunService:IsServer(), "to must only be specified on the server")
+
+		if typeof(sound) == "table" then
+			for _, v in sound do
+				if typeof(v) == "Instance" then
+					assert(Replication.CanInstanceReplicate(v), "Attempt to play non-replicated sound to client")
+				end
+			end
+		elseif typeof(sound) == "Instance" then
+			assert(Replication.CanInstanceReplicate(sound), "Attempt to play non-replicated sound to client")
+		end
+
 		script.Parent.Parent.Remotes.PlaySound:FireClient(to, sound, position, parent, props)
 		return
 	end
