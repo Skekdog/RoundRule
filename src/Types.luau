@@ -234,6 +234,7 @@ export type FireClient = (item: Item, origin: Vector3, direction: Vector3) -> ()
 
 export type Item = {
     Kind: "Item",
+    Extras: Extras,
 
     Base: ItemComponents,
     Components: ItemComponents,
@@ -327,7 +328,7 @@ export type ItemComponents = {
     PrimaryToggled: boolean?,
 
     PrimaryFireClient: FireClient?,
-    PrimaryFireServer: (item: Item) -> ()?,
+    PrimaryFireServer: (item: Item, participant: Participant, origin: Vector3, direction: Vector3) -> ()?,
     PrimaryFireValidationClient: () -> ()?,
     PrimaryActivatedClient: (item: Item) -> ()?,
     PrimaryDeactivatedClient: (item: Item) -> ()?,
@@ -348,7 +349,7 @@ export type ItemComponents = {
     AlternateToggled: boolean?,
 
     AlternateFireClient: FireClient?,
-    AlternateFireServer: () -> ()?,
+    AlternateFireServer: (item: Item, participant: Participant, origin: Vector3, direction: Vector3) -> ()?,
     AlternateFireValidationClient: () -> ()?,
     AlternateActivatedClient: (item: Item) -> ()?,
     AlternateDeactivatedClient: (item: Item) -> ()?,
