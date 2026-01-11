@@ -241,7 +241,6 @@ export type Item = {
 } & ItemComponents
 
 export type ItemComponents = {
-    [any]: never,
     Name: string,
     DisplayName: string?,
 
