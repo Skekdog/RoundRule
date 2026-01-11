@@ -10,7 +10,7 @@ function module.new(definition: Types.ItemComponents, model: Types.MapObject?): 
     local item: Types.Item = setmetatable({
         Kind = "Item" :: "Item",
         Extras = {},
-        Definition = definition,
+        Base = definition,
         Components = {},
     }, {
         __index = function(self: Types.Item, index: string)
