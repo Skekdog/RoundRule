@@ -10,20 +10,17 @@ export type ItemPurchaseResult = "Success" | "NotEnoughCredits" | "SlotOccupied"
 
 export type GeneralDamageSource = "Fall" | "Drown" | "Explode" | "Burn" | "Stab" | "Shot" | "Bludgeon" | "Crush" | "Magic" | "Other" | "Poison"
 export type NamedDamageSource = GeneralDamageSource | string
-export type DamageSource = AnyItem | GeneralDamageSource
+export type DamageSource = Item | GeneralDamageSource
 
--- todo: when recursive generic types are supported, do that
-export type ItemBeforeHit = AnyWeapon | ExplosionParams
-export type BeforeHitAnything = (item: ItemBeforeHit, round: Round, hitPart: BasePart, params: DamageParams) -> boolean
-export type BeforeHitParticipant = (item: ItemBeforeHit, round: Round, hitParticipant: Participant, params: DamageParams) -> boolean
-export type BeforeHitProp = (item: ItemBeforeHit, round: Round, hitProp: Prop | Interactable, params: DamageParams) -> boolean
+export type ItemSchedulerCallback = (item: Item, dt: number) -> ()
 
-export type RunBeforeHit = (item: ItemBeforeHit, round: Round, hitPart: BasePart, params: DamageParams) -> boolean
+export type BeforeHitAnything = (item: Item, params: DamageParams, round: Round) -> boolean
+export type BeforeHitParticipant = (item: Item, params: DamageParams, participant: Participant) -> boolean
+export type BeforeHitProp = (item: Item, params: DamageParams, prop: Prop) -> boolean
 
-export type ItemDefinitionOnHitClient = GunWeaponDefinition | MeleeWeaponDefinition | GrenadeWeaponDefinition
-export type OnHitClient = (item: ItemDefinitionOnHitClient, hitPart: BasePart?) -> ()
-
-export type RunOnHitClient = (item: AnyWeapon, participant: Participant, hitPart: BasePart) -> ()
+export type BeforeHitAnythingExplosionInfo = (info: ExplosionInfo, params: DamageParams) -> ()
+export type BeforeHitParticipantExplosionInfo = (info: ExplosionInfo, params: DamageParams, participant: Participant) -> ()
+export type BeforeHitPropExplosionInfo = (info: ExplosionInfo, params: DamageParams, prop: Prop) -> ()
 
 export type MapObject = BasePart | Model -- type is weird because Model | BasePart will lead to errorneous type errors when doing MapObject.Name = "blah"
 
@@ -38,7 +35,7 @@ export type Highlight = {
 
 export type ExplosionInfo = {
     Damage: number,
-    FalloffBegin: number,
+    FalloffStart: number,
     FalloffEnd: number,
     Pressure: number,
     VisualRadius: number,
@@ -47,9 +44,9 @@ export type ExplosionInfo = {
     IgnoreKarma: boolean?,
     IgnoreScore: boolean?,
 
-    BeforeHitAnything: BeforeHitAnything?,
-    BeforeHitProp: BeforeHitProp?,
-    BeforeHitParticipant: BeforeHitParticipant?,
+    BeforeHitAnything: BeforeHitAnythingExplosionInfo?,
+    BeforeHitParticipant: BeforeHitParticipantExplosionInfo?,
+    BeforeHitProp: BeforeHitPropExplosionInfo?,
 }
 
 export type CorpseIcon = {
@@ -65,8 +62,6 @@ export type ExplosionParams = {
     Definition: ExplosionInfo,
     Attacker: Participant?,
     Position: Vector3,
-
-    RunBeforeHit: RunBeforeHit,
 }
 
 export type DamageParams = {
@@ -116,12 +111,12 @@ export type GamemodeDefinition = {
     EnableKarma: boolean?,
 
     IsSlotless: boolean?,
-    AvailableItems: {[string]: AnyItemDefinition},
+    AvailableItems: {[string]: ItemComponents},
     AvailableAmmo: {[string]: AmmoDefinition},
 
     InteractableDefinitions: {[string]: InteractableDefinition},
 
-    StartingItems: {AnyItemDefinition},
+    StartingItems: {ItemComponents},
 
     Duration: (round: Round, numParticipants: number) -> number,
 
@@ -141,7 +136,7 @@ export type GamemodeDefinition = {
     OnFinish: (round: Round) -> ()?,
     OnStart: (round: Round) -> ()?,
 
-    OnItemEquipped: (round: Round, participant: Participant, item: AnyItem, equipped: boolean) -> ()?,
+    OnItemEquipped: (round: Round, participant: Participant, item: Item, equipped: boolean) -> ()?,
     BeforeDamageParticipant: ((round: Round, participant: Participant, params: DamageParams) -> boolean)?,
     BeforeDamageProp: ((round: Round, prop: Prop, params: DamageParams) -> boolean)?,
 }
@@ -162,9 +157,9 @@ export type RoleDefinition = {
 
     Allegiance: VictorType,
 
-    StartingItems: {AnyItemDefinition}?,
+    StartingItems: {ItemComponents}?,
     StartingCredits: number?,
-    EquipmentShop: {AnyItemDefinition}?,
+    EquipmentShop: {ItemComponents}?,
 
     ShouldAnnounceDisconnect: boolean?,
     CanStealCreditsFromCorpses: boolean?,
@@ -235,170 +230,140 @@ export type ItemGroup = {
     PreferredSlot: number?,
 }
 
-export type CommonItemDefinition = {
-    Name: string,
-    DisplayName: string?,
-    Description: string?,
+export type FireClient = (item: Item, origin: Vector3, direction: Vector3) -> ()
 
-    Icon: string?,
-    IsPixelIcon: boolean?,
-
-	IsEvilItem: boolean?,
-
-    Model: MapObject?,
-    HoldAnimation: string?,
-
-    ItemGroup: ItemGroup?,
-    CanDrop: boolean?,
-    PreventUnequip: boolean?,
-
-    CreditCost: number?,
-    MaxStock: number?,
-
-    OnPurchase: ((item: AnyItem, participant: Participant) -> ())?,
-
-    OnUnequipClient: ((item: AnyItem) -> ())?,
-    OnUnequipServer: ((item: AnyItem, participant: Participant) -> ())?,
-
-    OnEquipClient: ((item: AnyItem) -> ())?,
-    OnEquipServer: ((item: AnyItem, participant: Participant) -> ())?,
-
-    OnActivateClient: ((item: AnyItem) -> ())?,
-    OnDeactivateClient: ((item: AnyItem) -> ())?,
-}
-
-export type CommonWeaponDefinition = CommonItemDefinition & {
-    HoldAnimation: string,
-}
-
-export type FireActionClient = (item: Item, mode: "Primary" | "Alternate", origin: Vector3, direction: Vector3) -> ()
-export type FireActionServer = (item: Item, mode: "Primary" | "Alternate", origin: Vector3, direction: Vector3, participant: Participant) -> ()
-
-export type SchedulerCallback = (item: AnyItem, dt: number) -> ()
-export type ItemDefinition = CommonItemDefinition & {
+export type Item = {
     Kind: "Item",
 
-    PrimaryHint: string?,
-    AlternateHint: string?,
+    Base: ItemComponents,
+    Components: ItemComponents,
+} & ItemComponents
 
-    HeartbeatClient: SchedulerCallback?,
-    PreSimulationClient: SchedulerCallback?,
-    PostSimulationClient: SchedulerCallback?,
-    PreRenderClient: SchedulerCallback?,
-    PreAnimationClient: SchedulerCallback?,
+export type ItemComponents = {
+    Name: string,
+    DisplayName: string?,
 
-    PrimaryFireClient: FireActionClient?,
-    AlternateFireClient: FireActionClient?,
+    Description: string,
+    IconContent: Content,
+    IsPixelIcon: boolean?,
 
-    PrimaryFireServer: FireActionServer?,
-    AlternateFireServer: FireActionServer?,
+    Spread: number?,
+    RecoilX: number?,
+    RecoilY: number?,
 
-    OnAlternateActivateClient: ((item: AnyItem) -> ())?,
-    OnAlternateDeactivateClient: ((item: AnyItem) -> ())?,
+    Cost: number?,
+    MaxStock: number?,
 
-    PrimaryToggled: boolean?,
-    AlternateToggled: boolean?,
-}
+    IsEvilItem: boolean?,
 
-export type BeforeGunPrimaryFireClient = (item: GunWeapon, targettedParts: {BasePart}) -> boolean
-export type GunWeaponDefinition = CommonWeaponDefinition & {
-    Kind: "Gun",
+    Model: MapObject?,
+    HoldAnimation: Content?,
 
-    AimAnimation: string?,
-
-    ReloadTime: number,
-    AttackInterval: number,
-
-    AttackSound: Sound?,
-    ReloadSound: Sound?,
-
-    Damage: DamageInfo,
-
-    AmmoType: AmmoDefinition,
+    UnequipDisabled: boolean?,
+    DropDisabled: boolean?,
+    ItemGroup: ItemGroup?,
 
     IsSilent: boolean?,
+    CanHeadshot: boolean?,
 
+    AmmoDefinition: AmmoDefinition?,
+    Ammo: number?,
+
+    ReloadDuration: number?,
+    ReloadAnimation: Content?,
+    ReloadSound: Sound?,
+    IsReloading: boolean?,
+
+    Damage: DamageInfo | number?,
+    DamageKind: GeneralDamageSource?,
+
+    ImpulseForce: number?,
+
+    Projectile: MapObject?,
+    ProjectileCount: number?,
+    ProjectileSpeed: number?,
+    IsProjectileSimulated: boolean?,
+
+    IsAimable: boolean?,
     AimFOV: number?,
-    HasScope: boolean?,
-    HasMuzzleFlash: boolean?,
-    ScopeRequired: boolean?,
     AimSpreadMultiplier: number?,
+    AimAnimation: Content?,
+
+    IsScopable: boolean?,
+    IsScopeRequired: boolean?,
+
+    HasMuzzleFlash: boolean?,
 
     LaserColor: Color3?,
 
-    Projectile: BasePart?,
-    ProjectileSpeed: number?,
+    PregameDisable: boolean?,
 
-    IsPhysicallySimulated: boolean?,
+    FalloffStart: number?,
+    FalloffEnd: number?,
+
+    OnHitClient: (part: BasePart?) -> ()?,
+
     MaxBounces: number?,
+    ShouldPlayersStopBounces: boolean?,
 
-    ImpulseForce: number?,
+    MaxDistance: number?,
+    CheckInitialIntersection: boolean?,
 
-    BulletsPerShot: number?,
+    FuseTime: number?,
+    ExplosionInfo: ExplosionInfo?,
+    OnExplode: (params: ExplosionParams) -> ()?,
 
-    Spread: number,
-    RecoilX: number,
-    RecoilY: number,
+    IsSingleUse: boolean?,
+
+    PrimaryAnimation: Content?,
+    PrimarySound: Sound?,
+
+    PrimaryDisabled: boolean?,
+    PrimaryHint: string?,
+
+    PrimaryInterval: number?,
+    PrimaryLastUse: number?,
+
+    PrimaryToggled: boolean?,
+
+    PrimaryFireClient: FireClient?,
+    PrimaryFireServer: (item: Item) -> ()?,
+    PrimaryFireValidationClient: () -> ()?,
+    PrimaryActivatedClient: (item: Item) -> ()?,
+    PrimaryDeactivatedClient: (item: Item) -> ()?,
 
     BeforeHitAnything: BeforeHitAnything?,
     BeforeHitParticipant: BeforeHitParticipant?,
     BeforeHitProp: BeforeHitProp?,
 
-    OnHitClient: OnHitClient?,
+    AlternateAnimation: Content?,
+    AlternateSound: Sound?,
 
-    HeartbeatClient: SchedulerCallback?,
-    PreSimulationClient: SchedulerCallback?,
-    PostSimulationClient: SchedulerCallback?,
-    PreRenderClient: SchedulerCallback?,
-    PreAnimationClient: SchedulerCallback?,
+    AlternateDisabled: boolean?,
+    AlternateHint: string?,
 
-    BeforePrimaryFireClient: BeforeGunPrimaryFireClient?,
-}
+    AlternateInterval: number?,
+    AlternateLastUse: number?,
 
-export type GrenadeWeaponDefinition = CommonWeaponDefinition & {
-    Kind: "Grenade",
-
-    FuseTime: number,
-
-    AttackSound: Sound?,
-
-    Projectile: BasePart,
-
-    ExplosionInfo: ExplosionInfo,
-
-    MaxBounces: number?,
-
-    OnExplode: ((item: GrenadeWeapon, attacker: Participant, projectile: BasePart) -> ())?,
-    OnHitClient: OnHitClient?,
-}
-
-export type MeleeWeaponDefinition = CommonWeaponDefinition & {
-    Kind: "Melee",
-
-    DamageKind: "Bludgeon" | "Stab",
-    AttackAnimation: string,
-
-    AttackInterval: number,
-    AttackSound: Sound?,
-
-    Damage: DamageInfo,
-
-    ImpulseForce: number?,
-
-    MaxDistance: number,
-
-    BeforeHitAnything: BeforeHitAnything?,
-    BeforeHitParticipant: BeforeHitParticipant?,
-    BeforeHitProp: BeforeHitProp?,
-
-    OnHitClient: OnHitClient?,
-
-    AlternateFireServer: (item: MeleeWeapon, _: never, origin: Vector3, direction: Vector3, attacker: Participant) -> ()?,
-    AlternateFireClient: (item: MeleeWeapon, _: never, origin: Vector3, direction: Vector3) -> ()?,
     AlternateToggled: boolean?,
 
-    OnAlternateActivateClient: ((item: AnyItem) -> ())?,
-    OnAlternateDeactivateClient: ((item: AnyItem) -> ())?,
+    AlternateFireClient: FireClient?,
+    AlternateFireServer: () -> ()?,
+    AlternateFireValidationClient: () -> ()?,
+    AlternateActivatedClient: (item: Item) -> ()?,
+    AlternateDeactivatedClient: (item: Item) -> ()?,
+
+    HeartbeatClient: ItemSchedulerCallback?,
+    PreSimulationClient: ItemSchedulerCallback?,
+    PostSimulationClient: ItemSchedulerCallback?,
+    PreRenderClient: ItemSchedulerCallback?,
+    PreAnimationClient: ItemSchedulerCallback?,
+
+    OnEquipServer: (item: Item, participant: Participant) -> ()?,
+    OnEquipClient: (item: Item) -> ()?,
+
+    OnUnequipServer: (item: Item, participant: Participant) -> ()?,
+    OnUnequipClient: (item: Item) -> ()?,
 }
 
 export type AmmoDefinition = {
@@ -410,8 +375,6 @@ export type AmmoDefinition = {
     Model: MapObject?,
     CanDrop: boolean,
 }
-
-export type AnyItemDefinition = ItemDefinition | GunWeaponDefinition | GrenadeWeaponDefinition | MeleeWeaponDefinition
 
 export type MapStructure = Instance & {
     Static: Instance,
@@ -444,7 +407,7 @@ export type Map = {
     Gravity: number,
 
     InteractableDefinitions: {[string]: InteractableDefinition},
-    ItemDefinitions: {[string]: AnyItemDefinition},
+    ItemDefinitions: {[string]: ItemComponents},
     AmmoDefinitions: {[string]: AmmoDefinition},
 }
 
@@ -507,56 +470,6 @@ export type SelfDefenseParams = {
     Against: Participant,
     Duration: number,
 }
-
-export type BaseWeapon = {
-    Model: MapObject,
-    Extras: Extras,
-
-    PreventUnequip: boolean?,
-    PreventPrimaryFire: boolean?,
-    PreventAlternateFire: boolean?,
-
-    RunBeforeHit: RunBeforeHit,
-    RunOnHitClient: RunOnHitClient,
-}
-
-export type GunWeapon = BaseWeapon & {
-    Kind: "Gun",
-    Definition: GunWeaponDefinition,
-
-    Ammo: number,
-    LastAttackTime: number,
-
-    IsReloading: boolean,
-}
-
-export type GrenadeWeapon = BaseWeapon & {
-    Kind: "Grenade",
-    Definition: GrenadeWeaponDefinition,
-}
-
-export type MeleeWeapon = BaseWeapon & {
-    Kind: "Melee",
-    Definition: MeleeWeaponDefinition,
-
-    LastAttackTime: number,
-}
-
-export type Item = {
-    Kind: "Item",
-    Definition: ItemDefinition,
-    Model: MapObject?,
-
-    PreventUnequip: boolean?,
-    PreventPrimaryFire: boolean?,
-    PreventAlternateFire: boolean?,
-
-    Extras: Extras,
-}
-
-export type AnyItem = Item | AnyWeapon
-export type AnyWeapon = GunWeapon | GrenadeWeapon | MeleeWeapon
-export type GunMeleeWeapon = GunWeapon | MeleeWeapon
 
 export type AmmoBox = {
     Kind: "AmmoBox",
@@ -628,7 +541,7 @@ export type Participant = {
     SlayVotes: {Participant},
     TryAddSlayVote: (Participant, participant: Participant) -> boolean,
 
-    TryPlayAnimation: (Participant, id: number, name: string) -> AnimationTrack?,
+    TryPlayAnimation: (Participant, content: Content, name: string) -> AnimationTrack?,
     TryStopAnimation: (Participant, name: string) -> (),
 
     _karma: number,
@@ -689,24 +602,23 @@ export type Participant = {
     SetCredits: (Participant, amount: number) -> (),
     GetCredits: (Participant) -> number,
 
-    _items: {[string]: AnyItem?},
+    _items: {[string]: Item?},
     _ammo: {[string]: number?},
 
     DropAmmoBoxForCurrentItem: (Participant) -> (),
 
-    GetEquippedItem: (Participant) -> AnyItem?,
-    SetEquippedItem: (Participant, item: AnyItem?, force: boolean?) -> (),
-    _equippedItem: AnyItem?,
+    GetEquippedItem: (Participant) -> Item?,
+    SetEquippedItem: (Participant, item: Item?, force: boolean?) -> (),
+    _equippedItem: Item?,
 
-    GetItems: (Participant) -> {[string]: AnyItem?},
-    GiveItemFromItemDefinition: (Participant, itemDefinition: AnyItemDefinition) -> AnyItem,
-    DropItem: (Participant, item: AnyItem, throwDirection: Vector3?) -> (),
+    GetItems: (Participant) -> {[string]: Item?},
+    DropItem: (Participant, item: Item, throwDirection: Vector3?) -> (),
 
-    AddItem: (Participant, item: AnyItem) -> (),
-    RemoveItem: (Participant, item: AnyItem) -> (),
-    TryDropItem: (Participant, item: AnyItem, throw: Vector3?) -> boolean,
+    AddItem: (Participant, item: Item) -> (),
+    RemoveItem: (Participant, item: Item) -> (),
+    TryDropItem: (Participant, item: Item, throw: Vector3?) -> boolean,
 
-    GetItemOccupyingGroup: (Participant, group: ItemGroup?) -> AnyItem?,
+    GetItemOccupyingGroup: (Participant, group: ItemGroup?) -> Item?,
 
     GetAmmo: (Participant, kind: string) -> number,
     SetAmmo: (Participant, kind: string, amount: number) -> (),
@@ -714,7 +626,7 @@ export type Participant = {
     HasWeaponOfAmmoType: (Participant, ammoType: string) -> boolean,
 
     ItemPurchases: ItemPurchases,
-    PurchaseItem: (Participant, itemDefinition: AnyItemDefinition) -> ItemPurchaseResult,
+    PurchaseItem: (Participant, itemDefinition: ItemComponents) -> ItemPurchaseResult,
 
     _status: ParticipantStatus,
     _setStatus: (Participant, status: ParticipantStatus) -> (),
@@ -761,7 +673,7 @@ export type Round = {
 
     Extras: Extras,
 
-    GetItemDefinition: (Round, item: string) -> AnyItemDefinition?,
+    GetItemDefinition: (Round, item: string) -> ItemComponents?,
     GetAmmoDefinition: (Round, ammo: string) -> AmmoDefinition?,
     GetInteractableDefinition: (Round, interactable: string) -> InteractableDefinition?,
 
@@ -769,10 +681,10 @@ export type Round = {
     LoadMap: (Round, structure: MapStructure) -> (),
     GetMap: (Round) -> Map,
 
-    _items: {[MapObject]: AnyItem?},
-    GetItems: (Round) -> {[MapObject]: AnyItem},
-    GetItem: (Round, part: MapObject) -> AnyItem?,
-    LoadItem: (Round, model: MapObject) -> AnyItem,
+    _items: {[MapObject]: Item?},
+    GetItems: (Round) -> {[MapObject]: Item},
+    GetItem: (Round, part: MapObject) -> Item?,
+    LoadItem: (Round, model: MapObject) -> Item,
 
     _ammoBoxes: {[MapObject]: AmmoBox?},
     GetAmmoBoxes: (Round) -> {[MapObject]: AmmoBox},

@@ -48,12 +48,12 @@ function Map.new(structure: Types.MapStructure): Types.Map
         end
     end
 
-    local items: {[string]: Types.ItemDefinition} = {}
+    local items: {[string]: Types.ItemComponents} = {}
     local itemsFolder = structure:FindFirstChild("ItemDefinitions")
     if itemsFolder then
         for _, module in itemsFolder:GetChildren() do
             if module:IsA("ModuleScript") then
-                local definition: Types.ItemDefinition = (require :: any)(module).Definition
+                local definition: Types.ItemComponents = (require :: any)(module).Definition
                 items[definition.Name] = definition
             end
         end

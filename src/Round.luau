@@ -425,7 +425,7 @@ local function loadProp(round: Types.Round, model: Types.MapObject): Types.Prop
     return prop
 end
 
-local function LoadItem(round: Types.Round, model: Types.MapObject): Types.AnyItem
+local function LoadItem(round: Types.Round, model: Types.MapObject): Types.Item
     local existingItem = round:GetItem(model)
     if existingItem then
         return existingItem
@@ -436,8 +436,8 @@ local function LoadItem(round: Types.Round, model: Types.MapObject): Types.AnyIt
     local item = Item.new(definition, model)
     round._items[model] = item
 
-    model:SetAttribute("StoredAmmo", if item.Kind == "Gun" then item.Ammo else nil)
-    model:SetAttribute("AmmoType", if item.Kind == "Gun" then item.Definition.AmmoType.Name else nil)
+    model:SetAttribute("StoredAmmo", item.Ammo)
+    model:SetAttribute("AmmoType", if item.AmmoDefinition then item.AmmoDefinition.Name else nil)
 
     ForEachPart(model, function(part)
         part.Touched:Connect(function(touchPart)
@@ -452,7 +452,7 @@ local function LoadItem(round: Types.Round, model: Types.MapObject): Types.AnyIt
                 return
             end
 
-            if participant:GetItemOccupyingGroup(item.Definition.ItemGroup) then
+            if participant:GetItemOccupyingGroup(item.ItemGroup) then
                 return
             end
 
@@ -550,11 +550,11 @@ local function LoadProp(round: Types.Round, model: Types.MapObject): Types.Prop
     return prop
 end
 
-local function GetItems(round: Types.Round): {[Types.MapObject]: Types.AnyItem}
-    return round._items :: {[Types.MapObject]: Types.AnyItem}
+local function GetItems(round: Types.Round): {[Types.MapObject]: Types.Item}
+    return round._items :: {[Types.MapObject]: Types.Item}
 end
 
-local function GetItem(round: Types.Round, model: Types.MapObject): Types.AnyItem?
+local function GetItem(round: Types.Round, model: Types.MapObject): Types.Item?
     return round._items[model]
 end
 
@@ -622,7 +622,7 @@ local function GetAmmoDefinition(round: Types.Round, ammo: string): Types.AmmoDe
     return round:GetMap().AmmoDefinitions[ammo] or round.Gamemode.AvailableAmmo[ammo]
 end
 
-local function GetItemDefinition(round: Types.Round, item: string): Types.AnyItemDefinition?
+local function GetItemDefinition(round: Types.Round, item: string): Types.ItemComponents?
     return round:GetMap().ItemDefinitions[item] or round.Gamemode.AvailableItems[item]
 end
 
@@ -801,7 +801,7 @@ local function LoadMap(round: Types.Round, structure: Types.MapStructure): ()
     for _, v in round:GetParticipants() do
         for _, item in v:GetItems() do
             assert(item)
-            if not round:GetItemDefinition(item.Definition.Name) then
+            if not round:GetItemDefinition(item.Name) then
                 v:RemoveItem(item)
             end
         end

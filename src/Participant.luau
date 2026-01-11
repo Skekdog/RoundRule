@@ -84,7 +84,7 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
 
         local deathSound = char:FindFirstChild("DeathSound", true)
         if not params.IsHeadshot and deathSound and deathSound:IsA("Sound") then
-            if typeof(params.Source) ~= "table" or (params.Source.Kind == "Gun" and not params.Source.Definition.IsSilent) then
+            if typeof(params.Source) ~= "table" or not params.Source.IsSilent then
                 deathSound:Play()
             end
         end
@@ -168,7 +168,7 @@ function module.SetRole(participant: Types.Participant, role: Types.RoleDefiniti
     participant:AddCredits(role.StartingCredits or 0)
     if role.StartingItems then
         for _, v in role.StartingItems do
-            participant:GiveItemFromItemDefinition(v)
+            participant:AddItem(Item.new(v))
         end
     end
 
@@ -245,14 +245,14 @@ local function SetKarma(participant: Types.Participant, karma: number): ()
     end
 end
 
-local function GetEquippedItem(participant: Types.Participant): Types.AnyItem?
+local function GetEquippedItem(participant: Types.Participant): Types.Item?
     return participant._equippedItem
 end
 
-local function SetEquippedItem(participant: Types.Participant, item: Types.AnyItem?, force: boolean?): ()
+local function SetEquippedItem(participant: Types.Participant, item: Types.Item?, force: boolean?): ()
     local round = participant.Round
     local lastItem = participant:GetEquippedItem()
-    if not force and lastItem and lastItem.PreventUnequip then
+    if not force and lastItem and lastItem.UnequipDisabled then
         return
     end
 
@@ -260,8 +260,8 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.AnyIt
         round.Gamemode.OnItemEquipped(round, participant, lastItem, false)
     end
 
-    if lastItem and lastItem.Definition.OnUnequipServer then
-        lastItem.Definition.OnUnequipServer(lastItem, participant)
+    if lastItem and lastItem.OnUnequipServer then
+        lastItem.OnUnequipServer(lastItem, participant)
     end
 
     participant:TryStopAnimation("HoldItem")
@@ -274,9 +274,8 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.AnyIt
         end
     end
 
-    if item and item.Definition.HoldAnimation then
-        local id = assert(tonumber((item.Definition.HoldAnimation :: string):split("://")[2]), "Invalid hold animation: " .. tostring(item.Definition.HoldAnimation))
-        participant:TryPlayAnimation(id, "HoldItem")
+    if item and item.HoldAnimation then
+        participant:TryPlayAnimation(item.HoldAnimation, "HoldItem")
     end
 
     if item and item.Model and char then
@@ -310,8 +309,8 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.AnyIt
         round.Gamemode.OnItemEquipped(round, participant, item, true)
     end
 
-    if item and item.Definition.OnEquipServer then
-        item.Definition.OnEquipServer(item, participant)
+    if item and item.OnEquipServer then
+        item.OnEquipServer(item, participant)
     end
 end
 
@@ -330,7 +329,7 @@ local function IsFreeKill(participant: Types.Participant, attacker: Types.Partic
 
     local item = participant:GetEquippedItem()
     local role = participant:GetRole().Definition
-    if item and item.Definition.IsEvilItem and not role.IsEvil then
+    if item and item.IsEvilItem and not role.IsEvil then
         local attackerRole = if attacker then attacker:GetRole().Definition else nil
         if not attackerRole or not table.find(attackerRole.RevealedRoles or {}, role.Name) or not table.find(attackerRole.Allies or {}, role.Name) then
             return true
@@ -398,7 +397,7 @@ function module.TryTakeDamage(participant: Types.Participant, params: Types.Dama
 
     hum:TakeDamage(params.Amount)
 
-    if typeof(params.Source) ~= "table" or params.Source.Kind ~= "Gun" or (params.Source.Kind == "Gun" and not params.Source.Definition.IsSilent) then
+    if typeof(params.Source) ~= "table" or not params.Source.IsSilent then
         Replication.DamageTaken(participant.Player, params.Amount, params.Source)
     end
 
@@ -499,14 +498,14 @@ local function HasSelfDefenseAgainstParticipant(participant: Types.Participant, 
     return false
 end
 
-local function GetItemOccupyingGroup(participant: Types.Participant, group: Types.ItemGroup?): Types.AnyItem?
+local function GetItemOccupyingGroup(participant: Types.Participant, group: Types.ItemGroup?): Types.Item?
     if not group then
         return nil
     end
 
     for _, v in participant:GetItems() do
         assert(v)
-        local vGroup = v.Definition.ItemGroup
+        local vGroup = v.ItemGroup
         if vGroup then
             if vGroup == group or (not participant.Round.Gamemode.IsSlotless and vGroup.PreferredSlot == group.PreferredSlot) then
                 return v
@@ -517,14 +516,8 @@ local function GetItemOccupyingGroup(participant: Types.Participant, group: Type
     return nil
 end
 
-local function GiveItemFromItemDefinition(participant: Types.Participant, itemDefinition: Types.AnyItemDefinition): Types.AnyItem
-    local item = if itemDefinition.Model then participant.Round:LoadItem(itemDefinition.Model:Clone()) else Item.new(itemDefinition)
-    participant:AddItem(item)
-    return item
-end
-
-function module.DropItem(participant: Types.Participant, item: Types.AnyItem, throwDirection: Vector3?): ()
-    if not item.Definition.CanDrop then
+function module.DropItem(participant: Types.Participant, item: Types.Item, throwDirection: Vector3?): ()
+    if item.DropDisabled then
         return
     end
 
@@ -534,8 +527,8 @@ function module.DropItem(participant: Types.Participant, item: Types.AnyItem, th
         return
     end
 
-    item.Model:SetAttribute("AmmoType", if item.Kind == "Gun" then item.Definition.AmmoType.Name else nil)
-    item.Model:SetAttribute("StoredAmmo", if item.Kind == "Gun" then item.Ammo else nil)
+    item.Model:SetAttribute("AmmoType", if item.AmmoDefinition then item.AmmoDefinition.Name else nil)
+    item.Model:SetAttribute("StoredAmmo", item.Ammo)
 
     local parent = participant.Round:GetMap().Structure.Dynamic
     if throwDirection then
@@ -601,8 +594,8 @@ local function TryThrowAssembly(participant: Types.Participant, assembly: Types.
     return true
 end
 
-local function TryDropItem(participant: Types.Participant, item: Types.AnyItem, throw: Vector3?): boolean
-    if item.Definition.CanDrop then
+local function TryDropItem(participant: Types.Participant, item: Types.Item, throw: Vector3?): boolean
+    if not item.DropDisabled then
         participant:DropItem(item, throw)
         return true
     end
@@ -611,8 +604,8 @@ local function TryDropItem(participant: Types.Participant, item: Types.AnyItem, 
     return false
 end
 
-local function AddItem(participant: Types.Participant, item: Types.AnyItem): ()
-    if item.Definition.ItemGroup and participant:GetItemOccupyingGroup(item.Definition.ItemGroup) then
+local function AddItem(participant: Types.Participant, item: Types.Item): ()
+    if item.ItemGroup and participant:GetItemOccupyingGroup(item.ItemGroup) then
         return
     end
 
@@ -620,33 +613,33 @@ local function AddItem(participant: Types.Participant, item: Types.AnyItem): ()
         (item.Model :: Instance).Parent = nil
     end
 
-    participant._items[item.Definition.Name] = item
+    participant._items[item.Name] = item
 
-    if not item.Definition.ItemGroup and item.Definition.OnEquipServer then
-        item.Definition.OnEquipServer(item, participant)
+    if not item.ItemGroup and item.OnEquipServer then
+        item.OnEquipServer(item, participant)
     end
 
-    Replication.UpdateInventory(participant.Player, "Add", item)
+    Replication.UpdateInventory(participant.Player, "Add", item.Name, item.Components)
 end
 
-local function RemoveItem(participant: Types.Participant, item: Types.AnyItem): ()
-    participant._items[item.Definition.Name] = nil
+local function RemoveItem(participant: Types.Participant, item: Types.Item): ()
+    participant._items[item.Name] = nil
     if participant:GetEquippedItem() == item then
         participant:SetEquippedItem(nil, true)
     end
 
-    if not item.Definition.ItemGroup and item.Definition.OnUnequipServer then
-        item.Definition.OnUnequipServer(item, participant)
+    if not item.ItemGroup and item.OnUnequipServer then
+        item.OnUnequipServer(item, participant)
     end
 
-    Replication.UpdateInventory(participant.Player, "Remove", item.Definition.Name)
+    Replication.UpdateInventory(participant.Player, "Remove", item.Name)
 end
 
-local function GetItems(participant: Types.Participant): {[string]: Types.AnyItem?}
+local function GetItems(participant: Types.Participant): {[string]: Types.Item?}
     return participant._items
 end
 
-local function PurchaseItem(participant: Types.Participant, itemDefinition: Types.AnyItemDefinition): Types.ItemPurchaseResult
+local function PurchaseItem(participant: Types.Participant, itemDefinition: Types.ItemComponents): Types.ItemPurchaseResult
     if participant:GetStatus() ~= "Alive" then
         return "NotInRound"
     end
@@ -657,9 +650,9 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
         return "InvalidItemForRole"
     end
 
-    assert(itemDefinition.CreditCost and itemDefinition.CreditCost > 0, "Item cost must be greater than 0")
+    assert(itemDefinition.Cost and itemDefinition.Cost > 0, "Item cost must be greater than 0")
 
-    if participant:GetCredits() < itemDefinition.CreditCost then
+    if participant:GetCredits() < itemDefinition.Cost then
         return "NotEnoughCredits"
     end
 
@@ -671,14 +664,11 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
         return "SlotOccupied"
     end
 
-    participant:SetCredits(participant:GetCredits() - itemDefinition.CreditCost)
+    participant:SetCredits(participant:GetCredits() - itemDefinition.Cost)
     participant.ItemPurchases[itemDefinition.Name] = (participant.ItemPurchases[itemDefinition.Name] or 0) + 1
 
-    local item = participant:GiveItemFromItemDefinition(itemDefinition)
-
-    if itemDefinition.OnPurchase then
-        itemDefinition.OnPurchase(item :: Types.Item, participant)
-    end
+    local item = Item.new(itemDefinition)
+    participant:AddItem(item)
 
     return "Success"
 end
@@ -789,13 +779,13 @@ local function SpawnCharacter(participant: Types.Participant): ()
         char.Parent = charsFolder
 
         for _, v in participant.Round.Gamemode.StartingItems do
-            participant:GiveItemFromItemDefinition(v)
+            participant:AddItem(Item.new(v))
         end
 
         local startingItems = participant:GetRole().Definition.StartingItems
         if startingItems then
             for _, v in startingItems do
-                participant:GiveItemFromItemDefinition(v)
+                participant:AddItem(Item.new(v))
             end
         end
 
@@ -939,7 +929,7 @@ end
 local function HasWeaponOfAmmoType(participant: Types.Participant, ammoType: string): boolean
     for _, v in participant:GetItems() do
         assert(v)
-        if v.Definition.Kind == "Gun" and v.Definition.AmmoType.Name == ammoType then
+        if v.AmmoDefinition and v.AmmoDefinition.Name == ammoType then
             return true
         end
     end
@@ -949,19 +939,23 @@ end
 
 local function DropAmmoBoxForCurrentItem(participant: Types.Participant): ()
     local item = participant:GetEquippedItem()
-    if not item or item.Kind ~= "Gun" then
+    if not item then
         return
     end
 
-    local definition = item.Definition.AmmoType
+    local definition = item.AmmoDefinition
+    if not definition then
+        return
+    end
+
     local ammo = item.Ammo
 
-    if ammo < (definition.Capacity / 4) then
+    if not ammo or ammo < (definition.Capacity / 4) then
         return
     end
 
     local subtractAmount = math.min(ammo, definition.Capacity)
-    item.Ammo -= subtractAmount
+    item.Ammo = ammo - subtractAmount
 
     local ammoBox = AmmoBox.new(definition, item.Model, subtractAmount);
     (ammoBox.Model :: PVInstance).Parent = participant.Round:GetMap().Structure.Dynamic
@@ -976,14 +970,18 @@ local function tryGetAnimator(participant: Types.Participant): Animator?
     return hum:FindFirstChildOfClass("Animator")
 end
 
-local function TryPlayAnimation(participant: Types.Participant, id: number, name: string): AnimationTrack?
+local function TryPlayAnimation(participant: Types.Participant, content: Content, name: string): AnimationTrack?
     local animator = tryGetAnimator(participant)
     if not animator then
         return nil
     end
 
+    if not content.Uri then
+        return nil
+    end
+
     local animation = Instance.new("Animation")
-    animation.AnimationId = "rbxassetid://" .. tostring(id)
+    animation.AnimationId = content.Uri
 
     local track = animator:LoadAnimation(animation)
     track.Name = name
@@ -1093,7 +1091,6 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         AddCredits = AddCredits,
         AddSelfDefenseEntry = AddSelfDefenseEntry,
         HasSelfDefenseAgainstParticipant = HasSelfDefenseAgainstParticipant,
-        GiveItemFromItemDefinition = GiveItemFromItemDefinition,
         AddItem = AddItem,
         RemoveItem = RemoveItem,
         DropItem = module.DropItem,

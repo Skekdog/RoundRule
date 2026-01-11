@@ -243,7 +243,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams, 
         selfDefense = params.Attacker:HasSelfDefenseAgainstParticipant(participant)
     end
 
-    local source: Types.NamedDamageSource = if typeof(params.Source) == "table" then params.Source.Definition.Name else params.Source
+    local source: Types.NamedDamageSource = if typeof(params.Source) == "table" then params.Source.Name else params.Source
 
     local equipmentList: {string} = {}
     for i in participant:GetItems() do

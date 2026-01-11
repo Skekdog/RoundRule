@@ -50,18 +50,21 @@ function module.ReplicateRoundEndMusic(target: ReplicationTarget, music: Sound, 
 	fireToTargets(remotes.RoundEndMusic, target, music, startedAtServerTime)
 end
 
-function module.UpdateInventory(target: ReplicationTarget, mode: "Add" | "Remove" | "Reset", item: string | Types.AnyItem?): ()
+function module.UpdateInventory(target: ReplicationTarget, mode: "Add" | "Remove" | "Reset", item: string?, components: Types.ItemComponents?): ()
 	if mode == "Add" or mode == "Remove" then
 		assert(item, "Item must not be nil")
+		if mode == "Add" then
+			assert(components, "Must supply components")
+		end
 	elseif mode == "Reset" then
 		assert(not item, "Item must be nil")
 	end
 
-	fireToTargets(remotes.UpdateInventory, target, mode, item)
+	fireToTargets(remotes.UpdateInventory, target, mode, item, components)
 end
 
 function module.DamageTaken(target: ReplicationTarget, amount: number, kind: Types.DamageSource): ()
-	fireToTargets(remotes.DamageTaken, target, amount, if typeof(kind) == "string" then kind else kind.Definition.Name)
+	fireToTargets(remotes.DamageTaken, target, amount, if typeof(kind) == "string" then kind else kind.Name)
 end
 
 function module.UpdateReserveAmmo(target: ReplicationTarget, mode: "Update" | "Reset", kind: string?, amount: number?): ()
@@ -179,8 +182,8 @@ function module.Reset(): ()
     module.ReplicateWinner()
 end
 
-function module.RunOnHitClient(item: Types.AnyWeapon, participant: Types.Participant, hitPart: BasePart): ()
-	remotes.RunOnHitClient:FireClient(participant.Player, item.Definition.Name, hitPart)
+function module.RunOnHitClient(item: Types.Item, participant: Types.Participant, hitPart: BasePart): ()
+	remotes.RunOnHitClient:FireClient(participant.Player, item.Name, hitPart)
 end
 
 function module.CallRoleToCorpse(target: ReplicationTarget, model: Model): ()

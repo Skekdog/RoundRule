@@ -1,73 +1,26 @@
-local RunBeforeHit = require(script.Parent.RunBeforeHit)
-local RunOnHitClient = require(script.Parent.RunOnHitClient)
 local Types = require(script.Parent.Types)
 
 local module = {}
 
-function module.new(definition: Types.AnyItemDefinition, model: Types.MapObject?): Types.AnyItem
+function module.new(definition: Types.ItemComponents, model: Types.MapObject?): Types.Item
     if not model then
         model = if definition.Model then definition.Model:Clone() else nil
     end
 
-    if definition.Kind == "Item" then
-        return {
-            Kind = "Item",
-            Definition = definition,
-            Model = model,
+    local item: Types.Item = setmetatable({
+        Kind = "Item" :: "Item",
+        Definition = definition,
+        Components = {},
+    }, {
+        __index = function(self: Types.Item, index: string)
+            return if self.Components[index] ~= nil then self.Components[index] else self.Base[index]
+        end,
+        __newindex = function(self: Types.Item, index: string, value: any)
+            self.Components[index] = value
+        end,
+    }) :: any
 
-            PreventUnequip = definition.PreventUnequip,
-
-            Extras = {},
-        }
-    elseif definition.Kind == "Gun" then
-        return {
-            Kind = "Gun",
-            Definition = definition,
-            Model = model :: BasePart,
-
-            PreventUnequip = definition.PreventUnequip,
-
-            Ammo = definition.AmmoType.Capacity,
-            LastAttackTime = 0,
-
-            IsReloading = false,
-
-            Extras = {},
-
-            RunBeforeHit = RunBeforeHit,
-            RunOnHitClient = RunOnHitClient,
-        }
-    elseif definition.Kind == "Grenade" then
-        return {
-            Kind = "Grenade",
-            Definition = definition,
-            Model = model :: BasePart,
-
-            PreventUnequip = definition.PreventUnequip,
-
-            Extras = {},
-
-            RunBeforeHit = RunBeforeHit,
-            RunOnHitClient = RunOnHitClient,
-        }
-    elseif definition.Kind == "Melee" then
-        return {
-            Kind = "Melee",
-            Definition = definition,
-            Model = model :: BasePart,
-
-            PreventUnequip = definition.PreventUnequip,
-
-            LastAttackTime = 0,
-
-            Extras = {},
-
-            RunBeforeHit = RunBeforeHit,
-            RunOnHitClient = RunOnHitClient,
-        }
-    else
-        error("Unknown item kind: " .. definition.Kind)
-    end
+    return item
 end
 
 return module
