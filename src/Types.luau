@@ -241,6 +241,7 @@ export type Item = {
 } & ItemComponents
 
 export type ItemComponents = {
+    [any]: never,
     Name: string,
     DisplayName: string?,
 
@@ -329,7 +330,7 @@ export type ItemComponents = {
 
     PrimaryFireClient: FireClient?,
     PrimaryFireServer: (item: Item, participant: Participant, origin: Vector3, direction: Vector3) -> ()?,
-    PrimaryFireValidationClient: () -> ()?,
+    PrimaryValidationClient: (item: Item, targets: {BasePart}) -> ()?,
     PrimaryActivatedClient: (item: Item) -> ()?,
     PrimaryDeactivatedClient: (item: Item) -> ()?,
 
@@ -350,7 +351,7 @@ export type ItemComponents = {
 
     AlternateFireClient: FireClient?,
     AlternateFireServer: (item: Item, participant: Participant, origin: Vector3, direction: Vector3) -> ()?,
-    AlternateFireValidationClient: () -> ()?,
+    AlternateValidationClient: (item: Item) -> ()?,
     AlternateActivatedClient: (item: Item) -> ()?,
     AlternateDeactivatedClient: (item: Item) -> ()?,
 
