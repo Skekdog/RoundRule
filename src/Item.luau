@@ -21,6 +21,10 @@ function module.new(definition: Types.ItemComponents, model: Types.MapObject?): 
         end,
     }) :: any
 
+    if item.AmmoDefinition then
+        item.Ammo = item.AmmoDefinition.Capacity
+    end
+
     return item
 end
 
