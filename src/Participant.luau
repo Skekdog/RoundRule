@@ -5,8 +5,8 @@ local ForEachPart = require(ReplicatedStorage.Shared.RoundRule.Common.ForEachPar
 local GetPrimaryPart = require(ReplicatedStorage.Shared.RoundRule.Common.GetPrimaryPart)
 local AmmoBox = require(script.Parent.AmmoBox)
 local Corpse = require(script.Parent.Corpse)
+local DamageSource = require(script.Parent.DamageSource)
 local Defaults = require(script.Parent.Defaults)
-local IsPassiveDamageSource = require(script.Parent.IsPassiveDamageSource)
 local Item = require(script.Parent.Item)
 local Ragdoll = require(script.Parent.Ragdoll)
 local Replication = require(script.Parent.Replication)
@@ -32,7 +32,7 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
     end
 
     local attacker = params.Attacker
-    if not attacker and IsPassiveDamageSource(params.Source) then
+    if not attacker and DamageSource.IsPassive(params.Source) then
         attacker = participant:GetLastDamagedBy()
     end
     params.Attacker = attacker
