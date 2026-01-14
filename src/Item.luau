@@ -11,7 +11,9 @@ function module.new(definition: Types.ItemComponents, model: Types.MapObject?): 
         Kind = "Item" :: "Item",
         Extras = {},
         Base = definition,
-        Components = {},
+        Components = {
+            Model = model
+        },
     }, {
         __index = function(self: Types.Item, index: string)
             return if self.Components[index] ~= nil then self.Components[index] else self.Base[index]
