@@ -1,6 +1,7 @@
 local InsertService = game:GetService("InsertService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local ForEachPart = require(ReplicatedStorage.Shared.RoundRule.Common.ForEachPart)
 local GetPrimaryPart = require(ReplicatedStorage.Shared.RoundRule.Common.GetPrimaryPart)
 local AmmoBox = require(script.Parent.AmmoBox)
@@ -723,7 +724,7 @@ local function SpawnCharacter(participant: Types.Participant): ()
 
     participant:_setStatus("Alive")
 
-    participant.Player.CharacterAppearanceLoaded:Once(function(char)
+    local function onCharLoaded(char: Model): ()
         local hum = char:WaitForChild("Humanoid")
         assert(hum:IsA("Humanoid"), "Humanoid is not a Humanoid!?")
 
@@ -795,9 +796,20 @@ local function SpawnCharacter(participant: Types.Participant): ()
         if participant.Round.Gamemode.OnCharacterAdded then
             participant.Round.Gamemode.OnCharacterAdded(participant.Round, participant)
         end
-    end)
+    end
 
-    participant.Player:LoadCharacterAsync()
+    if RunService:IsStudio() then
+        local char = script.Parent.Assets.TestDummy:Clone()
+        char.OnDamage:Destroy()
+        char:RemoveTag("Prop")
+        char.Name = participant.Player.Name
+        char.Parent = workspace.Characters :: any
+        participant.Player.Character = char
+        onCharLoaded(char)
+    else
+        participant.Player.CharacterAppearanceLoaded:Once(onCharLoaded)
+        participant.Player:LoadCharacterAsync()
+    end
 end
 
 local function DespawnCharacter(participant: Types.Participant): ()
