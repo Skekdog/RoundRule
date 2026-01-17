@@ -330,7 +330,7 @@ export type ItemComponents = {
 
     PrimaryFireClient: FireClient?,
     PrimaryFireServer: (item: Item, participant: Participant, origin: Vector3, direction: Vector3) -> ()?,
-    PrimaryValidationClient: (item: Item, targets: {BasePart}) -> ()?,
+    PrimaryRayValidationClient: (item: Item, part: BasePart?) -> ()?,
     PrimaryActivatedClient: (item: Item) -> ()?,
     PrimaryDeactivatedClient: (item: Item) -> ()?,
 
