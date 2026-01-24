@@ -244,6 +244,8 @@ export type Item = {
     SetServerData: (item: Item, action: "Primary" | "Alternate", data: unknown) -> (),
     GetServerData: (item: Item, action: "Primary" | "Alternate") -> unknown,
 
+    ResetLastUse: (item: Item, action: "Primary" | "Alternate") -> (),
+
     Base: ItemComponents,
     Components: ItemComponents,
 } & ItemComponents

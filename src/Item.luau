@@ -23,6 +23,14 @@ local function GetServerData(item: Types.Item, action: "Primary" | "Alternate"):
     return data
 end
 
+local function ResetLastUse(item: Types.Item, action: "Primary" | "Alternate"): ()
+    if action == "Primary" and item.PrimaryLastUse then
+        item.PrimaryLastUse = 0
+    elseif action == "Alternate" and item.AlternateLastUse then
+        item.AlternateLastUse = 0
+    end
+end
+
 function module.new(definition: Types.ItemComponents, model: Types.MapObject?): Types.Item
     if not model then
         model = if definition.Model then definition.Model:Clone() else nil
@@ -38,6 +46,8 @@ function module.new(definition: Types.ItemComponents, model: Types.MapObject?): 
 
         SetServerData = SetServerData,
         GetServerData = GetServerData,
+
+        ResetLastUse = ResetLastUse,
     }, {
         __index = function(self: Types.Item, index: string)
             return if self.Components[index] ~= nil then self.Components[index] else self.Base[index]
