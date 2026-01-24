@@ -62,6 +62,7 @@ export type ExplosionParams = {
     Definition: ExplosionInfo,
     Attacker: Participant?,
     Position: Vector3,
+    SourceItem: ItemComponents?,
 }
 
 export type DamageParams = {
@@ -231,10 +232,17 @@ export type ItemGroup = {
 }
 
 export type FireClient = (item: Item, origin: Vector3, direction: Vector3) -> ()
+export type FireServer = (item: Item, origin: Vector3, direction: Vector3, participant: Participant, data: unknown) -> {string} | string?
 
 export type Item = {
     Kind: "Item",
     Extras: Extras,
+
+    _additionalPrimaryServerData: unknown,
+    _additionalAlternateServerData: unknown,
+
+    SetServerData: (item: Item, action: "Primary" | "Alternate", data: unknown) -> (),
+    GetServerData: (item: Item, action: "Primary" | "Alternate") -> unknown,
 
     Base: ItemComponents,
     Components: ItemComponents,
@@ -329,8 +337,7 @@ export type ItemComponents = {
     PrimaryToggled: boolean?,
 
     PrimaryFireClient: FireClient?,
-    PrimaryFireServer: (item: Item, participant: Participant, origin: Vector3, direction: Vector3) -> ()?,
-    PrimaryRayValidationClient: (item: Item, part: BasePart?) -> ()?,
+    PrimaryFireServer: FireServer?,
     PrimaryActivatedClient: (item: Item) -> ()?,
     PrimaryDeactivatedClient: (item: Item) -> ()?,
 
@@ -350,8 +357,7 @@ export type ItemComponents = {
     AlternateToggled: boolean?,
 
     AlternateFireClient: FireClient?,
-    AlternateFireServer: (item: Item, participant: Participant, origin: Vector3, direction: Vector3) -> ()?,
-    AlternateValidationClient: (item: Item) -> ()?,
+    AlternateFireServer: FireServer?,
     AlternateActivatedClient: (item: Item) -> ()?,
     AlternateDeactivatedClient: (item: Item) -> ()?,
 

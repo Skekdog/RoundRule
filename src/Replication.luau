@@ -182,7 +182,7 @@ function module.Reset(): ()
     module.ReplicateWinner()
 end
 
-function module.RunOnHitClient(item: Types.Item, participant: Types.Participant, hitPart: BasePart): ()
+function module.RunOnHitClient(item: Types.ItemComponents, participant: Types.Participant, hitPart: BasePart): ()
 	remotes.RunOnHitClient:FireClient(participant.Player, item.Name, hitPart)
 end
 
