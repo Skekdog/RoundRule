@@ -231,7 +231,7 @@ export type ItemGroup = {
     PreferredSlot: number?,
 }
 
-export type FireClient = (item: Item, origin: Vector3, direction: Vector3) -> ()
+export type FireClient = (item: Item, origin: Vector3, direction: Vector3) -> string | {string} | boolean
 export type FireServer = (item: Item, origin: Vector3, direction: Vector3, participant: Participant, data: unknown) -> {string} | string?
 
 export type Item = {
