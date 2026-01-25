@@ -329,6 +329,7 @@ export type ItemComponents = {
 
     PrimaryAnimation: Content?,
     PrimarySound: Sound?,
+    HitSound: Sound?,
 
     PrimaryDisabled: boolean?,
     PrimaryHint: string?,
