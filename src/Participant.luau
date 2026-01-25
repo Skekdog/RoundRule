@@ -803,8 +803,8 @@ local function SpawnCharacter(participant: Types.Participant): ()
         char.OnDamage:Destroy()
         char:RemoveTag("Prop")
         char.Name = participant.Player.Name
-        char.Parent = workspace.Characters :: any
         participant.Player.Character = char
+        char.Parent = workspace.Characters :: any
         onCharLoaded(char)
     else
         participant.Player.CharacterAppearanceLoaded:Once(onCharLoaded)
