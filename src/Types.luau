@@ -47,6 +47,8 @@ export type ExplosionInfo = {
     BeforeHitAnything: BeforeHitAnythingExplosionInfo?,
     BeforeHitParticipant: BeforeHitParticipantExplosionInfo?,
     BeforeHitProp: BeforeHitPropExplosionInfo?,
+
+    FilterImpulse: ((ExplosionInfo, participant: Participant) -> boolean?)?,
 }
 
 export type CorpseIcon = {
