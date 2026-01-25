@@ -12,15 +12,9 @@ end
 
 local function GetServerData(item: Types.Item, action: "Primary" | "Alternate"): ()
     if action == "Primary" then
-        local data = item._additionalPrimaryServerData
-        item:SetServerData(action, nil)
-        return data
+        return item._additionalPrimaryServerData
     end
-
-    local data = item._additionalAlternateServerData
-    item:SetServerData(action, nil)
-
-    return data
+    return item._additionalAlternateServerData
 end
 
 local function ResetLastUse(item: Types.Item, action: "Primary" | "Alternate"): ()
