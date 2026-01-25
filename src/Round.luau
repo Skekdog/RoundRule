@@ -425,15 +425,21 @@ local function loadProp(round: Types.Round, model: Types.MapObject): Types.Prop
     return prop
 end
 
-local function LoadItem(round: Types.Round, model: Types.MapObject): Types.Item
-    local existingItem = round:GetItem(model)
-    if existingItem then
-        return existingItem
+local function LoadItem(round: Types.Round, components: Types.ItemComponents, model: Types.MapObject?): Types.Item
+    if model then
+        local existingItem = round:GetItem(model)
+        if existingItem then
+            return existingItem
+        end
     end
 
-    local definition = round:GetItemDefinition(model.Name) or error(`Item {model.Name} does not exist in map or gamemode`)
+    local item = Item.new(components, model)
+    model = item.Model
 
-    local item = Item.new(definition, model)
+    if not model then
+        return item
+    end
+
     round._items[model] = item
 
     model:SetAttribute("StoredAmmo", item.Ammo)
@@ -460,6 +466,19 @@ local function LoadItem(round: Types.Round, model: Types.MapObject): Types.Item
             participant:AddItem(item)
         end)
     end)
+
+    return item
+end
+
+local function LoadItemFromMapObject(round: Types.Round, model: Types.MapObject): Types.Item
+    local existingItem = round:GetItem(model)
+    if existingItem then
+        return existingItem
+    end
+
+    local definition = round:GetItemDefinition(model.Name) or error(`Item {model.Name} does not exist in map or gamemode`)
+
+    local item = round:LoadItem(definition, model)
 
     return item
 end
@@ -534,7 +553,7 @@ local function LoadProp(round: Types.Round, model: Types.MapObject): Types.Prop
     end
 
     if model:HasTag("Item") then
-        round:LoadItem(model)
+        round:LoadItemFromMapObject(model)
         model:AddTag("Interactable")
     elseif model:HasTag("AmmoBox") then
         loadAmmoBox(round, model)
@@ -858,6 +877,7 @@ function module.new(gamemode: Types.GamemodeDefinition): Types.Round
         _items = {},
         GetItems = GetItems,
         GetItem = GetItem,
+        LoadItemFromMapObject = LoadItemFromMapObject,
         LoadItem = LoadItem,
 
         GetAmmoDefinition = GetAmmoDefinition,

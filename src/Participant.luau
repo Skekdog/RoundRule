@@ -8,7 +8,6 @@ local AmmoBox = require(script.Parent.AmmoBox)
 local Corpse = require(script.Parent.Corpse)
 local DamageSource = require(script.Parent.DamageSource)
 local Defaults = require(script.Parent.Defaults)
-local Item = require(script.Parent.Item)
 local Ragdoll = require(script.Parent.Ragdoll)
 local Replication = require(script.Parent.Replication)
 local Types = require(script.Parent.Types)
@@ -169,7 +168,7 @@ function module.SetRole(participant: Types.Participant, role: Types.RoleDefiniti
     participant:AddCredits(role.StartingCredits or 0)
     if role.StartingItems then
         for _, v in role.StartingItems do
-            participant:AddItem(Item.new(v))
+            participant:AddItem(participant.Round:LoadItem(v))
         end
     end
 
@@ -668,7 +667,7 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
     participant:SetCredits(participant:GetCredits() - itemDefinition.Cost)
     participant.ItemPurchases[itemDefinition.Name] = (participant.ItemPurchases[itemDefinition.Name] or 0) + 1
 
-    local item = Item.new(itemDefinition)
+    local item = participant.Round:LoadItem(itemDefinition)
     participant:AddItem(item)
 
     return "Success"
@@ -780,13 +779,13 @@ local function SpawnCharacter(participant: Types.Participant): ()
         char.Parent = charsFolder
 
         for _, v in participant.Round.Gamemode.StartingItems do
-            participant:AddItem(Item.new(v))
+            participant:AddItem(participant.Round:LoadItem(v))
         end
 
         local startingItems = participant:GetRole().Definition.StartingItems
         if startingItems then
             for _, v in startingItems do
-                participant:AddItem(Item.new(v))
+                participant:AddItem(participant.Round:LoadItem(v))
             end
         end
 
