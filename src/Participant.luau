@@ -979,7 +979,7 @@ local function tryGetAnimator(participant: Types.Participant): Animator?
         return nil
     end
 
-    return hum:FindFirstChildOfClass("Animator")
+    return hum:FindFirstChildOfClass("Animator") or Instance.new("Animator", hum)
 end
 
 local function TryPlayAnimation(participant: Types.Participant, content: Content, name: string): AnimationTrack?
