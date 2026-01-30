@@ -87,6 +87,7 @@ local function spawnParticipant(participant: Types.Participant): ()
 end
 
 local function LoadBoss(round: Types.Round, boss: Types.BossDefinition): ()
+    round:GetMap().Structure.Static:SetAttribute("BossSpawned", true)
     round:LoadGamemode(boss.Gamemode)
 
     local prop = round:LoadProp(boss.Model:Clone())
