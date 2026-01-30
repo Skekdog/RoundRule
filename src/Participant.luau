@@ -253,6 +253,12 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.Item?
         return
     end
 
+    local char = participant:GetCharacter()
+
+    if item and not force and char and char:GetAttribute("IsRagdolled") then
+        return
+    end
+
     if lastItem and round.Gamemode.OnItemEquipped then
         round.Gamemode.OnItemEquipped(round, participant, lastItem, false)
     end
@@ -263,7 +269,6 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.Item?
 
     participant:TryStopAnimation("HoldItem")
 
-    local char = participant:GetCharacter()
     if char then
         local lastModel = char:FindFirstChild("Item")
         if lastModel then

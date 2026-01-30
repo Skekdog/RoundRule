@@ -2,8 +2,10 @@ local Types = require(script.Parent.Types)
 
 local Ragdoll = {}
 
-function Ragdoll.Ragdoll(char: Model): ()
+function Ragdoll.Ragdoll(participant: Types.Participant, char: Model): ()
 	char:SetAttribute("IsRagdolled", true)
+
+	participant:SetEquippedItem(nil)
 
 	for _, constraint in char:QueryDescendants("AnimationConstraint:not(#Root)") do
 		assert(constraint:IsA("AnimationConstraint"))
@@ -37,7 +39,7 @@ function Ragdoll.MakeCorpse(participant: Types.Participant, char: Model): Model
 	char:AddTag("Prop")
 	char.Parent = workspace.Characters
 	participant.Player.Character = nil
-	Ragdoll.Ragdoll(char)
+	Ragdoll.Ragdoll(participant, char)
 	participant._character = nil
 	participant.Round:LoadProp(char)
 	char:SetAttribute("Unidentified", true)
