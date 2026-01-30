@@ -279,16 +279,35 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.Item?
         local model = item.Model:Clone();
         (model :: Instance).Name = "Item"
 
-        local motor = Instance.new("Motor6D")
-        motor.Part0 = char:FindFirstChild("RightHand") :: BasePart?
-        motor.Part1 = if model:IsA("Model") then model.PrimaryPart else model
+        local hand = char:FindFirstChild("RightHand")
+        if hand and hand:IsA("BasePart") then
+            local animationConstraint = Instance.new("AnimationConstraint")
+            animationConstraint.Name = "ItemGrip"
+            animationConstraint.IsKinematic = true
 
-        local c1 = model:GetAttribute("AnimC1")
-        if typeof(c1) == "CFrame" then
-            motor.C1 = c1
+            local attachment0 = hand:FindFirstChild("ItemAttachment") or Instance.new("Attachment")
+            assert(attachment0:IsA("Attachment"))
+            attachment0.Name = "ItemAttachment"
+            attachment0.Parent = hand
+
+            local primaryPart = GetPrimaryPart(model)
+            local attachment1 = primaryPart:FindFirstChild("ItemAttachment") or Instance.new("Attachment")
+            assert(attachment1:IsA("Attachment"))
+            attachment1.Name = "ItemAttachment"
+            attachment1.Parent = primaryPart
+
+            animationConstraint.Attachment0 = attachment0
+            animationConstraint.Attachment1 = attachment1
+
+            local c1 = model:GetAttribute("AnimC1")
+            if typeof(c1) == "CFrame" then
+                attachment1.CFrame = c1
+            else
+                attachment1.CFrame = CFrame.identity
+            end
+
+            animationConstraint.Parent = model
         end
-
-        motor.Parent = model
 
         ForEachPart(model, function(part)
             part.Massless = true
