@@ -77,10 +77,7 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
 
     local char = participant:GetCharacter()
     if char then
-        char = Ragdoll(char)
-        participant._character = nil
-        round:LoadProp(char)
-        char:SetAttribute("Unidentified", true)
+        char = Ragdoll.MakeCorpse(participant, char)
 
         local deathSound = char:FindFirstChild("DeathSound", true)
         if not params.IsHeadshot and deathSound and deathSound:IsA("Sound") then
