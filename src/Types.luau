@@ -395,7 +395,7 @@ export type BossDefinition = {
     GamepassId: number?,
     Model: MapObject,
 
-    Gamemode: GamemodeDefinition?,
+    Gamemode: GamemodeDefinition,
 
     OnSummon: (boss: BossDefinition, model: Prop) -> (),
 }
@@ -697,6 +697,8 @@ export type Round = {
     Gamemode: GamemodeDefinition,
 
     LoadBoss: (Round, definition: BossDefinition) -> (),
+
+    LoadGamemode: (Round, gamemode: GamemodeDefinition) -> (),
 
     MinimumRequiredPlayers: number,
 

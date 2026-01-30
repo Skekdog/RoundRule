@@ -4,7 +4,6 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
-local Boss = require(ReplicatedStorage.Shared.GameDefinition.Gamemodes.Common.Boss)
 local ForEachPart = require(ReplicatedStorage.Shared.RoundRule.Common.ForEachPart)
 local GetDisplayName = require(ReplicatedStorage.Shared.RoundRule.Common.GetDisplayName)
 local GetTaggedDescendants = require(ReplicatedStorage.Shared.RoundRule.Common.GetTaggedDescendants)
@@ -27,6 +26,17 @@ local HIGHLIGHTS_TIME = 20
 local PREPARING_TIME = 20
 
 local lastMap: Types.Map?
+
+local function removeInvalidItems(round: Types.Round): ()
+    for _, v in round:GetParticipants() do
+        for _, item in v:GetItems() do
+            assert(item)
+            if not round:GetItemDefinition(item.Name) then
+                v:RemoveItem(item)
+            end
+        end
+    end
+end
 
 local function IsPreGame(round: Types.Round): boolean
     return round:GetPhase() == "Waiting" or round:GetPhase() == "Preparing"
@@ -77,10 +87,48 @@ local function spawnParticipant(participant: Types.Participant): ()
 end
 
 local function LoadBoss(round: Types.Round, boss: Types.BossDefinition): ()
+    round:LoadGamemode(boss.Gamemode)
+
     local prop = round:LoadProp(boss.Model:Clone())
     boss.OnSummon(boss, prop)
+end
 
-    round.Gamemode = Boss
+local function LoadGamemode(round: Types.Round, gamemode: Types.GamemodeDefinition): ()
+    round.Gamemode = gamemode
+
+    removeInvalidItems(round)
+
+    round:SetPhase("Waiting", 0)
+
+    if round._heartbeat then
+        round._heartbeat:Disconnect()
+    end
+
+    local roles: {[string]: Types.Role} = {}
+    for _, v in gamemode.Roles do
+        roles[v.Name] = Role.fromDefinition(v)
+    end
+
+    round._roles = roles
+
+    round.MinimumRequiredPlayers = if typeof(gamemode.MinimumPlayers) == "number" then gamemode.MinimumPlayers else gamemode.MinimumPlayers()
+
+    local count = 0
+    for _, v in round:GetParticipants() do
+        assert(v)
+        count += 1
+        v:SetRole()
+        v:SetCredits(0)
+        if not v:IsAlive() then
+            v:SpawnCharacter()
+        end
+    end
+
+    if count == round.MinimumRequiredPlayers then
+        round:SetPhase("Preparing", PREPARING_TIME)
+    end
+
+    Replication.ReplicateGamemode(gamemode)
 end
 
 local function AddPlayer(round: Types.Round, player: Player, karma: number?): Types.Participant
@@ -825,14 +873,7 @@ local function LoadMap(round: Types.Round, structure: Types.MapStructure): ()
             v:MoveToSpawn()
         end
     end)
-    for _, v in round:GetParticipants() do
-        for _, item in v:GetItems() do
-            assert(item)
-            if not round:GetItemDefinition(item.Name) then
-                v:RemoveItem(item)
-            end
-        end
-    end
+    removeInvalidItems(round)
 
     Replication.ReplicateMap()
 end
@@ -930,6 +971,7 @@ function module.new(gamemode: Types.GamemodeDefinition): Types.Round
         SendMessage = SendMessage,
 
         LoadBoss = LoadBoss,
+        LoadGamemode = LoadGamemode,
     }
 
     Replication.ReplicateRoundPhase(round:GetPhase())
