@@ -70,6 +70,17 @@ function Map.new(structure: Types.MapStructure): Types.Map
         end
     end
 
+    local bosses: {[string]: Types.BossDefinition} = {}
+    local bossesFolder = structure:FindFirstChild("Bosses")
+    if bossesFolder then
+        for _, module in bossesFolder:GetChildren() do
+            if module:IsA("ModuleScript") then
+                local definition: Types.BossDefinition = (require :: any)(module).Definition
+                bosses[definition.Name] = definition
+            end
+        end
+    end
+
     local name = structure.Name
     local originalNameAttr = structure:GetAttribute("OriginalName")
     if typeof(originalNameAttr) == "string" then
@@ -90,6 +101,7 @@ function Map.new(structure: Types.MapStructure): Types.Map
         InteractableDefinitions = interactables,
         ItemDefinitions = items,
         AmmoDefinitions = ammo,
+        Bosses = bosses,
     }
 end
 

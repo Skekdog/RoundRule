@@ -389,6 +389,17 @@ export type AmmoDefinition = {
     CanDrop: boolean,
 }
 
+export type BossDefinition = {
+    Name: string,
+    DisplayName: string?,
+    GamepassId: number?,
+    Model: MapObject,
+
+    Gamemode: GamemodeDefinition?,
+
+    OnSummon: (boss: BossDefinition, model: Prop) -> (),
+}
+
 export type MapStructure = Instance & {
     Static: Instance,
     Dynamic: Instance,
@@ -404,6 +415,7 @@ export type MapStructure = Instance & {
     InteractableDefinitions: Instance?,
     ItemDefinitions: Instance?,
     AmmoDefinitions: Instance?,
+    Bosses: Instance?,
 
     MaterialVariants: Instance?,
 }
@@ -422,6 +434,8 @@ export type Map = {
     InteractableDefinitions: {[string]: InteractableDefinition},
     ItemDefinitions: {[string]: ItemComponents},
     AmmoDefinitions: {[string]: AmmoDefinition},
+
+    Bosses: {[string]: BossDefinition},
 }
 
 export type Role = {
@@ -681,6 +695,8 @@ export type GameConfig = {
 export type Round = {
     Config: GameConfig,
     Gamemode: GamemodeDefinition,
+
+    LoadBoss: (Round, definition: BossDefinition) -> (),
 
     MinimumRequiredPlayers: number,
 

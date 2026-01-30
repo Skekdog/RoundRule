@@ -4,6 +4,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
+local Boss = require(ReplicatedStorage.Shared.GameDefinition.Gamemodes.Common.Boss)
 local ForEachPart = require(ReplicatedStorage.Shared.RoundRule.Common.ForEachPart)
 local GetDisplayName = require(ReplicatedStorage.Shared.RoundRule.Common.GetDisplayName)
 local GetTaggedDescendants = require(ReplicatedStorage.Shared.RoundRule.Common.GetTaggedDescendants)
@@ -73,6 +74,13 @@ local function spawnParticipant(participant: Types.Participant): ()
     end
 
     participant:SpawnCharacter()
+end
+
+local function LoadBoss(round: Types.Round, boss: Types.BossDefinition): ()
+    local prop = round:LoadProp(boss.Model:Clone())
+    boss.OnSummon(boss, prop)
+
+    round.Gamemode = Boss
 end
 
 local function AddPlayer(round: Types.Round, player: Player, karma: number?): Types.Participant
@@ -920,6 +928,8 @@ function module.new(gamemode: Types.GamemodeDefinition): Types.Round
         LoadProp = LoadProp,
 
         SendMessage = SendMessage,
+
+        LoadBoss = LoadBoss,
     }
 
     Replication.ReplicateRoundPhase(round:GetPhase())
