@@ -279,7 +279,6 @@ export type ItemComponents = {
     IsSilent: boolean?,
     CanHeadshot: boolean?,
 
-    UseAttack: boolean?,
     AmmoDefinition: AmmoDefinition?,
     Ammo: number?,
 
