@@ -1,14 +1,13 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local ForEachPart = require(ReplicatedStorage.Shared.RoundRule.Common.ForEachPart)
 local Types = require(script.Parent.Types)
 local module = {}
 
 module.Tags = {"Prop", "Item", "AmmoBox", "Interactable", "Corpse"}
 
 local function destroyProp(prop: Types.Prop, params: Types.DamageParams): ()
-    local onBreak = prop.Model:FindFirstChild("OnBreak")
-    if onBreak and onBreak:IsA("ModuleScript") then
-        ((require)(onBreak) :: Types.OnPropBreak)(prop, params)
-    end
-
+    prop.OnBreak(prop, params)
     prop.Model:Destroy()
 end
 
@@ -18,6 +17,15 @@ local function tryRunOnDamage(prop: Types.Prop, params: Types.DamageParams): boo
         return ((require)(onDamage) :: Types.OnPropBreak)(prop, params)
     end
     return true
+end
+
+local function OnBreak(prop: Types.Prop, params: Types.DamageParams): ()
+    local onBreak = prop.Model:FindFirstChild("OnBreak")
+    if onBreak and onBreak:IsA("ModuleScript") then
+        -- To allow the OnBreak script to continue running after the prop is destroyed :ghost:
+        prop.OnBreak = ((require)(onBreak) :: Types.OnPropBreak)
+        prop.OnBreak(prop, params)
+    end
 end
 
 local function GetHealth(prop: Types.Prop): number?
@@ -30,6 +38,8 @@ local function SetHealth(prop: Types.Prop, health: number): ()
 end
 
 local function TryTakeDamage(prop: Types.Prop, params: Types.DamageParams, deferDeath: boolean?): boolean
+    assert(prop.Round)
+
     local health = prop:GetHealth()
     if health and health <= 0 then
         return false
@@ -69,14 +79,16 @@ local function TryTakeDamage(prop: Types.Prop, params: Types.DamageParams, defer
     return true
 end
 
-function module.new(model: Types.MapObject, round: Types.Round): Types.Prop
+function module.new(model: Types.MapObject, round: Types.Round?, interactable: Types.InteractableDefinition?): Types.Prop
     local health = model:GetAttribute("Health")
     assert((typeof(health) == "number") or typeof(health) == "nil")
 
-    return {
+    local prop: Types.Prop = {
         Kind = "Prop",
         Model = model,
         Extras = {},
+
+        Interactable = interactable,
 
         Round = round,
 
@@ -85,7 +97,22 @@ function module.new(model: Types.MapObject, round: Types.Round): Types.Prop
         GetHealth = GetHealth,
         SetHealth = SetHealth,
         TryTakeDamage = TryTakeDamage,
+        OnBreak = interactable and interactable.OnBreakServer or OnBreak,
     }
+
+    if interactable then
+        ForEachPart(model, function(part)
+            part.CollisionGroup = "Interactables"
+        end)
+
+        if RunService:IsClient() and interactable.OnLoadClient then
+            interactable.OnLoadClient(prop)
+        elseif RunService:IsServer() and interactable.OnLoadServer then
+            interactable.OnLoadServer(prop)
+        end
+    end
+
+    return prop
 end
 
 return module

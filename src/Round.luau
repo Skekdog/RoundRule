@@ -9,7 +9,6 @@ local GetDisplayName = require(ReplicatedStorage.Shared.RoundRule.Common.GetDisp
 local GetTaggedDescendants = require(ReplicatedStorage.Shared.RoundRule.Common.GetTaggedDescendants)
 local HasTag = require(ReplicatedStorage.Shared.RoundRule.Common.HasAnyTag)
 local AmmoBox = require(script.Parent.AmmoBox)
-local Interactable = require(script.Parent.Interactable)
 local Item = require(script.Parent.Item)
 local Map = require(script.Parent.Map)
 local Participant = require(script.Parent.Participant)
@@ -473,12 +472,12 @@ local function GetProp(round: Types.Round, model: Types.MapObject): Types.Prop?
     return round._props[model]
 end
 
-local function loadProp(round: Types.Round, model: Types.MapObject): Types.Prop
+local function loadProp(round: Types.Round, model: Types.MapObject, interactable: Types.InteractableDefinition?): Types.Prop
     if not model.Parent then
         (model :: Instance).Parent = round:GetMap().Structure.Dynamic
     end
     model:AddTag("Prop")
-    local prop = Prop.new(model, round)
+    local prop = Prop.new(model, round, interactable)
     return prop
 end
 
@@ -590,7 +589,11 @@ local function loadAmmoBox(round: Types.Round, model: Types.MapObject): ()
     }
 end
 
-local function loadInteractable(round: Types.Round, model: Types.MapObject): ()
+local function loadInteractable(round: Types.Round, model: Types.MapObject): Types.InteractableDefinition?
+    if not model:HasTag("Interactable") then
+        return nil
+    end
+
     local name = model.Name
     if model:HasTag("Door") then
         name = "Door"
@@ -600,7 +603,7 @@ local function loadInteractable(round: Types.Round, model: Types.MapObject): ()
         name = "Item"
     end
     local definition = round:GetInteractableDefinition(name) or error(`Interactable {name} does not exist in map or gamemode`)
-    round:AddInteractable(definition, model)
+    return definition
 end
 
 local function LoadProp(round: Types.Round, model: Types.MapObject): Types.Prop
@@ -616,11 +619,7 @@ local function LoadProp(round: Types.Round, model: Types.MapObject): Types.Prop
         loadAmmoBox(round, model)
     end
 
-    if model:HasTag("Interactable") then
-        loadInteractable(round, model)
-    end
-
-    local prop = loadProp(round, model)
+    local prop = loadProp(round, model, loadInteractable(round, model))
 
     round._props[model] = prop
     return prop
@@ -640,37 +639,6 @@ end
 
 local function GetAmmoBox(round: Types.Round, model: Types.MapObject): Types.AmmoBox?
     return round._ammoBoxes[model]
-end
-
-local function GetInteractables(round: Types.Round): {[Types.MapObject]: Types.Interactable}
-    return round._interactables :: {[Types.MapObject]: Types.Interactable}
-end
-
-function module.GetInteractable(round: Types.Round, model: Types.MapObject): Types.Interactable?
-    return round._interactables[model]
-end
-
-local function AddInteractable(round: Types.Round, definition: Types.InteractableDefinition, object: Types.MapObject?, deferLoad: boolean?): Types.Interactable
-    if object then
-        local existing = round:GetInteractable(object)
-        if existing then
-            return existing
-        end
-    end
-    local interactable = Interactable.new(definition, object)
-    interactable.Round = round
-
-    round._interactables[interactable.Model] = interactable
-
-    if interactable.Definition.OnLoadServer then
-        if deferLoad then
-            task.defer(interactable.Definition.OnLoadServer, interactable)
-        else
-            interactable.Definition.OnLoadServer(interactable)
-        end
-    end
-
-    return interactable
 end
 
 local function GetRoleFromRoleName(round: Types.Round, name: string): Types.Role
@@ -905,8 +873,6 @@ function module.new(gamemode: Types.GamemodeDefinition): Types.Round
 
         MinimumRequiredPlayers = if typeof(gamemode.MinimumPlayers) == "number" then gamemode.MinimumPlayers else gamemode.MinimumPlayers(),
 
-        AddInteractable = AddInteractable,
-
         Extras = {},
 
         LoadMap = LoadMap,
@@ -941,10 +907,6 @@ function module.new(gamemode: Types.GamemodeDefinition): Types.Round
         _ammoBoxes = {},
         GetAmmoBoxes = GetAmmoBoxes,
         GetAmmoBox = GetAmmoBox,
-
-        _interactables = {},
-        GetInteractables = GetInteractables,
-        GetInteractable = module.GetInteractable,
 
         AddEvent = AddEvent,
         GetEventLog = GetEventLog,

@@ -202,31 +202,15 @@ export type InteractableDefinition = {
     IsContinuousInteraction: boolean,
     InteractionRange: number,
 
-    OnInteractClient: ((object: Interactable) -> ())?,
-    OnInteractServer: ((object: Interactable, participant: Participant) -> ())?,
+    OnInteractClient: ((object: Prop) -> ())?,
+    OnInteractServer: ((object: Prop, participant: Participant) -> ())?,
 
-    OnLoadClient: ((object: Interactable) -> ())?,
-    OnLoadServer: ((object: Interactable) -> ())?,
+    OnLoadClient: ((object: Prop) -> ())?,
+    OnLoadServer: ((object: Prop) -> ())?,
 
-    OnBreakServer: ((object: Interactable, params: DamageParams) -> ())?,
+    OnBreakServer: ((object: Prop, params: DamageParams) -> ())?,
 
-    BeforeTakeDamage: ((object: Interactable, params: DamageParams) -> boolean)?,
-}
-
-export type Interactable = {
-    Kind: "Interactable",
-    Definition: InteractableDefinition,
-    Model: MapObject,
-
-    Round: Round?,
-    Extras: Extras,
-
-    HintTextClient: string?,
-
-    _health: number?,
-    GetHealth: (Interactable) -> number?,
-    SetHealth: (Interactable, health: number) -> (),
-    TryTakeDamage: (Interactable, params: DamageParams, deferDeath: boolean?) -> boolean,
+    BeforeTakeDamage: ((object: Prop, params: DamageParams) -> boolean)?,
 }
 
 export type ItemGroup = {
@@ -674,13 +658,17 @@ export type Prop = {
     Model: MapObject,
     Extras: Extras,
 
-    Round: Round,
+    Interactable: InteractableDefinition?,
+    HintTextClient: string?,
+
+    Round: Round?,
 
     _health: number?,
     GetHealth: (Prop) -> number?,
     SetHealth: (Prop, health: number) -> (),
 
     TryTakeDamage: (Prop, params: DamageParams, deferDeath: boolean?) -> boolean,
+    OnBreak: OnPropBreak,
 }
 
 export type GameConfig = {
@@ -721,16 +709,10 @@ export type Round = {
     GetAmmoBoxes: (Round) -> {[MapObject]: AmmoBox},
     GetAmmoBox: (Round, part: MapObject) -> AmmoBox?,
 
-    _interactables: {[MapObject]: Interactable?},
-    GetInteractables: (Round) -> {[MapObject]: Interactable},
-    GetInteractable: (Round, part: MapObject) -> Interactable?,
-
     _props: {[MapObject]: Prop?},
     GetProps: (Round) -> {[MapObject]: Prop},
     GetProp: (Round, model: MapObject) -> Prop?,
     LoadProp: (Round, model: MapObject) -> Prop,
-
-    AddInteractable: (Round, definition: InteractableDefinition, object: MapObject?, deferLoad: boolean?) -> Interactable,
 
     _participants: {[string]: Participant?},
     GetParticipant: (Round, identifier: string | Player | Model) -> Participant?,
