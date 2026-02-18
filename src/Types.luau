@@ -78,6 +78,8 @@ export type DamageParams = {
     IsHeadshot: boolean?,
     Source: DamageSource,
 
+    Projectile: MapObject?,
+
     Attacker: Participant?,
 
     IgnoreKarma: boolean?,
