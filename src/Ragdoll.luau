@@ -5,6 +5,7 @@ local Ragdoll = {}
 
 function Ragdoll.Ragdoll(participant: Types.Participant, char: Model): ()
 	char:SetAttribute("IsRagdolled", true)
+	char:AddTag("Ragdoll")
 
 	participant:SetEquippedItem(nil)
 	Replication.SetEquippedItem(participant.Player, nil)
@@ -73,6 +74,7 @@ function Ragdoll.Unragdoll(char: Model): ()
 	end
 
 	char:SetAttribute("IsRagdolled", nil)
+	char:RemoveTag("Ragdoll")
 end
 
 return Ragdoll
