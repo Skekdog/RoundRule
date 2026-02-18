@@ -63,6 +63,10 @@ function module.UpdateInventory(target: ReplicationTarget, mode: "Add" | "Remove
 	fireToTargets(remotes.UpdateInventory, target, mode, item, components)
 end
 
+function module.SetEquippedItem(target: ReplicationTarget, item: string?): ()
+	fireToTargets(remotes.SetEquippedItem, target, item)
+end
+
 function module.DamageTaken(target: ReplicationTarget, amount: number, kind: Types.DamageSource): ()
 	fireToTargets(remotes.DamageTaken, target, amount, if typeof(kind) == "string" then kind else kind.Name)
 end

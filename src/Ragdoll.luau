@@ -1,3 +1,4 @@
+local Replication = require(script.Parent.Replication)
 local Types = require(script.Parent.Types)
 
 local Ragdoll = {}
@@ -6,6 +7,7 @@ function Ragdoll.Ragdoll(participant: Types.Participant, char: Model): ()
 	char:SetAttribute("IsRagdolled", true)
 
 	participant:SetEquippedItem(nil)
+	Replication.SetEquippedItem(participant.Player, nil)
 
 	for _, constraint in char:QueryDescendants("AnimationConstraint:not(#Root)") do
 		assert(constraint:IsA("AnimationConstraint"))
