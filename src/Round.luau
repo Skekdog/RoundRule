@@ -124,7 +124,7 @@ local function LoadGamemode(round: Types.Round, gamemode: Types.GamemodeDefiniti
         end
     end
 
-    if count == round.MinimumRequiredPlayers then
+    if count >= round.MinimumRequiredPlayers then
         round:SetPhase("Preparing", PREPARING_TIME)
     end
 
