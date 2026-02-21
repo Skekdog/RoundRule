@@ -70,6 +70,7 @@ export type ExplosionParams = {
 export type DamageParams = {
     Amount: number,
 
+    TimeOrigin: number?,
     Origin: Vector3?,
     HitPosition: Vector3?,
     HitPart: BasePart?,
@@ -363,6 +364,8 @@ export type ItemComponents = {
 
     OnUnequipServer: (item: Item, participant: Participant) -> ()?,
     OnUnequipClient: (item: Item) -> ()?,
+
+    OnProjectileSpawn: (item: Item, projectile: MapObject) -> ()?,
 }
 
 export type AmmoDefinition = {
