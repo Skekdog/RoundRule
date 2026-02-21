@@ -67,8 +67,6 @@ function Ragdoll.Unragdoll(char: Model): ()
 			continue
 		end
 
-		print(part)
-
 		assert(part:IsA("BasePart"))
 
 		part.CollisionGroup = "PlayerCharacterParts"
