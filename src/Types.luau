@@ -657,7 +657,7 @@ export type Participant = {
 
     MoveToSpawn: (Participant, spawnCFrame: CFrame?) -> (),
 
-    TryThrowAssembly: (Participant, assembly: MapObject, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?) -> boolean,
+    TryThrowAssembly: (Participant, assembly: MapObject, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?, noAngularImpulse: boolean?) -> boolean,
 }
 
 export type Prop = {

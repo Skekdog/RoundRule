@@ -579,7 +579,7 @@ local function betterSign(a: number): number
     return if a >= 0 then 1 else -1
 end
 
-local function TryThrowAssembly(participant: Types.Participant, assembly: Types.MapObject, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?): boolean
+local function TryThrowAssembly(participant: Types.Participant, assembly: Types.MapObject, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?, noAngularImpulse: boolean?): boolean
     local char = participant:GetCharacter()
     if not char then
         return false
@@ -610,7 +610,10 @@ local function TryThrowAssembly(participant: Types.Participant, assembly: Types.
     assemblyRoot.AssemblyAngularVelocity = Vector3.zero
     assemblyRoot.CFrame = CFrame.lookAlong(startPosition, direction)
 	assemblyRoot:ApplyImpulse(direction * (assemblyRoot.AssemblyMass * force))
-    assemblyRoot:ApplyAngularImpulse(Vector3.new(direction.X + 2 * betterSign(direction.X), direction.Y + 2 * betterSign(direction.Y), direction.Z + 2 * betterSign(direction.Z)) * (assemblyRoot.AssemblyMass * force) / 10)
+
+    if not noAngularImpulse then
+        assemblyRoot:ApplyAngularImpulse(Vector3.new(direction.X + 2 * betterSign(direction.X), direction.Y + 2 * betterSign(direction.Y), direction.Z + 2 * betterSign(direction.Z)) * (assemblyRoot.AssemblyMass * force) / 10)
+    end
 
     return true
 end
