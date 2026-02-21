@@ -23,7 +23,7 @@ function Ragdoll.Ragdoll(participant: Types.Participant, char: Model): ()
 	end
 
 	for _, part in char:QueryDescendants("BasePart") do
-		if part:FindFirstAncestorWhichIsA("Accessory") then
+		if part:FindFirstAncestorWhichIsA("Accessory") or part:FindFirstAncestor("Item") or part.Name == "Item" then
 			continue
 		end
 
@@ -63,9 +63,11 @@ function Ragdoll.Unragdoll(char: Model): ()
 	end
 
 	for _, part in char:QueryDescendants("BasePart") do
-		if part:FindFirstAncestorWhichIsA("Accessory") then
+		if part:FindFirstAncestorWhichIsA("Accessory") or part:FindFirstAncestor("Item") or part.Name == "Item" then
 			continue
 		end
+
+		print(part)
 
 		assert(part:IsA("BasePart"))
 
