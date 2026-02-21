@@ -24,7 +24,6 @@ local function generateKillList(participant: Types.Participant): {string}
     return killList
 end
 
-
 local function UpdateKillList(corpse: Types.Corpse): ()
     local killList = generateKillList(corpse.Participant)
 
@@ -250,7 +249,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams, 
         local definition = participant.Round:GetItemDefinition(i)
         assert(definition)
 
-        if definition.ItemGroup then
+        if definition.ItemGroup or definition.DoNotShowInEquipmentList then
             continue
         end
         table.insert(equipmentList, i)

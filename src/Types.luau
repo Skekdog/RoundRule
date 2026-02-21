@@ -253,6 +253,7 @@ export type ItemComponents = {
     Cost: number?,
     MaxStock: number?,
 
+    DoNotShowInEquipmentList: boolean?,
     IsEvilItem: boolean?,
 
     Model: MapObject?,
