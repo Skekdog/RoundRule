@@ -365,7 +365,8 @@ export type ItemComponents = {
     OnUnequipServer: (item: Item, participant: Participant) -> ()?,
     OnUnequipClient: (item: Item) -> ()?,
 
-    OnProjectileSpawn: (item: Item, projectile: MapObject) -> ()?,
+    OnProjectileSpawn: (item: Item, projectile: MapObject, participant: Participant) -> ()?,
+    OnProjectileDespawn: (item: Item, projectile: MapObject, participant: Participant) -> ()?,
 }
 
 export type AmmoDefinition = {
