@@ -31,6 +31,8 @@ export type Highlight = {
     Description: string,
     Priority: number,
     Group: string,
+    ScoreBonus: number?,
+    Participants: {Participant}?,
 }
 
 export type ExplosionInfo = {

@@ -289,8 +289,16 @@ local function GetEventLog(round: Types.Round): {Types.Event}
 end
 
 local function AddHighlight(round: Types.Round, highlight: Types.Highlight): ()
-    if not round.Highlights[highlight.Group] or round.Highlights[highlight.Group].Priority < highlight.Priority then
-        round.Highlights[highlight.Group] = highlight
+    if round.Highlights[highlight.Group] and round.Highlights[highlight.Group].Priority >= highlight.Priority then
+        return
+    end
+
+    round.Highlights[highlight.Group] = highlight
+
+    if highlight.Participants and highlight.ScoreBonus then
+        for _, participant in highlight.Participants do
+            participant:AddScore(highlight.Title, highlight.ScoreBonus)
+        end
     end
 end
 
