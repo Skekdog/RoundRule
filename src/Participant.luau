@@ -731,7 +731,7 @@ local function MoveToSpawn(participant: Types.Participant, spawnCFrame: CFrame?)
     char:PivotTo(assert(spawnCFrame))
 end
 
-local function SpawnCharacter(participant: Types.Participant): ()
+local function SpawnCharacter(participant: Types.Participant, morph: Model?): ()
     if participant._isCharacterLoading then
         return
     end
@@ -766,7 +766,9 @@ local function SpawnCharacter(participant: Types.Participant): ()
         participant._humanoid = hum
         participant._character = char
 
-        participant:MoveToSpawn()
+        if not morph then
+            participant:MoveToSpawn()
+        end
 
         tryAssignHumanoidPropertiesForRole(hum, participant:GetRole())
 
@@ -821,17 +823,24 @@ local function SpawnCharacter(participant: Types.Participant): ()
         end
     end
 
-    if RunService:IsStudio() then
-        local char = script.Parent.Assets.TestDummy:Clone()
-        char.OnDamage:Destroy()
-        char:RemoveTag("Prop")
-        char.Name = participant.Player.Name
-        participant.Player.Character = char
-        char.Parent = workspace.Characters :: any
-        onCharLoaded(char)
+    if morph then
+        morph.Name = participant.Player.Name
+        participant.Player.Character = morph
+        morph.Parent = workspace.Characters
+        onCharLoaded(morph)
     else
-        participant.Player.CharacterAppearanceLoaded:Once(onCharLoaded)
-        participant.Player:LoadCharacterAsync()
+        if RunService:IsStudio() then
+            local char = script.Parent.Assets.TestDummy:Clone()
+            char.OnDamage:Destroy()
+            char:RemoveTag("Prop")
+            char.Name = participant.Player.Name
+            participant.Player.Character = char
+            char.Parent = workspace.Characters :: any
+            onCharLoaded(char)
+        else
+            participant.Player.CharacterAppearanceLoaded:Once(onCharLoaded)
+            participant.Player:LoadCharacterAsync()
+        end
     end
 end
 
