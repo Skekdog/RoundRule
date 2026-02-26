@@ -119,6 +119,9 @@ local function LoadGamemode(round: Types.Round, gamemode: Types.GamemodeDefiniti
         count += 1
         v:SetRole()
         v:SetCredits(0)
+        for _, item in gamemode.StartingItems do
+            v:AddItem(round:LoadItem(item))
+        end
         if not v:IsAlive() then
             v:SpawnCharacter()
         end
