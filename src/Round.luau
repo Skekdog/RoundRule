@@ -94,6 +94,9 @@ local function LoadBoss(round: Types.Round, boss: Types.BossDefinition): ()
 end
 
 local function LoadGamemode(round: Types.Round, gamemode: Types.GamemodeDefinition): ()
+    if round.Gamemode.UnloadGamemode then
+        round.Gamemode.UnloadGamemode(round)
+    end
     round.Gamemode = gamemode
 
     round:SetPhase("Waiting", 0)
