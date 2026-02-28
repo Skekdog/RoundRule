@@ -147,6 +147,8 @@ export type GamemodeDefinition = {
     OnItemEquipped: (round: Round, participant: Participant, item: Item, equipped: boolean) -> ()?,
     BeforeDamageParticipant: ((round: Round, participant: Participant, params: DamageParams) -> boolean)?,
     BeforeDamageProp: ((round: Round, prop: Prop, params: DamageParams) -> boolean)?,
+
+    IsValidOnMap: ((map: MapStructure) -> boolean)?
 }
 
 export type RoleDefinition = {
