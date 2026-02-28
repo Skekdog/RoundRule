@@ -4,6 +4,7 @@ local function CreateEmptyPart(cframe: CFrame, children: {Instance}?, canCollide
     part.CanCollide = canCollide or false
     part.CanTouch = canTouch or false
     part.CanQuery = canQuery or false
+    part.Size = Vector3.zero
 
     part.CFrame = cframe
     part.Anchored = true
