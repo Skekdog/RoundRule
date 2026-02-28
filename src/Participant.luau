@@ -731,11 +731,14 @@ local function MoveToSpawn(participant: Types.Participant, spawnCFrame: CFrame?)
     char:PivotTo(assert(spawnCFrame))
 end
 
-local function SpawnCharacter(participant: Types.Participant, morph: Model?): ()
+local function SpawnCharacter(participant: Types.Participant, morph: Model?, preserve: boolean?): ()
     if participant._isCharacterLoading then
         return
     end
-    participant:DespawnCharacter()
+
+    local lastHealth = participant:GetHealth()
+
+    participant:DespawnCharacter(preserve)
 
     participant._isCharacterLoading = true
     participant._wasDeathProcessed = false
@@ -815,6 +818,10 @@ local function SpawnCharacter(participant: Types.Participant, morph: Model?): ()
             end
         end
 
+        if preserve then
+            participant:SetHealth(lastHealth)
+        end
+
         if participant.Round.Config.OnCharacterAdded then
             participant.Round.Config.OnCharacterAdded(participant.Round, participant)
         end
@@ -844,7 +851,7 @@ local function SpawnCharacter(participant: Types.Participant, morph: Model?): ()
     end
 end
 
-local function DespawnCharacter(participant: Types.Participant): ()
+local function DespawnCharacter(participant: Types.Participant, preserve: boolean?): ()
     if participant._isCharacterLoading then
         return
     end
@@ -855,12 +862,14 @@ local function DespawnCharacter(participant: Types.Participant): ()
         return
     end
 
-    for _, v in participant:GetItems() do
-        assert(v)
-        participant:TryDropItem(v)
-    end
+    if not preserve then
+        for _, v in participant:GetItems() do
+            assert(v)
+            participant:TryDropItem(v)
+        end
 
-    participant._ammo = {}
+        participant._ammo = {}
+    end
 
     participant._humanoid = nil
     participant._character = nil

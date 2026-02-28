@@ -601,8 +601,8 @@ export type Participant = {
 
     CorpseSearchDistance: number,
 
-    SpawnCharacter: (Participant, morph: Model?) -> (),
-    DespawnCharacter: (Participant) -> (),
+    SpawnCharacter: (Participant, morph: Model?, preserve: boolean?) -> (),
+    DespawnCharacter: (Participant, preserve: boolean?) -> (),
 
     _selfDefenseList: {SelfDefenseEntry},
     AddSelfDefenseEntry: (Participant, params: SelfDefenseParams) -> (),
