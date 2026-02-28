@@ -312,16 +312,16 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.Item?
             end
 
             animationConstraint.Parent = model
+
+            ForEachPart(model, function(part)
+                part.Massless = true
+                part.CanCollide = false
+                part.CanTouch = false
+                part.CanQuery = false
+            end);
+
+            (model :: Instance).Parent = char
         end
-
-        ForEachPart(model, function(part)
-            part.Massless = true
-            part.CanCollide = false
-            part.CanTouch = false
-            part.CanQuery = false
-        end);
-
-        (model :: Instance).Parent = char
     end
 
     participant._equippedItem = item
