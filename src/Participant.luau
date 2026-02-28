@@ -474,6 +474,8 @@ local function AddScore(participant: Types.Participant, reason: string, amount: 
     if amount == 0 then
         return
     end
+
+    amount = math.ceil(amount)
     participant.Scores[reason] = (participant.Scores[reason] or 0) + amount
 end
 
