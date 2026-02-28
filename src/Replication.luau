@@ -145,8 +145,10 @@ function module.AddScore(participant: Types.Participant): ()
 	value.Name = participant.Player.Name
 
 	for reason, score in participant.Scores do
-		assert(score)
-		value:SetAttribute(reason:gsub(" ", "_"), score)
+		local scoreValue = Instance.new("IntValue")
+		scoreValue.Name = reason
+		scoreValue.Value = score or 0
+		scoreValue.Parent = value
 	end
 
 	value.Parent = replicatedData.Scores
