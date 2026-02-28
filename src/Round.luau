@@ -96,8 +96,6 @@ end
 local function LoadGamemode(round: Types.Round, gamemode: Types.GamemodeDefinition): ()
     round.Gamemode = gamemode
 
-    removeInvalidItems(round)
-
     round:SetPhase("Waiting", 0)
 
     if round._heartbeat then
@@ -119,6 +117,10 @@ local function LoadGamemode(round: Types.Round, gamemode: Types.GamemodeDefiniti
         count += 1
         v:SetRole()
         v:SetCredits(0)
+        for _, item in v:GetItems() do
+            assert(item)
+            v:RemoveItem(item)
+        end
         for _, item in gamemode.StartingItems do
             v:AddItem(round:LoadItem(item))
         end
