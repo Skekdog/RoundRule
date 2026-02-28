@@ -748,9 +748,9 @@ local function SpawnCharacter(participant: Types.Participant, morph: Model?, pre
         participant.SlayVotes = {}
         participant.KillList = {}
         participant:SetFreeKill()
-
-        participant:_setStatus("Alive")
     end
+
+    participant:_setStatus("Alive")
 
     local function onCharLoaded(char: Model): ()
         local hum = char:WaitForChild("Humanoid")
