@@ -144,6 +144,8 @@ export type GamemodeDefinition = {
     OnFinish: (round: Round) -> ()?,
     OnStart: (round: Round) -> ()?,
 
+    Heartbeat: (round: Round, dt: number) -> ()?,
+
     OnItemEquipped: (round: Round, participant: Participant, item: Item, equipped: boolean) -> ()?,
     BeforeDamageParticipant: ((round: Round, participant: Participant, params: DamageParams) -> boolean)?,
     BeforeDamageProp: ((round: Round, prop: Prop, params: DamageParams) -> boolean)?,

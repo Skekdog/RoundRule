@@ -246,6 +246,10 @@ local function setAdvanceTime(round: Types.Round, duration: number, callback: ()
             assert(round._heartbeat):Disconnect()
             callback()
         end
+
+        if round.Gamemode.Heartbeat then
+            round.Gamemode.Heartbeat(round, dt)
+        end
     end)
 end
 
