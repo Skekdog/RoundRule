@@ -106,9 +106,9 @@ function module.new(model: Types.MapObject, round: Types.Round?, interactable: T
         end)
 
         if RunService:IsClient() and interactable.OnLoadClient then
-            interactable.OnLoadClient(prop)
+            task.defer(interactable.OnLoadClient, prop)
         elseif RunService:IsServer() and interactable.OnLoadServer then
-            interactable.OnLoadServer(prop)
+            task.defer(interactable.OnLoadServer, prop)
         end
     end
 
