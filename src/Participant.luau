@@ -53,7 +53,8 @@ function module.OnDeath(participant: Types.Participant, params: Types.DamagePara
             local otherRoleParticipants = round:GetParticipantsWithRole(otherRole)
             for _, otherParticipant in otherRoleParticipants do
                 otherParticipant:AddCredits(amount)
-                round:SendMessage(otherParticipant.Player, `{otherRoleName}{if #otherRoleParticipants == 1 then "" else "s"}, you have been awarded {amount} credit{if amount == 1 then "" else "s"} for your work.`, "Team")
+                local name = if #otherRoleParticipants == 1 then otherRole:GetFormattedName() else otherRole:FormatString(otherRole:GetPluralName())
+                round:SendMessage(otherParticipant.Player, `{name}, you have been awarded {amount} credit{if amount == 1 then "" else "s"} for your work.`, "Team")
             end
         end
     end
