@@ -8,7 +8,7 @@ export type ItemPurchases = {[string]: number?}
 
 export type ItemPurchaseResult = "Success" | "NotEnoughCredits" | "SlotOccupied" | "NotInStock" | "InvalidItemForRole" | "NotInRound"
 
-export type GeneralDamageSource = "Fall" | "Drown" | "Explode" | "Burn" | "Stab" | "Shot" | "Bludgeon" | "Crush" | "Magic" | "Other" | "Poison"
+export type GeneralDamageSource = "Fall" | "Drown" | "Explode" | "Burn" | "Stab" | "Shot" | "Bludgeon" | "Crush" | "Magic" | "Other" | "Poison" | "Stomp"
 export type NamedDamageSource = GeneralDamageSource | string
 export type DamageSource = Item | GeneralDamageSource
 

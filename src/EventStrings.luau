@@ -30,6 +30,8 @@ local function GetEventString(event: Types.Event): string
             msg = `{victim} was burned to death{if killer then ` by {killer}` else ""}.`
         elseif source == "Crush" then
             msg = `{victim} was crushed{if killer then ` by {killer}` else ""}.`
+        elseif source == "Stomp" then
+            msg = `{victim} was stomped{if killer then ` by {killer}` else ""}.`
         elseif source == "Drown" then
             msg = `{victim} drowned{if killer then ` at the hands of {killer}` else ""}.`
         elseif source == "Fall" then
