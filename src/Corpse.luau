@@ -242,7 +242,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams, 
         selfDefense = params.Attacker:HasSelfDefenseAgainstParticipant(participant)
     end
 
-    local source: Types.NamedDamageSource = if typeof(params.Source) == "table" then params.Source.Name else params.Source
+    local source = params.Source
 
     local equipmentList: {string} = {}
     for i in participant:GetItems() do
@@ -270,7 +270,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams, 
 
         DeathTime = workspace:GetServerTimeNow(),
 
-        DamageSource = source,
+        DamageSource = source :: Types.DamageSource,
     }
 
     return {
@@ -290,6 +290,8 @@ function module.new(participant: Types.Participant, params: Types.DamageParams, 
 
         Search = Search,
         SearchAsAlive = SearchAsAlive,
+
+        DamageParams = params,
 
         Killer = params.Attacker,
     }

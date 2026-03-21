@@ -9,7 +9,6 @@ export type ItemPurchases = {[string]: number?}
 export type ItemPurchaseResult = "Success" | "NotEnoughCredits" | "SlotOccupied" | "NotInStock" | "InvalidItemForRole" | "NotInRound"
 
 export type GeneralDamageSource = "Fall" | "Drown" | "Explode" | "Burn" | "Stab" | "Shot" | "Bludgeon" | "Crush" | "Magic" | "Other" | "Poison" | "Stomp"
-export type NamedDamageSource = GeneralDamageSource | string
 export type DamageSource = Item | GeneralDamageSource
 
 export type ItemSchedulerCallback = (item: Item, dt: number) -> ()
@@ -525,11 +524,13 @@ export type CorpseView = {
 
     DeathTime: number,
 
-    DamageSource: NamedDamageSource,
+    DamageSource: DamageSource,
 }
 
 export type Corpse = {
     Participant: Participant,
+
+    DamageParams: DamageParams,
 
     CorpseView: CorpseView,
     WasCorrectKill: boolean?, -- Not in CorpseView, as we don't want clients to see this
@@ -666,6 +667,8 @@ export type Participant = {
     MoveToSpawn: (Participant, spawnCFrame: CFrame?) -> (),
 
     TryThrowAssembly: (Participant, assembly: MapObject, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?, noAngularImpulse: boolean?) -> boolean,
+
+    OnCharacterPartAdded: (Participant, part: Instance) -> (),
 }
 
 export type Prop = {
@@ -691,7 +694,9 @@ export type GameConfig = {
     OnDeath: (Round, Participant, boolean) -> ()?,
     OnCharacterAdded: (Round, Participant) -> ()?,
     BeforeDamageProp: ((Round, Prop, DamageParams) -> boolean)?,
+    BeforeDamageParticipant: ((Round, Participant, DamageParams) -> boolean)?,
     OnRoleAssigned: (Round, Participant) -> ()?,
+    OnItemDropped: (Round, Participant, Item) -> ()?,
 }
 
 export type Round = {

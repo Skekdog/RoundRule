@@ -24,7 +24,7 @@ local function randomElementFromArray<T>(array: {T}): T?
     return array[math.random(#array)]
 end
 
-function module.OnDeath(participant: Types.Participant, params: Types.DamageParams, deferVictoryCheck: boolean): ()
+local function onDeath(participant: Types.Participant, params: Types.DamageParams, deferVictoryCheck: boolean): ()
     local round = participant.Round
     if round:IsPreGame() then
         participant:SpawnCharacter()
@@ -153,7 +153,7 @@ local function GetRole(participant: Types.Participant): Types.Role
     return participant._role or Defaults.Role
 end
 
-function module.SetRole(participant: Types.Participant, role: Types.RoleDefinition?): ()
+local function SetRole(participant: Types.Participant, role: Types.RoleDefinition?): ()
     if not role then
         participant._role = nil
         Replication.ReplicateRole("All", participant, true)
@@ -370,7 +370,7 @@ local function IsEvil(participant: Types.Participant): boolean
     return participant:GetRole().Definition.IsEvil or false
 end
 
-function module.TryTakeDamage(participant: Types.Participant, params: Types.DamageParams, deferDeath: boolean?): boolean
+local function TryTakeDamage(participant: Types.Participant, params: Types.DamageParams, deferDeath: boolean?): boolean
     if participant._wasDeathProcessed then
         return false
     end
@@ -403,6 +403,12 @@ function module.TryTakeDamage(participant: Types.Participant, params: Types.Dama
         end
     end
 
+    if participant.Round.Config.BeforeDamageParticipant then
+        if not participant.Round.Config.BeforeDamageParticipant(participant.Round, participant, params) then
+            return false
+        end
+    end
+
     if participant.Round.Gamemode.BeforeDamageParticipant then
         if not participant.Round.Gamemode.BeforeDamageParticipant(participant.Round, participant, params) then
             return false
@@ -424,7 +430,7 @@ function module.TryTakeDamage(participant: Types.Participant, params: Types.Dama
     end
 
     if dead then
-        module.OnDeath(participant, params, deferDeath or false)
+        onDeath(participant, params, deferDeath or false)
     end
 
     return true
@@ -540,7 +546,7 @@ local function GetItemOccupyingGroup(participant: Types.Participant, group: Type
     return nil
 end
 
-function module.DropItem(participant: Types.Participant, item: Types.Item, throwDirection: Vector3?): ()
+local function DropItem(participant: Types.Participant, item: Types.Item, throwDirection: Vector3?): ()
     if item.DropDisabled then
         return
     end
@@ -553,6 +559,10 @@ function module.DropItem(participant: Types.Participant, item: Types.Item, throw
 
     item.Model:SetAttribute("AmmoType", if item.AmmoDefinition then item.AmmoDefinition.Name else nil)
     item.Model:SetAttribute("StoredAmmo", item.Ammo)
+
+    if participant.Round.Config.OnItemDropped then
+        participant.Round.Config.OnItemDropped(participant.Round, participant, item)
+    end
 
     local parent = participant.Round:GetMap().Structure.Dynamic
     if throwDirection then
@@ -700,7 +710,7 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
     return "Success"
 end
 
-function module.OnCharacterPartAdded(part: Instance): ()
+local function OnCharacterPartAdded(participant: Types.Participant, part: Instance): ()
     if not part:IsA("BasePart") then
         return
     end
@@ -766,9 +776,11 @@ local function SpawnCharacter(participant: Types.Participant, morph: Model?, pre
             task.wait()
         end
 
-        char.DescendantAdded:Connect(module.OnCharacterPartAdded)
+        char.DescendantAdded:Connect(function(part)
+            participant:OnCharacterPartAdded(part)
+        end)
         for _, v in char:GetDescendants() do
-            module.OnCharacterPartAdded(v)
+            participant:OnCharacterPartAdded(v)
         end
 
         participant._humanoid = hum
@@ -799,7 +811,7 @@ local function SpawnCharacter(participant: Types.Participant, morph: Model?, pre
 
         hum.Died:Once(function()
             if not participant._wasDeathProcessed then
-                module.OnDeath(participant, {
+                onDeath(participant, {
                     Amount = 0,
                     Source = "Other",
                     Attacker = participant,
@@ -1119,7 +1131,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         GetHumanoid = GetHumanoid,
 
         GetRole = GetRole,
-        SetRole = module.SetRole,
+        SetRole = SetRole,
 
         IsEvil = IsEvil,
 
@@ -1138,7 +1150,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         GetFormattedName = GetFormattedName,
         GetHealth = GetHealth,
         SetHealth = SetHealth,
-        TryTakeDamage = module.TryTakeDamage,
+        TryTakeDamage = TryTakeDamage,
         IsAlive = IsAlive,
         GetStatus = GetStatus,
         _setStatus = _setStatus,
@@ -1151,7 +1163,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         HasSelfDefenseAgainstParticipant = HasSelfDefenseAgainstParticipant,
         AddItem = AddItem,
         RemoveItem = RemoveItem,
-        DropItem = module.DropItem,
+        DropItem = DropItem,
         GetItems = GetItems,
         PurchaseItem = PurchaseItem,
         GetItemOccupyingGroup = GetItemOccupyingGroup,
@@ -1163,6 +1175,8 @@ function module.new(player: Player, round: Types.Round): Types.Participant
 
         GetLastDamagedBy = GetLastDamagedBy,
         SetLastDamagedBy = SetLastDamagedBy,
+
+        OnCharacterPartAdded = OnCharacterPartAdded,
     }
 end
 
