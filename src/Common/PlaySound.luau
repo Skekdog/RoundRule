@@ -18,7 +18,11 @@ export type SoundProperties = {
 
 local module = {}
 
-module.DefaultSoundGroup = nil :: SoundGroup?
+local defaultSoundGroup: SoundGroup?
+
+function module.SetDefaultSoundGroup(soundGroup: SoundGroup): ()
+	defaultSoundGroup = soundGroup
+end
 
 function module.MakeSound(sound: SoundId | {SoundId}, props: SoundProperties?): Sound
 	props = props or {}
@@ -60,7 +64,7 @@ function module.MakeSound(sound: SoundId | {SoundId}, props: SoundProperties?): 
 		soundObject.Volume = props.Volume
 	end
 
-	if module.DefaultSoundGroup and not props.SoundGroup then
+	if defaultSoundGroup and not props.SoundGroup then
 		soundObject.SoundGroup = props.SoundGroup
 	elseif props.SoundGroup then
 		soundObject.SoundGroup = props.SoundGroup
