@@ -174,12 +174,14 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
         participant.Round.Config.OnRoleAssigned(participant.Round, participant)
     end
 
+    if role.OnRoleAssignedServer then
+        role.OnRoleAssignedServer(role, participant)
+    end
+
     if not participant.Round:IsInProgress() then
         Replication.ReplicateRole("All", participant, false)
     else
         for _, v in participant.Round:GetParticipants() do
-            assert(v)
-
             if v == participant then
                 Replication.ReplicateRole(participant.Player, participant, false)
             end

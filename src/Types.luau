@@ -196,6 +196,8 @@ export type RoleDefinition = {
     Allies: {string}?,
     RevealedRoles: {string}?,
     HighlightedRoles: {string}?,
+
+    OnRoleAssignedServer: (RoleDefinition, participant: Participant) -> ()?,
 }
 
 export type InteractableDefinition = {
