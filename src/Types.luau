@@ -137,7 +137,7 @@ export type GamemodeDefinition = {
     -- is what we have to do, unless we want a lot more work.
 
     OnDeath: (round: Round, Participant, deferVictoryCheck: boolean) -> ()?,
-    OnCharacterAdded: (round: Round, Participant) -> ()?,
+    OnCharacterAdded: (round: Round, Participant, character: Model) -> ()?,
     OnIdentifyCorpse: (round: Round, corpse: Corpse, searcher: Participant) -> ()?,
     AddFinishHighlights: (round: Round) -> ()?,
     OnFinish: (round: Round) -> ()?,
@@ -704,7 +704,7 @@ export type Prop = {
 export type GameConfig = {
     DeathSounds: {string},
     OnDeath: (Round, Participant, boolean) -> ()?,
-    OnCharacterAdded: (Round, Participant) -> ()?,
+    OnCharacterAdded: (Round, Participant, Model) -> ()?,
     BeforeDamageProp: ((Round, Prop, DamageParams) -> boolean)?,
     BeforeDamageParticipant: ((Round, Participant, DamageParams) -> boolean)?,
     OnRoleAssigned: (Round, Participant) -> ()?,

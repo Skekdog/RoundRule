@@ -840,10 +840,10 @@ local function SpawnCharacter(participant: Types.Participant, morph: Model?, pre
         end
 
         if participant.Round.Config.OnCharacterAdded then
-            participant.Round.Config.OnCharacterAdded(participant.Round, participant)
+            participant.Round.Config.OnCharacterAdded(participant.Round, participant, char)
         end
         if participant.Round.Gamemode.OnCharacterAdded then
-            participant.Round.Gamemode.OnCharacterAdded(participant.Round, participant)
+            participant.Round.Gamemode.OnCharacterAdded(participant.Round, participant, char)
         end
     end
 
