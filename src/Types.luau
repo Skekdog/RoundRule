@@ -56,7 +56,7 @@ export type CorpseIcon = {
     Name: string,
     DisplayText: string?,
     Description: string,
-    Icon: string,
+    Icon: Content,
 }
 
 export type ExplosionParams = {
@@ -261,6 +261,7 @@ export type ItemComponents = {
     Description: string,
     IconContent: Content,
     IsPixelIcon: boolean?,
+    CorpseIconDescription: string?,
 
     Spread: number?,
     RecoilX: number?,
@@ -528,7 +529,7 @@ export type BaseCorpseView = {
     WasSelfDefense: boolean?,
 
     KillList: {string},
-    EquipmentList: {string},
+    EquipmentList: {ItemReplication},
 
     DeathTime: number,
 }

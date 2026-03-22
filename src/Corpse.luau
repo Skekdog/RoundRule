@@ -244,15 +244,15 @@ function module.new(participant: Types.Participant, params: Types.DamageParams, 
 
     local source = params.Source
 
-    local equipmentList: {string} = {}
-    for i in participant:GetItems() do
-        local definition = participant.Round:GetItemDefinition(i)
-        assert(definition)
+    local equipmentList: {Types.ItemReplication} = {}
+    for _, item in participant:GetItems() do
+        assert(item)
 
-        if definition.ItemGroup or definition.DoNotShowInEquipmentList then
+        if item.ItemGroup or item.DoNotShowInEquipmentList then
             continue
         end
-        table.insert(equipmentList, i)
+
+        table.insert(equipmentList, Replication.GetItemReplicate(item, false, {"CorpseIconDescription"}))
     end
 
     local corpseView: Types.ServerCorpseView = {
