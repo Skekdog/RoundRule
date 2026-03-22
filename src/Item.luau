@@ -47,6 +47,9 @@ function module.new(definition: Types.ItemComponents, model: Types.MapObject?): 
             return if self.Components[index] ~= nil then self.Components[index] else self.Base[index]
         end,
         __newindex = function(self: Types.Item, index: string, value: any)
+            if index == "Name" then
+                error("Cannot change Name component, consider DisplayName instead")
+            end
             self.Components[index] = value
         end,
     }) :: any
