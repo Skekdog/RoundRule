@@ -255,7 +255,7 @@ function module.new(participant: Types.Participant, params: Types.DamageParams, 
         table.insert(equipmentList, i)
     end
 
-    local corpseView: Types.CorpseView = {
+    local corpseView: Types.ServerCorpseView = {
         Name = participant.Player.Name,
         UserId = participant.Player.UserId,
 

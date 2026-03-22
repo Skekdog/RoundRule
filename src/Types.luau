@@ -246,6 +246,12 @@ export type Item = {
     Components: ItemComponents,
 } & ItemComponents
 
+export type ItemReplication = {
+    Name: string,
+    Model: MapObject?, -- model is replicated separately
+    Components: ItemComponents,
+}
+
 export type ItemComponents = {
     Name: string,
     DisplayName: string?,
@@ -509,7 +515,7 @@ export type SelfDefenseEntry = {
     Until: number,
 }
 
-export type CorpseView = {
+export type BaseCorpseView = {
     Name: string,
     UserId: number,
 
@@ -523,8 +529,14 @@ export type CorpseView = {
     EquipmentList: {string},
 
     DeathTime: number,
+}
 
+export type ServerCorpseView = BaseCorpseView & {
     DamageSource: DamageSource,
+}
+
+export type ClientCorpseView = BaseCorpseView & {
+    DamageSource: GeneralDamageSource | ItemReplication,
 }
 
 export type Corpse = {
@@ -532,7 +544,7 @@ export type Corpse = {
 
     DamageParams: DamageParams,
 
-    CorpseView: CorpseView,
+    CorpseView: ServerCorpseView,
     WasCorrectKill: boolean?, -- Not in CorpseView, as we don't want clients to see this
 
     Model: Model?,

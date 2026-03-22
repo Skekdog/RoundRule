@@ -656,7 +656,7 @@ local function AddItem(participant: Types.Participant, item: Types.Item): ()
         item.OnEquipServer(item, participant)
     end
 
-    Replication.UpdateInventory(participant.Player, "Add", item.Name, item.Components)
+    Replication.UpdateInventory(participant.Player, "Add", item)
 end
 
 local function RemoveItem(participant: Types.Participant, item: Types.Item): ()
@@ -669,7 +669,7 @@ local function RemoveItem(participant: Types.Participant, item: Types.Item): ()
         item.OnUnequipServer(item, participant)
     end
 
-    Replication.UpdateInventory(participant.Player, "Remove", item.Name)
+    Replication.UpdateInventory(participant.Player, "Remove", item)
 end
 
 local function GetItems(participant: Types.Participant): {[string]: Types.Item?}
@@ -1079,7 +1079,7 @@ local function TryStopAnimation(participant: Types.Participant, name: string): (
 end
 
 function module.new(player: Player, round: Types.Round): Types.Participant
-    Replication.UpdateInventory(player, "Reset")
+    Replication.ResetInventory(player)
     Replication.UpdateReserveAmmo(player, "Reset")
 
     return {

@@ -26,6 +26,22 @@ function module.CanInstanceReplicate(instance: Instance): boolean
 	return instance:IsDescendantOf(ReplicatedStorage) or instance:IsDescendantOf(workspace)
 end
 
+function module.GetItemReplicate(item: Types.Item, replicateModel: boolean, replicateComponents: {string}?): Types.ItemReplication
+	local components
+	if replicateComponents then
+		components = {}
+		for _, component in replicateComponents do
+			components[component] = item.Components[component]
+		end
+	end
+
+	return {
+		Name = item.Name,
+		Model = if replicateModel then item.Model else nil,
+		Components = components or item.Components,
+	}
+end
+
 local remotes = script.Parent.Remotes
 local replicatedData = script.Parent.ReplicatedData
 
@@ -42,7 +58,16 @@ function module.ReplicateCredits(target: Types.Participant): ()
 end
 
 function module.ReplicateCorpse(target: ReplicationTarget, corpse: Types.Corpse, covert: boolean): ()
-	fireToTargets(remotes.UpdatePlayerCorpse, target, corpse.CorpseView, covert)
+	local view: Types.ClientCorpseView
+	if typeof(corpse.CorpseView.DamageSource) == "table" then
+		local clientView: Types.ClientCorpseView = table.clone(corpse.CorpseView) :: any
+		clientView.DamageSource = module.GetItemReplicate(corpse.CorpseView.DamageSource, false, {"IconContent"})
+		view = clientView
+	else
+		view = (corpse.CorpseView :: Types.BaseCorpseView) :: Types.ClientCorpseView
+	end
+
+	fireToTargets(remotes.UpdatePlayerCorpse, target, view, covert)
 end
 
 function module.ReplicateRoundEndMusic(target: ReplicationTarget, music: Sound, startedAtServerTime: number): ()
@@ -50,17 +75,12 @@ function module.ReplicateRoundEndMusic(target: ReplicationTarget, music: Sound, 
 	fireToTargets(remotes.RoundEndMusic, target, music, startedAtServerTime)
 end
 
-function module.UpdateInventory(target: ReplicationTarget, mode: "Add" | "Remove" | "Reset", item: string?, components: Types.ItemComponents?): ()
-	if mode == "Add" or mode == "Remove" then
-		assert(item, "Item must not be nil")
-		if mode == "Add" then
-			assert(components, "Must supply components")
-		end
-	elseif mode == "Reset" then
-		assert(not item, "Item must be nil")
-	end
+function module.UpdateInventory(target: ReplicationTarget, mode: "Add" | "Remove", item: Types.Item): ()
+	fireToTargets(remotes.UpdateInventory, target, mode, if mode == "Add" then module.GetItemReplicate(item, true) else item.Name)
+end
 
-	fireToTargets(remotes.UpdateInventory, target, mode, item, components)
+function module.ResetInventory(target: ReplicationTarget): ()
+	fireToTargets(remotes.UpdateInventory, target, "Reset")
 end
 
 function module.SetEquippedItem(target: ReplicationTarget, item: string?): ()
