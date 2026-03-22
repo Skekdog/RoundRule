@@ -70,6 +70,10 @@ function module.ReplicateCorpse(target: ReplicationTarget, corpse: Types.Corpse,
 	fireToTargets(remotes.UpdatePlayerCorpse, target, view, covert)
 end
 
+function module.ClearCorpse(target: ReplicationTarget, participant: Types.Participant): ()
+	fireToTargets(remotes.UpdatePlayerCorpse, target, participant.Player.Name)
+end
+
 function module.ReplicateRoundEndMusic(target: ReplicationTarget, music: Sound, startedAtServerTime: number): ()
 	assert(module.CanInstanceReplicate(music), "Music must be parented to a replicatable service")
 	fireToTargets(remotes.RoundEndMusic, target, music, startedAtServerTime)
