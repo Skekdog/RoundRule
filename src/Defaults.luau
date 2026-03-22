@@ -20,4 +20,4 @@ module.WalkSpeed = 16
 module.JumpPower = 18
 module.Health = 100
 
-return module
+return table.freeze(module)

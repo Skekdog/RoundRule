@@ -115,4 +115,4 @@ function module.new(model: Types.MapObject, round: Types.Round?, interactable: T
     return prop
 end
 
-return module
+return table.freeze(module)

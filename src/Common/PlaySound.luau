@@ -138,4 +138,4 @@ setmetatable(module, {
 	end
 })
 
-return module
+return table.freeze(module)

@@ -297,4 +297,4 @@ function module.new(participant: Types.Participant, params: Types.DamageParams, 
     }
 end
 
-return module
+return table.freeze(module)

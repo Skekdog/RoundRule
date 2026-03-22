@@ -13,4 +13,4 @@ function module.new(definition: Types.ExplosionInfo, position: Vector3, attacker
 	}
 end
 
-return module
+return table.freeze(module)

@@ -105,4 +105,4 @@ function Map.new(structure: Types.MapStructure): Types.Map
     }
 end
 
-return Map
+return table.freeze(Map)

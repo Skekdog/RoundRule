@@ -4,4 +4,4 @@ local config: Types.GameConfig = {
 	DeathSounds = {},
 }
 
-return config
+return table.freeze(config)

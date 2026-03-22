@@ -35,4 +35,4 @@ function module.fromDefinition(roleDefinition: Types.RoleDefinition): Types.Role
     }
 end
 
-return module
+return table.freeze(module)

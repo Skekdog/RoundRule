@@ -963,4 +963,4 @@ function module.new(gamemode: Types.GamemodeDefinition): Types.Round
     return round
 end
 
-return module
+return table.freeze(module)

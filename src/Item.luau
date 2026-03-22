@@ -61,4 +61,4 @@ function module.new(definition: Types.ItemComponents, model: Types.MapObject?): 
     return item
 end
 
-return module
+return table.freeze(module)

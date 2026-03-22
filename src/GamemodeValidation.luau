@@ -29,4 +29,4 @@ function GamemodeValidation.ValidateGamemodeScript(instance: Instance): Types.Ga
 	return GamemodeValidation.ValidateDefinition(instance, (require)(instance))
 end
 
-return GamemodeValidation
+return table.freeze(GamemodeValidation)

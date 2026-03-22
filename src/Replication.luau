@@ -216,4 +216,4 @@ function module.CallRoleToCorpse(target: ReplicationTarget, model: Model): ()
 	fireToTargets(remotes.CallToCorpse, target, model)
 end
 
-return module
+return table.freeze(module)

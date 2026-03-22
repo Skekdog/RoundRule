@@ -17,4 +17,4 @@ function module.new(definition: Types.AmmoDefinition, model: Types.MapObject?, a
     }
 end
 
-return module
+return table.freeze(module)

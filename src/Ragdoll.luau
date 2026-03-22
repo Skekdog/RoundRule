@@ -77,4 +77,4 @@ function Ragdoll.Unragdoll(char: Model): ()
 	char:RemoveTag("Ragdoll")
 end
 
-return Ragdoll
+return table.freeze(Ragdoll)

@@ -1180,4 +1180,4 @@ function module.new(player: Player, round: Types.Round): Types.Participant
     }
 end
 
-return module
+return table.freeze(module)
