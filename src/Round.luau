@@ -127,6 +127,12 @@ local function LoadGamemode(round: Types.Round, gamemode: Types.GamemodeDefiniti
         for _, item in gamemode.StartingItems do
             v:AddItem(round:LoadItem(item))
         end
+        local char = v:GetCharacter()
+        if char then
+            if round.Gamemode.OnCharacterAdded then
+                round.Gamemode.OnCharacterAdded(round, v, char)
+            end
+        end
         if not v:IsAlive() then
             v:SpawnCharacter()
         end
