@@ -802,14 +802,11 @@ local function SpawnCharacter(participant: Types.Participant, morph: Model?, pre
             healthScript:Destroy()
         end
 
-        local deathSoundId = randomElementFromArray(participant.Round.Config.DeathSounds)
-        if deathSoundId then
-            local deathSound = Instance.new("Sound")
+        local deathSound = randomElementFromArray(participant.Round.Config.DeathSounds)
+        if deathSound then
+            deathSound = deathSound:Clone()
             deathSound.Name = "DeathSound"
-            deathSound.SoundId = deathSoundId
-            deathSound.RollOffMinDistance = 20
-            deathSound.RollOffMaxDistance = 50
-            deathSound.Parent = char.PrimaryPart
+            deathSound:Clone().Parent = char.PrimaryPart
         end
 
         participant._isCharacterLoading = false

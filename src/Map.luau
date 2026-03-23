@@ -94,7 +94,7 @@ function Map.new(structure: Types.MapStructure): Types.Map
         DisplayName = structure:GetAttribute("DisplayName") :: string?,
         Description = structure:GetAttribute("Description") :: string,
         Authors = structure:GetAttribute("Authors") :: string,
-        Icon = structure:GetAttribute("Icon") :: string,
+        Icon = Content.fromUri(structure:GetAttribute("Icon") :: string),
 
         Gravity = structure:GetAttribute("Gravity") :: number? or 50,
 

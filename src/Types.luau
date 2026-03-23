@@ -161,7 +161,7 @@ export type RoleDefinition = {
     DisplayName: string?,
     Description: string,
     Color: Color3,
-    Sound: string,
+    Sound: Sound,
     IsExclamatory: boolean?,
 
     PluralName: string?,
@@ -433,7 +433,7 @@ export type Map = {
     DisplayName: string?,
     Description: string,
     Authors: string,
-    Icon: string,
+    Icon: Content,
 
     Gravity: number,
 
@@ -705,7 +705,7 @@ export type Prop = {
 }
 
 export type GameConfig = {
-    DeathSounds: {string},
+    DeathSounds: {Sound},
     OnDeath: (Round, Participant, boolean) -> ()?,
     OnCharacterAdded: (Round, Participant, Model) -> ()?,
     BeforeDamageProp: ((Round, Prop, DamageParams) -> boolean)?,
