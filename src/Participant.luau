@@ -480,11 +480,12 @@ local function _addToKillList(participant: Types.Participant, toAdd: Types.Parti
 end
 
 local function AddScore(participant: Types.Participant, reason: string, amount: number): ()
+    amount = math.floor(amount)
+
     if amount == 0 then
         return
     end
 
-    amount = math.floor(amount)
     participant.Scores[reason] = (participant.Scores[reason] or 0) + amount
 end
 
