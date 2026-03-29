@@ -486,6 +486,10 @@ local function AddScore(participant: Types.Participant, reason: string, amount: 
         return
     end
 
+    if not math.isfinite(amount) then
+        error("Attempt to add invalid score: " .. amount)
+    end
+
     participant.Scores[reason] = (participant.Scores[reason] or 0) + amount
 end
 
