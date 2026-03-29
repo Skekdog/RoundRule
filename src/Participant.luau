@@ -238,7 +238,12 @@ local function GetKarma(participant: Types.Participant): number
 end
 
 local function SetKarma(participant: Types.Participant, karma: number): ()
+    if not math.isfinite(karma) then
+        error("Attempt to set invalid karma value: " .. karma)
+    end
+
     if participant.Round.Gamemode.EnableKarma then
+        karma = math.floor(karma)
         participant._karma = math.clamp(karma, 1, 1000)
     else
         participant._karma = 1000
