@@ -162,7 +162,11 @@ export type RoleDefinition = {
     Description: string,
     Color: Color3,
     Sound: Sound,
+
     IsExclamatory: boolean?,
+
+    ShouldAnnounceRoleCount: boolean?,
+    ShouldRevealComradeList: boolean?,
 
     PluralName: string?,
 

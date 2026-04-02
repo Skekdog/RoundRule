@@ -357,31 +357,34 @@ local function _start(round: Types.Round): ()
         round.Gamemode.AssignRoles(round, participantList)
     end
 
-    local exclamatoryRoles: {[Types.Role]: {Types.Participant}} = {}
+    local announceRoles: {[Types.Role]: {Types.Participant}} = {}
+    local comradeRoles: {[Types.Role]: {Types.Participant}} = {}
     for _, v in participantList do
         local role = v:GetRole()
-        if not role.Definition.IsExclamatory then
-            continue
+
+        if role.Definition.ShouldAnnounceRoleCount then
+            announceRoles[role] = announceRoles[role] or {}
+            table.insert(announceRoles[role], v)
         end
 
-        exclamatoryRoles[role] = exclamatoryRoles[role] or {}
-        table.insert(exclamatoryRoles[role], v)
-    end
-
-    local exclamatoryCount = 0
-    for _ in exclamatoryRoles do
-        exclamatoryCount += 1
+        if role.Definition.ShouldRevealComradeList then
+            comradeRoles[role] = comradeRoles[role] or {}
+            table.insert(comradeRoles[role], v)
+        end
     end
 
     local index = 0
-    local message = "There "
-    for role, participants in exclamatoryRoles do
+    local announceMessage = "There "
+    for role, participants in announceRoles do
         index += 1
         if index == 1 then
-            message ..= if #participants == 1 then "is" else "are"
+            announceMessage ..= if #participants == 1 then "is" else "are"
         end
-        message ..= ` {#participants} {role:FormatString(GetDisplayName(role.Definition) .. if #participants == 1 then "" else "s")},`
+        announceMessage ..= ` {#participants} {role:FormatString(GetDisplayName(role.Definition) .. if #participants == 1 then "" else "s")},`
+    end
+    index = 0
 
+    for role, participants in comradeRoles do
         local comrades = role:GetFormattedName() .. ", "
         if #participants == 1 then
             comrades ..= "you stand alone"
@@ -399,11 +402,11 @@ local function _start(round: Types.Round): ()
         end
     end
 
-    if message ~= "There " then
-        message = message:sub(1, -2)
-        message ..= " this round."
+    if announceMessage ~= "There " then
+        announceMessage = announceMessage:sub(1, -2)
+        announceMessage ..= " this round."
 
-        round:SendMessage(Players:GetPlayers(), message)
+        round:SendMessage(Players:GetPlayers(), announceMessage)
     end
 
     if round.Gamemode.OnStart then
