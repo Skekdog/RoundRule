@@ -167,6 +167,7 @@ export type RoleDefinition = {
     PluralName: string?,
 
 	IsEvil: boolean?,
+    CanUseActionNodes: boolean?,
 
     Allegiance: VictorType,
 
