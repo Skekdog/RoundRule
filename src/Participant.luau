@@ -358,7 +358,7 @@ local function IsFreeKill(participant: Types.Participant, attacker: Types.Partic
 
     local item = participant:GetEquippedItem()
     local role = participant:GetRole().Definition
-    if item and item.IsEvilItem and not role.IsEvil then
+    if item and item.IsSuspicious and not role.CanDoSuspiciousActions then
         local attackerRole = if attacker then attacker:GetRole().Definition else nil
         if not attackerRole or not table.find(attackerRole.RevealedRoles or {}, role.Name) or not table.find(attackerRole.Allies or {}, role.Name) then
             return true

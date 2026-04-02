@@ -273,7 +273,7 @@ export type ItemComponents = {
     MaxStock: number?,
 
     DoNotShowInEquipmentList: boolean?,
-    IsEvilItem: boolean?,
+    IsSuspicious: boolean?,
 
     Model: MapObject?,
     HoldAnimation: Content?,
