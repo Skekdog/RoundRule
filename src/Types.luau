@@ -168,6 +168,7 @@ export type RoleDefinition = {
 
 	IsEvil: boolean?,
     CanUseActionNodes: boolean?,
+    CanDoSuspiciousActions: boolean?,
 
     Allegiance: VictorType,
 
