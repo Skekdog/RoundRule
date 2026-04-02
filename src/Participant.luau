@@ -42,7 +42,7 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
     end
 
     if attacker and not params.IgnoreKarma and not attacker:IsDamageJustifiedAgainstParticipant(participant) then
-        attacker:SetFreeKill("killed a teammate", true)
+        attacker:SetFreeKill("killed a teammate")
         Replication.SlayVote(participant.Player, attacker)
     end
 
@@ -352,35 +352,25 @@ local function IsDamageJustifiedAgainstParticipant(participant: Types.Participan
 end
 
 local function IsFreeKill(participant: Types.Participant, attacker: Types.Participant?): boolean
-    return #participant._freeKillReasons > 0
+    if participant._isFreeKill then
+        return true
+    end
+
+    local item = participant:GetEquippedItem()
+    local role = participant:GetRole().Definition
+    if item and item.IsEvilItem and not role.IsEvil then
+        local attackerRole = if attacker then attacker:GetRole().Definition else nil
+        if not attackerRole or not table.find(attackerRole.RevealedRoles or {}, role.Name) or not table.find(attackerRole.Allies or {}, role.Name) then
+            return true
+        end
+    end
+
+    return false
 end
 
-local function SetFreeKill(participant: Types.Participant, reason: string, enabled: boolean, hideReason: boolean?): ()
-    local index = table.find(participant._freeKillReasons, reason)
-    if enabled and index then
-        return
-    end
-
-    if not enabled and not index then
-        return
-    end
-
-    if enabled then
-        table.insert(participant._freeKillReasons, reason)
-    else
-        table.remove(participant._freeKillReasons, index)
-    end
-
-    if #participant._freeKillReasons == 0 then
-        Replication.InformFreeKill(participant.Player)
-    else
-        Replication.InformFreeKill(participant.Player, reason, hideReason)
-    end
-end
-
-local function ClearFreeKillReasons(participant: Types.Participant): ()
-    participant._freeKillReasons = {}
-    Replication.InformFreeKill(participant.Player)
+local function SetFreeKill(participant: Types.Participant, reason: string?): ()
+    participant._isFreeKill = not not reason
+    Replication.InformFreeKill(participant.Player, reason)
 end
 
 local function IsEvil(participant: Types.Participant): boolean
@@ -785,7 +775,7 @@ local function SpawnCharacter(participant: Types.Participant, morph: Model?, pre
         participant._selfDefenseList = {}
         participant.SlayVotes = {}
         participant.KillList = {}
-        participant:ClearFreeKillReasons()
+        participant:SetFreeKill()
     end
 
     participant:_setStatus("Alive")
@@ -1121,7 +1111,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         TryAddSlayVote = TryAddSlayVote,
 
         _karma = 1000,
-        _freeKillReasons = {},
+        _isFreeKill = false,
 
         _status = "Alive",
 
@@ -1199,8 +1189,6 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         SetLastDamagedBy = SetLastDamagedBy,
 
         OnCharacterPartAdded = OnCharacterPartAdded,
-
-        ClearFreeKillReasons = ClearFreeKillReasons,
     }
 end
 

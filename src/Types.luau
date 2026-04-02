@@ -271,6 +271,7 @@ export type ItemComponents = {
     MaxStock: number?,
 
     DoNotShowInEquipmentList: boolean?,
+    IsEvilItem: boolean?,
 
     Model: MapObject?,
     HoldAnimation: Content?,
@@ -588,10 +589,9 @@ export type Participant = {
     GetKarma: (Participant) -> number,
     SetKarma: (Participant, karma: number) -> (),
 
-    _freeKillReasons: {string},
+    _isFreeKill: boolean,
     IsFreeKill: (Participant, attacker: Participant?) -> boolean,
-    SetFreeKill: (Participant, reason: string, enabled: boolean, hideReason: boolean?) -> (),
-    ClearFreeKillReasons: (Participant) -> (),
+    SetFreeKill: (Participant, reason: string?) -> (),
 
     GetKarmaDamageMultiplier: (Participant) -> number,
 
