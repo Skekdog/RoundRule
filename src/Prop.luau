@@ -57,6 +57,12 @@ local function TryTakeDamage(prop: Types.Prop, params: Types.DamageParams, defer
         end
     end
 
+    if prop.Interactable and prop.Interactable.BeforeTakeDamage then
+        if not prop.Interactable.BeforeTakeDamage(prop, params) then
+            return false
+        end
+    end
+
     local canDamage = tryRunOnDamage(prop, params)
     if canDamage == false then -- if nil we still want to deal damage
         return false
