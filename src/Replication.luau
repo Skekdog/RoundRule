@@ -4,9 +4,9 @@ local Types = require(script.Parent.Types)
 
 local module = {}
 
-export type ReplicationTarget = Player | {[string | number]: Player} | "All"
+export type ReplicationTarget = Player | {[any]: Player} | "All"
 
-local function fireToTargets(remote: RemoteEvent, target: ReplicationTarget, ...): ()
+function module.FireToTargets(remote: RemoteEvent, target: ReplicationTarget, ...): ()
 	if target == "All" then
 		remote:FireAllClients(...)
 	else
@@ -46,15 +46,15 @@ local remotes = script.Parent.Remotes
 local replicatedData = script.Parent.ReplicatedData
 
 function module.ReplicateRole(target: ReplicationTarget, roleOf: Types.Participant, replicateNil: boolean): ()
-	fireToTargets(remotes.UpdatePlayerRole, target, roleOf.Player.Name, if replicateNil then nil else roleOf:GetRole().Definition.Name)
+	module.FireToTargets(remotes.UpdatePlayerRole, target, roleOf.Player.Name, if replicateNil then nil else roleOf:GetRole().Definition.Name)
 end
 
 function module.ReplicatePlayerStatus(target: ReplicationTarget, statusOf: Types.Participant, status: Types.ParticipantStatus?): ()
-	fireToTargets(remotes.UpdatePlayerStatus, target, statusOf.Player.Name, status)
+	module.FireToTargets(remotes.UpdatePlayerStatus, target, statusOf.Player.Name, status)
 end
 
 function module.ReplicateCredits(target: Types.Participant): ()
-	fireToTargets(remotes.UpdateCredits, target.Player, target:GetCredits())
+	module.FireToTargets(remotes.UpdateCredits, target.Player, target:GetCredits())
 end
 
 function module.ReplicateCorpse(target: ReplicationTarget, corpse: Types.Corpse, covert: boolean): ()
@@ -67,32 +67,32 @@ function module.ReplicateCorpse(target: ReplicationTarget, corpse: Types.Corpse,
 		view = (corpse.CorpseView :: Types.BaseCorpseView) :: Types.ClientCorpseView
 	end
 
-	fireToTargets(remotes.UpdatePlayerCorpse, target, view, covert)
+	module.FireToTargets(remotes.UpdatePlayerCorpse, target, view, covert)
 end
 
 function module.ClearCorpse(target: ReplicationTarget, participant: Types.Participant): ()
-	fireToTargets(remotes.UpdatePlayerCorpse, target, participant.Player.Name)
+	module.FireToTargets(remotes.UpdatePlayerCorpse, target, participant.Player.Name)
 end
 
 function module.ReplicateRoundEndMusic(target: ReplicationTarget, music: Sound, startedAtServerTime: number): ()
 	assert(module.CanInstanceReplicate(music), "Music must be parented to a replicatable service")
-	fireToTargets(remotes.RoundEndMusic, target, music, startedAtServerTime)
+	module.FireToTargets(remotes.RoundEndMusic, target, music, startedAtServerTime)
 end
 
 function module.UpdateInventory(target: ReplicationTarget, mode: "Add" | "Remove", item: Types.Item): ()
-	fireToTargets(remotes.UpdateInventory, target, mode, if mode == "Add" then module.GetItemReplicate(item, true) else item.Name)
+	module.FireToTargets(remotes.UpdateInventory, target, mode, if mode == "Add" then module.GetItemReplicate(item, true) else item.Name)
 end
 
 function module.ResetInventory(target: ReplicationTarget): ()
-	fireToTargets(remotes.UpdateInventory, target, "Reset")
+	module.FireToTargets(remotes.UpdateInventory, target, "Reset")
 end
 
 function module.SetEquippedItem(target: ReplicationTarget, item: string?): ()
-	fireToTargets(remotes.SetEquippedItem, target, item)
+	module.FireToTargets(remotes.SetEquippedItem, target, item)
 end
 
 function module.DamageTaken(target: ReplicationTarget, amount: number, kind: Types.DamageSource): ()
-	fireToTargets(remotes.DamageTaken, target, amount, if typeof(kind) == "string" then kind else kind.Name)
+	module.FireToTargets(remotes.DamageTaken, target, amount, if typeof(kind) == "string" then kind else kind.Name)
 end
 
 function module.UpdateReserveAmmo(target: ReplicationTarget, mode: "Update" | "Reset", kind: string?, amount: number?): ()
@@ -103,19 +103,19 @@ function module.UpdateReserveAmmo(target: ReplicationTarget, mode: "Update" | "R
 		assert(kind == nil, "Kind must be nil")
 	end
 
-	fireToTargets(remotes.UpdateReserveAmmo, target, mode, kind, amount)
+	module.FireToTargets(remotes.UpdateReserveAmmo, target, mode, kind, amount)
 end
 
 function module.SlayVote(target: ReplicationTarget, against: Types.Participant): ()
-	fireToTargets(remotes.SlayVote, target, against.Player.Name)
+	module.FireToTargets(remotes.SlayVote, target, against.Player.Name)
 end
 
 function module.SendMessage(target: ReplicationTarget, message: string, kind: Types.MessageKind?): ()
-	fireToTargets(remotes.SendMessage, target, message, kind or "All")
+	module.FireToTargets(remotes.SendMessage, target, message, kind or "All")
 end
 
 function module.InformFreeKill(target: ReplicationTarget, reason: string?): ()
-	fireToTargets(remotes.FreeKill, target, reason)
+	module.FireToTargets(remotes.FreeKill, target, reason)
 end
 
 function module.ReplicateAdvanceTime(target: number?): ()
@@ -144,7 +144,7 @@ function module.ReplicateGamemode(gamemode: Types.GamemodeDefinition): ()
 end
 
 function module.ReplicateMap(): ()
-	fireToTargets(remotes.MapLoaded, "All")
+	module.FireToTargets(remotes.MapLoaded, "All")
 end
 
 function module.AddEvent(event: Types.Event): ()
@@ -217,7 +217,7 @@ function module.RunOnHitClient(item: Types.ItemComponents, participant: Types.Pa
 end
 
 function module.CallRoleToCorpse(target: ReplicationTarget, model: Model): ()
-	fireToTargets(remotes.CallToCorpse, target, model)
+	module.FireToTargets(remotes.CallToCorpse, target, model)
 end
 
 return table.freeze(module)
