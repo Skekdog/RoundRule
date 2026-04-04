@@ -41,6 +41,8 @@ export type ExplosionInfo = {
     Pressure: number,
     VisualRadius: number,
 
+    Sound: Sound?,
+
     IgnoreSelfDefense: boolean?,
     IgnoreKarma: boolean?,
     IgnoreScore: boolean?,
