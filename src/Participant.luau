@@ -763,10 +763,10 @@ local function SpawnCharacter(participant: Types.Participant, morph: Model?, pre
 
     local lastHealth = participant:GetHealth()
 
+    participant:DespawnCharacter(preserve)
+
     participant.Corpse = nil
     Replication.ClearCorpse("All", participant)
-
-    participant:DespawnCharacter(preserve)
 
     participant._isCharacterLoading = true
     participant._wasDeathProcessed = false
