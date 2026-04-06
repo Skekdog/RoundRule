@@ -293,6 +293,7 @@ export type ItemComponents = {
 
     AmmoDefinition: AmmoDefinition?,
     Ammo: number?,
+    UseShells: boolean?,
 
     ReloadDuration: number?,
     ReloadAnimation: Content?,
