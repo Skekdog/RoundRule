@@ -263,6 +263,8 @@ local function SetPhase(round: Types.Round, phase: Types.Phase, duration: number
     round._phase = phase
     round.PhaseLength = duration
 
+    round:Pause(false)
+
     if callback == nil then
         if phase == "Waiting" then
             callback = false
