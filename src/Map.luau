@@ -87,6 +87,8 @@ function Map.new(structure: Types.MapStructure): Types.Map
         name = originalNameAttr
     end
 
+    local icon = structure:GetAttribute("Icon") :: string?
+
     return {
         Structure = structure,
 
@@ -94,7 +96,7 @@ function Map.new(structure: Types.MapStructure): Types.Map
         DisplayName = structure:GetAttribute("DisplayName") :: string?,
         Description = structure:GetAttribute("Description") :: string,
         Authors = structure:GetAttribute("Authors") :: string,
-        Icon = Content.fromUri(structure:GetAttribute("Icon") :: string),
+        Icon = if icon then Content.fromUri(icon) else Content.none,
 
         Gravity = structure:GetAttribute("Gravity") :: number? or 50,
 
