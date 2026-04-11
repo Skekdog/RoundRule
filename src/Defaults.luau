@@ -1,4 +1,3 @@
-local PlaySound = require(script.Parent.Common.PlaySound)
 local Role = require(script.Parent.Role)
 local Types = require(script.Parent.Types)
 
@@ -10,7 +9,7 @@ local defaultRoleDefinition: Types.RoleDefinition = {
 	Name = "",
 	Description = "",
 	Color = Color3.new(1, 1, 1),
-	Sound = PlaySound.MakeSound(""),
+	Sound = Instance.new("Sound"),
 
 	Allegiance = {Kind = "Solo"},
 }
