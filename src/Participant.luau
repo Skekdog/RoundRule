@@ -736,7 +736,9 @@ local function OnCharacterPartAdded(participant: Types.Participant, part: Instan
         part.CanCollide = true
     end
 
-    part.CollisionGroup = "PlayerCharacterParts"
+    if part.CollisionGroup ~= "Corpses" then
+        part.CollisionGroup = "PlayerCharacterParts"
+    end
 end
 
 local function MoveToSpawn(participant: Types.Participant, spawnCFrame: CFrame?): ()
