@@ -392,6 +392,8 @@ export type ItemComponents = {
 
     OnProjectileSpawn: (item: Item, projectile: MapObject, participant: Participant) -> ()?,
     OnProjectileDespawn: (item: Item, projectile: MapObject, participant: Participant) -> ()?,
+
+    OnHitRejectServer: (item: Item) -> ()?,
 }
 
 export type AmmoDefinition = {
