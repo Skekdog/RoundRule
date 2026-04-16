@@ -593,8 +593,7 @@ local function isObscured(participant: Types.Participant, origin: Vector3, targe
     local char = assert(participant:GetCharacter())
 
     local params = RaycastParams.new()
-    params.FilterDescendantsInstances = {char}
-    params.FilterType = Enum.RaycastFilterType.Exclude
+    params.ExcludeInstances = {char}
 
     local result = workspace:Raycast(origin, target - origin, params)
     return if result then result.Distance else nil
