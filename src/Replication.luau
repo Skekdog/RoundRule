@@ -154,7 +154,9 @@ function module.AddEvent(event: Types.Event): ()
 
 	if event.Data.Kind == "DeathRoundEvent" then
 		local corpse = event.Data.Victim.Corpse
-		assert(corpse, "Victim has no corpse")
+		if not corpse then
+			return
+		end
 
 		value:SetAttribute("WasSelfDefense", corpse.CorpseView.WasSelfDefense)
 		value:SetAttribute("WasFreeKill", corpse.CorpseView.WasFreeKill)
