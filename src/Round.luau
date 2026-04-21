@@ -835,6 +835,11 @@ end
 local function LoadMap(round: Types.Round, structure: Types.MapStructure): ()
     structure = structure:Clone()
 
+    local projectiles = workspace:FindFirstChild("Projectiles")
+    if projectiles then
+        projectiles:ClearAllChildren()
+    end
+
     if not lastMap or lastMap.Name ~= structure.Name then
         loadStatic(round, structure)
     elseif lastMap and lastMap.Name == structure.Name then
