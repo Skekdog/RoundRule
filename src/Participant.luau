@@ -757,7 +757,7 @@ local function MoveToSpawn(participant: Types.Participant, spawnCFrame: CFrame?)
     char:PivotTo(assert(spawnCFrame))
 end
 
-local function SpawnCharacter(participant: Types.Participant, morph: Model?, preserve: boolean?): ()
+local function SpawnCharacter(participant: Types.Participant, morph: Model?, preserve: boolean?, morphToSpawn: boolean?): ()
     if participant._isCharacterLoading then
         return
     end
@@ -802,7 +802,7 @@ local function SpawnCharacter(participant: Types.Participant, morph: Model?, pre
         participant._humanoid = hum
         participant._character = char
 
-        if not morph then
+        if not morph and not morphToSpawn then
             participant:MoveToSpawn()
         end
 
