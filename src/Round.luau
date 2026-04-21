@@ -829,19 +829,17 @@ local function reloadDynamic(round: Types.Round, structure: Types.MapStructure):
     round._map = lastMap
 
     lastMap.Structure.Dynamic:Destroy()
-    structure.Dynamic.Parent = lastMap.Structure
+    structure.Dynamic:Clone().Parent = lastMap.Structure
 end
 
 local function LoadMap(round: Types.Round, structure: Types.MapStructure): ()
-    structure = structure:Clone()
-
     local projectiles = workspace:FindFirstChild("Projectiles")
     if projectiles then
         projectiles:ClearAllChildren()
     end
 
     if not lastMap or lastMap.Name ~= structure.Name then
-        loadStatic(round, structure)
+        loadStatic(round, structure:Clone())
     elseif lastMap and lastMap.Name == structure.Name then
         reloadDynamic(round, structure)
     else
