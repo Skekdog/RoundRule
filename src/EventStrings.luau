@@ -12,7 +12,9 @@ local function GetEventString(event: Types.Event): string
         return `{data.SearchedBy:GetFormattedName()} found the body of {data.Victim:GetFormattedName()}.`
     elseif data.Kind == "DeathRoundEvent" then
         local corpse = data.Victim.Corpse
-        assert(corpse)
+        if not corpse then
+            return `{data.Victim:GetFormattedName()} died.`
+        end
 
         local msg: string
 
