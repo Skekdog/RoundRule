@@ -802,7 +802,7 @@ local function SpawnCharacter(participant: Types.Participant, morph: Model?, pre
         participant._humanoid = hum
         participant._character = char
 
-        if not morph and not morphToSpawn then
+        if not morph or morphToSpawn then
             participant:MoveToSpawn()
         end
 
