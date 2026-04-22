@@ -10,8 +10,7 @@ function Ragdoll.Ragdoll(participant: Types.Participant, char: Model): ()
 	participant:SetEquippedItem(nil)
 	Replication.SetEquippedItem(participant.Player, nil)
 
-	for _, constraint in char:QueryDescendants("AnimationConstraint:not(#Root)") do
-		assert(constraint:IsA("AnimationConstraint"))
+	for _, constraint in char:QueryDescendants("Motor6D:not(#Root)") do
 		constraint.Enabled = false
 	end
 
@@ -50,8 +49,7 @@ function Ragdoll.MakeCorpse(participant: Types.Participant, char: Model): Model
 end
 
 function Ragdoll.Unragdoll(char: Model): ()
-	for _, constraint in char:QueryDescendants("AnimationConstraint:not(#Root)") do
-		assert(constraint:IsA("AnimationConstraint"))
+	for _, constraint in char:QueryDescendants("Motor6D:not(#Root)") do
 		constraint.Enabled = true
 	end
 

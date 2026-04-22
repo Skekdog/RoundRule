@@ -694,7 +694,7 @@ export type Participant = {
 
     TryThrowAssembly: (Participant, assembly: MapObject, force: number, parent: Instance?, position: Vector3?, direction: Vector3?, noForward: boolean?, noAngularImpulse: boolean?) -> boolean,
 
-    OnCharacterPartAdded: (Participant, part: Instance) -> (),
+    OnCharacterInstanceAdded: (Participant, part: Instance) -> (),
 }
 
 export type Prop = {
