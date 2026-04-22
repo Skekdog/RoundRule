@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local ForEachPart = require(ReplicatedStorage.Shared.RoundRule.Common.ForEachPart)
+local GetMapObjectWithTag = require(ReplicatedStorage.Shared.RoundRule.Common.GetMapObjectWithTag)
 local GetPrimaryPart = require(ReplicatedStorage.Shared.RoundRule.Common.GetPrimaryPart)
 local AmmoBox = require(script.Parent.AmmoBox)
 local Corpse = require(script.Parent.Corpse)
@@ -704,7 +705,7 @@ end
 
 local function OnCharacterInstanceAdded(participant: Types.Participant, instance: Instance): ()
     -- AnimationConstraints have some really weird bugs so we use Motor6Ds instead. It's lame but such is life
-    if instance:IsA("AnimationConstraint") then
+    if instance:IsA("AnimationConstraint") and instance.Enabled then
         local motor = Instance.new("Motor6D")
 
         local part0 = if instance.Attachment0 then instance.Attachment0:FindFirstAncestorWhichIsA("BasePart") else nil
@@ -724,6 +725,7 @@ local function OnCharacterInstanceAdded(participant: Types.Participant, instance
         instance.Name ..= "_Disabled"
         instance.Enabled = false
 
+        motor.Enabled = if GetMapObjectWithTag(instance, "Ragdoll") then false else true
         motor.Parent = instance.Parent
     end
 
