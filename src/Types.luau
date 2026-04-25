@@ -38,6 +38,7 @@ export type ExplosionInfo = {
     Damage: number,
     FalloffStart: number,
     FalloffEnd: number,
+    FalloffMultiplier: number?,
     Pressure: number,
     VisualRadius: number,
 
@@ -326,6 +327,7 @@ export type ItemComponents = {
 
     FalloffStart: number?,
     FalloffEnd: number?,
+    FalloffMultiplier: number?,
 
     OnHitClient: (part: BasePart?) -> ()?,
 
