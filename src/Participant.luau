@@ -725,7 +725,7 @@ local function OnCharacterInstanceAdded(participant: Types.Participant, instance
         instance.Name ..= "_Disabled"
         instance.Enabled = false
 
-        motor.Enabled = if GetMapObjectWithTag(instance, "Ragdoll") then false else true
+        motor.Enabled = if motor.Name ~= "Root" and GetMapObjectWithTag(instance, "Ragdoll") then false else true
         motor.Parent = instance.Parent
     end
 
