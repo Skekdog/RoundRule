@@ -161,8 +161,9 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
         return
     end
 
-    participant._role = participant.Round:GetRoleFromRoleName(role.Name)
-    tryAssignHumanoidPropertiesForRole(participant._humanoid, participant._role)
+    local roundRole = participant.Round:GetRoleFromRoleName(role.Name)
+    participant._role = roundRole
+    tryAssignHumanoidPropertiesForRole(participant._humanoid, roundRole)
 
     participant:AddCredits(role.StartingCredits or 0)
     if role.StartingItems then
@@ -172,7 +173,7 @@ local function SetRole(participant: Types.Participant, role: Types.RoleDefinitio
     end
 
     if participant.Round.Config.OnRoleAssigned then
-        participant.Round.Config.OnRoleAssigned(participant.Round, participant)
+        participant.Round.Config.OnRoleAssigned(participant.Round, participant, roundRole)
     end
 
     if role.OnRoleAssignedServer then
