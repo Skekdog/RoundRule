@@ -724,6 +724,7 @@ export type GameConfig = {
     BeforeDamageProp: ((Round, Prop, DamageParams) -> boolean)?,
     BeforeDamageParticipant: ((Round, Participant, DamageParams) -> boolean)?,
     OnRoleAssigned: (Round, Participant, Role) -> ()?,
+    OnPhaseChanged: (Round, Phase) -> ()?,
     OnItemDropped: (Round, Participant, Item) -> ()?,
 }
 
