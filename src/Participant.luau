@@ -93,10 +93,11 @@ local function onDeath(participant: Types.Participant, params: Types.DamageParam
 
     participant:_setStatus("Missing")
 
+    if round.Config.OnDeath then
+        round.Config.OnDeath(round, participant, deferVictoryCheck)
+    end
+
     if round:IsInProgress() then
-        if round.Config.OnDeath then
-            round.Config.OnDeath(round, participant, deferVictoryCheck)
-        end
         if round.Gamemode.OnDeath then
             round.Gamemode.OnDeath(round, participant, deferVictoryCheck)
         end
