@@ -292,6 +292,10 @@ local function SetPhase(round: Types.Round, phase: Types.Phase, duration: number
     Replication.ReplicateRoundPhase(phase)
 
     setAdvanceTime(round, duration, callback or function() end)
+
+    if round.Config.OnPhaseChanged then
+        round.Config.OnPhaseChanged(round, phase)
+    end
 end
 
 local function AddEvent(round: Types.Round, data: Types.RoundEventData): ()
