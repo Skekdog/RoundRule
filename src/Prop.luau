@@ -87,7 +87,7 @@ end
 
 function module.new(model: Types.MapObject, round: Types.Round?, interactable: Types.InteractableDefinition?): Types.Prop
     local health = model:GetAttribute("Health")
-    assert((typeof(health) == "number") or typeof(health) == "nil")
+    assert((typeof(health) == "number") or typeof(health) == "nil", `Expected number or nil for Health attribute, got {typeof(health)} ({model:GetFullName()})`)
 
     local prop: Types.Prop = {
         Kind = "Prop",
