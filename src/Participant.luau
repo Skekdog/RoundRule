@@ -387,7 +387,7 @@ local function TryTakeDamage(participant: Types.Participant, params: Types.Damag
 
         params.Amount *= attacker:GetKarmaDamageMultiplier()
 
-        if not params.IgnoreKarma then
+        if not params.IgnoreKarma and attacker ~= participant then
             local karma = participant:GetKarma()
             karma = karma + (params.Amount * (participant:GetRole().Definition.DamageKarmaMultiplier or 1)) * (if attacker:IsDamageJustifiedAgainstParticipant(participant) then 1 else -1)
             participant:SetKarma(karma)
