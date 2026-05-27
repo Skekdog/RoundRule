@@ -294,25 +294,44 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.Item?
         local model = item.Model:Clone();
         (model :: Instance).Name = "Item"
 
-        local motor = Instance.new("Motor6D")
-        motor.Part0 = char:FindFirstChild("RightHand") :: BasePart?
-        motor.Part1 = if model:IsA("Model") then model.PrimaryPart else model
+        local hand = char:FindFirstChild("RightHand")
+        if hand and hand:IsA("BasePart") then
+            local animationConstraint = Instance.new("AnimationConstraint")
+            animationConstraint.Name = "ItemGrip"
+            animationConstraint.IsKinematic = true
 
-        local c1 = model:GetAttribute("AnimC1")
-        if typeof(c1) == "CFrame" then
-            motor.C1 = c1
+            local attachment0 = hand:FindFirstChild("ItemAttachment") or Instance.new("Attachment")
+            assert(attachment0:IsA("Attachment"))
+            attachment0.Name = "ItemAttachment"
+            attachment0.Parent = hand
+
+            local primaryPart = GetPrimaryPart(model)
+            local attachment1 = primaryPart:FindFirstChild("ItemAttachment") or Instance.new("Attachment")
+            assert(attachment1:IsA("Attachment"))
+            attachment1.Name = "ItemAttachment"
+            attachment1.Parent = primaryPart
+
+            animationConstraint.Attachment0 = attachment0
+            animationConstraint.Attachment1 = attachment1
+
+            local c1 = model:GetAttribute("AnimC1")
+            if typeof(c1) == "CFrame" then
+                attachment1.CFrame = c1
+            else
+                attachment1.CFrame = CFrame.identity
+            end
+
+            animationConstraint.Parent = model
+
+            ForEachPart(model, function(part)
+                part.Massless = true
+                part.CanCollide = false
+                part.CanTouch = false
+                part.CanQuery = false
+            end);
+
+            (model :: Instance).Parent = char
         end
-
-        motor.Parent = model
-
-        ForEachPart(model, function(part)
-            part.Massless = true
-            part.CanCollide = false
-            part.CanTouch = false
-            part.CanQuery = false
-        end);
-
-        (model :: Instance).Parent = char
     end
 
     participant._equippedItem = item
@@ -704,46 +723,22 @@ local function PurchaseItem(participant: Types.Participant, itemDefinition: Type
     return "Success"
 end
 
-local function OnCharacterInstanceAdded(participant: Types.Participant, instance: Instance): ()
-    -- AnimationConstraints have some really weird bugs so we use Motor6Ds instead. It's lame but such is life
-    if instance:IsA("AnimationConstraint") then
-        local motor = Instance.new("Motor6D")
-
-        local part0 = if instance.Attachment0 then instance.Attachment0:FindFirstAncestorWhichIsA("BasePart") else nil
-        local part1 = if instance.Attachment1 then instance.Attachment1:FindFirstAncestorWhichIsA("BasePart") else nil
-
-        local c0 = if instance.Attachment0 then instance.Attachment0.CFrame else nil
-        local c1 = if instance.Attachment1 then instance.Attachment1.CFrame else nil
-
-        motor.Part0 = part0
-        motor.Part1 = part1
-
-        motor.C0 = c0 or CFrame.identity
-        motor.C1 = c1 or CFrame.identity
-
-        motor.Name = instance.Name
-
-        instance.Name ..= "_Disabled"
-        instance.Enabled = false
-
-        motor.Parent = instance.Parent
-    end
-
-    if not instance:IsA("BasePart") then
+local function OnCharacterPartAdded(participant: Types.Participant, part: Instance): ()
+    if not part:IsA("BasePart") then
         return
     end
 
-    if instance:FindFirstAncestorOfClass("Accessory") then
-        instance.CanCollide = false
-        instance.CanTouch = false
-        instance.CanQuery = false
+    if part:FindFirstAncestorOfClass("Accessory") then
+        part.CanCollide = false
+        part.CanTouch = false
+        part.CanQuery = false
         return
-    elseif instance.Name == "Head" then
-        instance.CanCollide = true
+    elseif part.Name == "Head" then
+        part.CanCollide = true
     end
 
-    if instance.CollisionGroup ~= "Corpses" then
-        instance.CollisionGroup = "PlayerCharacterParts"
+    if part.CollisionGroup ~= "Corpses" then
+        part.CollisionGroup = "PlayerCharacterParts"
     end
 end
 
@@ -800,10 +795,10 @@ local function SpawnCharacter(participant: Types.Participant, morph: Model?, pre
         end
 
         char.DescendantAdded:Connect(function(part)
-            participant:OnCharacterInstanceAdded(part)
+            participant:OnCharacterPartAdded(part)
         end)
         for _, v in char:GetDescendants() do
-            participant:OnCharacterInstanceAdded(v)
+            participant:OnCharacterPartAdded(v)
         end
 
         participant._humanoid = hum
@@ -1196,7 +1191,7 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         GetLastDamagedBy = GetLastDamagedBy,
         SetLastDamagedBy = SetLastDamagedBy,
 
-        OnCharacterInstanceAdded = OnCharacterInstanceAdded,
+        OnCharacterPartAdded = OnCharacterPartAdded,
     }
 end
 
