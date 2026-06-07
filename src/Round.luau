@@ -31,7 +31,7 @@ local function removeInvalidItems(round: Types.Round): ()
         for _, item in v:GetItems() do
             assert(item)
             if not round:GetItemDefinition(item.Name) then
-                v:RemoveItem(item)
+                v:RemoveItem(item, true)
             end
         end
     end
@@ -122,7 +122,7 @@ local function LoadGamemode(round: Types.Round, gamemode: Types.GamemodeDefiniti
         v:SetCredits(0)
         for _, item in v:GetItems() do
             assert(item)
-            v:RemoveItem(item)
+            v:RemoveItem(item, true)
         end
         for _, item in gamemode.StartingItems do
             v:AddItem(round:LoadItem(item))
@@ -201,7 +201,7 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
 
     for _, v in participant:GetItems() do
         assert(v)
-        participant:RemoveItem(v)
+        participant:RemoveItem(v, true)
     end
 
     if not isRejoining and count < round.MinimumRequiredPlayers and round:IsPreGame() then
@@ -553,7 +553,6 @@ local function LoadItem(round: Types.Round, components: Types.ItemComponents, mo
                 return
             end
 
-            (model :: PVInstance).Parent = nil
             participant:AddItem(item)
         end)
     end)

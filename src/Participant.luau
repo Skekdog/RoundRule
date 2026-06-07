@@ -650,7 +650,7 @@ local function TryDropItem(participant: Types.Participant, item: Types.Item, thr
         return true
     end
 
-    participant:RemoveItem(item)
+    participant:RemoveItem(item, true)
     return false
 end
 
@@ -660,7 +660,7 @@ local function AddItem(participant: Types.Participant, item: Types.Item): ()
     end
 
     if item.Model then
-        (item.Model :: Instance).Parent = nil
+        (item.Model :: Instance).Parent = Replication.ReplicatedData.ItemModels
     end
 
     participant._items[item.Name] = item
@@ -672,7 +672,7 @@ local function AddItem(participant: Types.Participant, item: Types.Item): ()
     Replication.UpdateInventory(participant.Player, "Add", item)
 end
 
-local function RemoveItem(participant: Types.Participant, item: Types.Item): ()
+local function RemoveItem(participant: Types.Participant, item: Types.Item, removeFromRound: boolean?): ()
     participant._items[item.Name] = nil
     if participant:GetEquippedItem() == item then
         participant:SetEquippedItem(nil, true)
@@ -683,6 +683,11 @@ local function RemoveItem(participant: Types.Participant, item: Types.Item): ()
     end
 
     Replication.UpdateInventory(participant.Player, "Remove", item)
+
+    if removeFromRound and item.Model then
+        participant.Round._items[item.Model] = nil
+        item.Model:Destroy()
+    end
 end
 
 local function GetItems(participant: Types.Participant): {[string]: Types.Item?}

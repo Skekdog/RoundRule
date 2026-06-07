@@ -12,6 +12,10 @@
         {
             "name": "Scores",
             "className": "Folder"
+        },
+        {
+            "name": "ItemModels",
+            "className": "Folder"
         }
     ]
 }

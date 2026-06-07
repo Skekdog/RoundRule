@@ -670,7 +670,7 @@ export type Participant = {
     DropItem: (Participant, item: Item, throwDirection: Vector3?) -> (),
 
     AddItem: (Participant, item: Item) -> (),
-    RemoveItem: (Participant, item: Item) -> (),
+    RemoveItem: (Participant, item: Item, shouldDestroy: boolean?) -> (),
     TryDropItem: (Participant, item: Item, throw: Vector3?) -> boolean,
 
     GetItemOccupyingGroup: (Participant, group: ItemGroup?) -> Item?,
