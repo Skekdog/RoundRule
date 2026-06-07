@@ -187,6 +187,7 @@ export type RoleDefinition = {
     CanStealCreditsFromCorpses: boolean?,
     CanSeeMissingInAction: boolean?,
     CanTeamChat: boolean?,
+    CanTransferCreditsToAllies: boolean?,
 
     AwardCreditsToRolesOnDeath: {[string]: number}?,
     CorpseHidesSelfDefense: boolean?,
