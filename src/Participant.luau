@@ -265,7 +265,7 @@ local function SetEquippedItem(participant: Types.Participant, item: Types.Item?
 
     local char = participant:GetCharacter()
 
-    if item and not force and char and char:GetAttribute("IsRagdolled") then
+    if item and not force and char and char:HasTag("Ragdoll") then
         return
     end
 
