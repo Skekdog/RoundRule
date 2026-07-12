@@ -737,6 +737,7 @@ export type Round = {
 
     LoadGamemode: (Round, gamemode: GamemodeDefinition) -> (),
 
+    StartTime: number?,
     MinimumRequiredPlayers: number,
 
     Extras: Extras,
@@ -808,6 +809,23 @@ export type Round = {
     GetParticipantsWithRole: (Round, role: Role) -> {Participant},
 
     SendMessage: (Round, to: {Player} | Player?, message: string, kind: MessageKind?) -> (),
+}
+
+export type ClientEventData = {
+    Timestamp: number,
+    Description: string,
+    WasFreeKill: boolean?,
+    WasSelfDefense: boolean?,
+    WasCorrectKill: boolean?,
+}
+
+export type ClientRoundFinishData = {
+    VictorName: string,
+    VictorKind: "Role" | "Participant",
+    StartTime: number,
+    Events: {ClientEventData},
+    Scores: {[string]: ScoreTable},
+    Highlights: {Highlight},
 }
 
 return nil

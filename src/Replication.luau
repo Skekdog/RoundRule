@@ -132,15 +132,6 @@ function module.ReplicateRoundPause(target: boolean): ()
 	replicatedData:SetAttribute("Paused", target)
 end
 
-function module.ReplicateStartTime(target: number?): ()
-	replicatedData:SetAttribute("StartTime", target)
-end
-
-function module.ReplicateWinner(victor: Types.Victor?): ()
-	replicatedData:SetAttribute("WinnerKind", if victor then victor.Kind else nil)
-	replicatedData:SetAttribute("Winner", if victor then if victor.Kind == "Role" then victor.Definition.Name else victor.Player.Name else nil)
-end
-
 function module.ReplicateGamemode(gamemode: Types.GamemodeDefinition): ()
 	replicatedData:SetAttribute("Gamemode", gamemode.Name)
 end
@@ -149,71 +140,9 @@ function module.ReplicateMap(): ()
 	module.FireToTargets(remotes.MapLoaded, "All")
 end
 
-function module.AddEvent(event: Types.Event): ()
-	local value = Instance.new("StringValue")
-	value.Name = tostring(event.Timestamp)
-	value.Value = EventStrings(event)
-
-	if event.Data.Kind == "DeathRoundEvent" then
-		local corpse = event.Data.Victim.Corpse
-		if not corpse then
-			return
-		end
-
-		value:SetAttribute("WasSelfDefense", corpse.CorpseView.WasSelfDefense)
-		value:SetAttribute("WasFreeKill", corpse.CorpseView.WasFreeKill)
-		value:SetAttribute("WasCorrectKill", corpse.WasCorrectKill)
-	end
-
-	value.Parent = replicatedData.Events
-end
-
-function module.AddScore(participant: Types.Participant): ()
-	local value = Instance.new("StringValue")
-	value.Name = participant.Player.Name
-
-	for reason, score in participant.Scores do
-		local scoreValue = Instance.new("IntValue")
-		scoreValue.Name = reason
-		scoreValue.Value = score or 0
-		scoreValue.Parent = value
-	end
-
-	value.Parent = replicatedData.Scores
-end
-
-function module.AddHighlight(highlight: Types.Highlight): ()
-	local value = Instance.new("StringValue")
-	value.Name = highlight.Title
-	value.Value = highlight.Description
-	value:SetAttribute("Priority", highlight.Priority)
-	value:SetAttribute("Group", highlight.Group)
-
-	value.Parent = replicatedData.Highlights
-end
-
-function module.ClearEvents(): ()
-	replicatedData.Events:ClearAllChildren()
-end
-
-function module.ClearHighlights(): ()
-	replicatedData.Highlights:ClearAllChildren()
-end
-
-function module.ClearScores(): ()
-	replicatedData.Scores:ClearAllChildren()
-end
-
 function module.Reset(): ()
 	remotes.Reset:FireAllClients()
-
-	module.ClearEvents()
-	module.ClearHighlights()
-	module.ClearScores()
-
-    module.ReplicateStartTime()
     module.ReplicateAdvanceTime()
-    module.ReplicateWinner()
 end
 
 function module.RunOnHitClient(item: Types.ItemComponents, participant: Types.Participant, hitPart: BasePart): ()
@@ -222,6 +151,48 @@ end
 
 function module.CallRoleToCorpse(target: ReplicationTarget, model: Model): ()
 	module.FireToTargets(remotes.CallToCorpse, target, model)
+end
+
+function module.ReplicateRoundFinish(round: Types.Round): ()
+	local victory = round.VictoryData
+	assert(victory)
+
+	local victorKind: "Participant" | "Role" = victory.Victor.Kind
+	local victorName = if victory.Victor.Kind == "Participant" then victory.Victor.Player.Name else victory.Victor.Definition.Name
+
+	local highlights: {Types.Highlight} = {}
+	for _, highlight in round.Highlights do
+		local cutHighlight = table.clone(highlight)
+		cutHighlight.Participants = nil
+
+		table.insert(highlights, cutHighlight)
+	end
+
+	local events: {Types.ClientEventData} = {}
+	for _, event in round:GetEventLog() do
+		table.insert(events, {
+			Timestamp = event.Timestamp,
+			Description = EventStrings(event)
+		})
+	end
+
+	local scores: {[string]: Types.ScoreTable} = {}
+	for _, participant in round:GetParticipants() do
+		scores[participant.Player.Name] = participant.Scores
+	end
+
+	local data: Types.ClientRoundFinishData = {
+		VictorKind = victorKind,
+		VictorName = victorName,
+
+		StartTime = assert(round.StartTime),
+
+		Highlights = highlights,
+		Events = events,
+		Scores = scores,
+	}
+
+	remotes.RoundFinishData:FireAllClients(data)
 end
 
 return table.freeze(module)

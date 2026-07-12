@@ -354,7 +354,7 @@ local function _start(round: Types.Round): ()
         Kind = "StartRoundEvent",
     })
 
-    Replication.ReplicateStartTime(workspace:GetServerTimeNow())
+    round.StartTime = workspace:GetServerTimeNow()
     round:SetPhase("Playing", round.Gamemode.Duration(round, #participantList))
 
     Random.new():Shuffle(participantList)
@@ -459,24 +459,12 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
         VictoryText = victoryText,
     })
 
-    Replication.ClearEvents()
-    Replication.ClearHighlights()
-    Replication.ClearScores()
-    for _, v in round:GetEventLog() do
-        Replication.AddEvent(v)
-    end
-
     if round.Gamemode.AddFinishHighlights then
         round.Gamemode.AddFinishHighlights(round)
     end
 
-    for _, v in round.Highlights do
-        Replication.AddHighlight(v)
-    end
-
     for _, v in round:GetParticipants() do
         assert(v)
-        Replication.AddScore(v)
         Replication.ReplicateRole("All", v, false)
         Replication.ReplicatePlayerStatus("All", v, v:GetStatus())
 
@@ -491,12 +479,13 @@ local function Finish(round: Types.Round, victor: Types.Victor, isTimeout: boole
         Replication.ReplicateRoundEndMusic("All", chosenMusic, workspace:GetServerTimeNow())
     end
 
-    Replication.ReplicateWinner(victor)
     round:SetPhase("Highlights", HIGHLIGHTS_TIME)
 
     if round.Gamemode.OnFinish then
         round.Gamemode.OnFinish(round)
     end
+
+    Replication.ReplicateRoundFinish(round)
 end
 
 local function GetProps(round: Types.Round): {[Types.MapObject]: Types.Prop}
