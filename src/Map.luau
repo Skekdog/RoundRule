@@ -3,6 +3,24 @@ local Types = require(script.Parent.Types)
 local Map = {}
 
 function Map.ValidateStructure(structure: Instance): Types.MapStructure
+    local metadataModule = structure:FindFirstChild("Metadata")
+    assert(metadataModule and metadataModule:IsA("ModuleScript"), "Map must have Metadata ModuleScript")
+
+    local metadata: {[unknown]: unknown} = (require)(metadataModule)
+    assert(typeof(metadata) == "table", "Metadata must return a table")
+
+    local displayName = metadata.DisplayName
+    assert(displayName == nil or typeof(displayName) == "string", "DisplayName must be a string or nil")
+
+    local description = metadata.Description
+    assert(typeof(description) == "string", "Description must be a string")
+
+    local authors = metadata.Authors
+    assert(typeof(authors) == "string", "Authors must be a string")
+
+    local icon = metadata.Icon
+    assert(typeof(icon) == "Content", "Icon must be a Content. Use `Content.none` for default icon.")
+
     local static = structure:FindFirstChild("Static")
     assert(static, "Map must have Static")
 
@@ -17,18 +35,6 @@ function Map.ValidateStructure(structure: Instance): Types.MapStructure
 
     local clouds = structure:FindFirstChild("Clouds")
     assert(not clouds or clouds:IsA("Clouds"), "Clouds must be a Clouds")
-
-    local displayName = structure:GetAttribute("DisplayName")
-    assert(displayName == nil or typeof(displayName) == "string", "DisplayName must be a string")
-
-    local description = structure:GetAttribute("Description")
-    assert(typeof(description) == "string", "Description must be a string")
-
-    local authors = structure:GetAttribute("Authors")
-    assert(typeof(authors) == "string", "Authors must be a string")
-
-    local icon = structure:GetAttribute("Icon")
-    assert(icon == nil or typeof(icon) == "string", "Icon must be a string")
 
     local gravity = structure:GetAttribute("Gravity")
     assert(gravity == nil or typeof(gravity) == "number", "Gravity must be a number")
@@ -87,16 +93,16 @@ function Map.new(structure: Types.MapStructure): Types.Map
         name = originalNameAttr
     end
 
-    local icon = structure:GetAttribute("Icon") :: string?
+    local metadata: Types.MapMetadata = (require)(structure.Metadata)
 
     return {
         Structure = structure,
 
         Name = name,
-        DisplayName = structure:GetAttribute("DisplayName") :: string?,
-        Description = structure:GetAttribute("Description") :: string,
-        Authors = structure:GetAttribute("Authors") :: string,
-        Icon = if icon then Content.fromUri(icon) else Content.none,
+        DisplayName = metadata.DisplayName,
+        Description = metadata.Description,
+        Authors = metadata.Authors,
+        Icon = metadata.Icon,
 
         Gravity = structure:GetAttribute("Gravity") :: number? or 50,
 

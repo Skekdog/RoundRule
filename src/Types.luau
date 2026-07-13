@@ -420,7 +420,16 @@ export type BossDefinition = {
     OnSummon: (boss: BossDefinition, model: Prop) -> (),
 }
 
+export type MapMetadata = {
+    DisplayName: string?,
+    Description: string,
+    Authors: string,
+    Icon: Content,
+}
+
 export type MapStructure = Instance & {
+    Metadata: ModuleScript,
+
     Static: Instance,
     Dynamic: Instance,
     PlayerSpawns: Instance,
@@ -440,14 +449,9 @@ export type MapStructure = Instance & {
     MaterialVariants: Instance?,
 }
 
-export type Map = {
-    Structure: MapStructure,
-
+export type Map = MapMetadata & {
     Name: string,
-    DisplayName: string?,
-    Description: string,
-    Authors: string,
-    Icon: Content,
+    Structure: MapStructure,
 
     Gravity: number,
 
