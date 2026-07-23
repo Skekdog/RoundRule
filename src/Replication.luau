@@ -134,6 +134,7 @@ end
 
 function module.ReplicateGamemode(gamemode: Types.GamemodeDefinition): ()
 	replicatedData:SetAttribute("Gamemode", gamemode.Name)
+	module.FireToTargets(remotes.Gamemode, "All", gamemode.Name)
 end
 
 function module.ReplicateMap(): ()
