@@ -633,6 +633,8 @@ export type Participant = {
     _isCharacterLoading: boolean,
     _character: Model?,
     GetCharacter: (Participant) -> Model?,
+    CharacterCollisionGroup: string,
+    SetCharacterCollisionGroup: (Participant, collisionGroup: string) -> (),
 
     _humanoid: Humanoid?,
     GetHumanoid: (Participant) -> Humanoid?,

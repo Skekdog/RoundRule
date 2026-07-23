@@ -743,7 +743,18 @@ local function OnCharacterPartAdded(participant: Types.Participant, part: Instan
     end
 
     if part.CollisionGroup ~= "Corpses" then
-        part.CollisionGroup = "PlayerCharacterParts"
+        part.CollisionGroup = participant.CharacterCollisionGroup
+    end
+end
+
+local function SetCharacterCollisionGroup(participant: Types.Participant, collisionGroup: string): ()
+    local char = participant:GetCharacter()
+    if not char then
+        return
+    end
+
+    for _, part in char:QueryDescendants("BasePart") do
+        part.CollisionGroup = collisionGroup
     end
 end
 
@@ -1197,6 +1208,9 @@ function module.new(player: Player, round: Types.Round): Types.Participant
         SetLastDamagedBy = SetLastDamagedBy,
 
         OnCharacterPartAdded = OnCharacterPartAdded,
+
+        CharacterCollisionGroup = "PlayerCharacterParts",
+        SetCharacterCollisionGroup = SetCharacterCollisionGroup,
     }
 end
 
