@@ -81,8 +81,8 @@ function module.ReplicateRoundEndMusic(target: ReplicationTarget, music: Sound, 
 	module.FireToTargets(remotes.RoundEndMusic, target, music, startedAtServerTime)
 end
 
-function module.UpdateInventory(target: ReplicationTarget, mode: "Add" | "Remove", item: Types.Item): ()
-	module.FireToTargets(remotes.UpdateInventory, target, mode, if mode == "Add" then module.GetItemReplicate(item, true) else item.Name)
+function module.UpdateInventory(target: ReplicationTarget, mode: "Add" | "Update" | "Remove", item: Types.Item): ()
+	module.FireToTargets(remotes.UpdateInventory, target, mode, if mode == "Add" or mode == "Update" then module.GetItemReplicate(item, true) else item.Name)
 end
 
 function module.ResetInventory(target: ReplicationTarget): ()
