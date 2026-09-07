@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 local EventStrings = require(script.Parent.EventStrings)
 local Types = require(script.Parent.Types)
 
@@ -23,7 +24,7 @@ end
 
 function module.CanInstanceReplicate(instance: Instance): boolean
 	-- note: instances under ReplicatedFirst will not be nil if passed to the client, but they will not replicated either. That is, updating their properties on the server will have no effect on the client.
-	return instance:IsDescendantOf(ReplicatedStorage) or instance:IsDescendantOf(workspace)
+	return instance:IsDescendantOf(ReplicatedStorage) or instance:IsDescendantOf(workspace) or instance:IsDescendantOf(SoundService)
 end
 
 function module.GetItemReplicate(item: Types.Item, replicateModel: boolean, replicateComponents: {string}?): Types.ItemReplication
