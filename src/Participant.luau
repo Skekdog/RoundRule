@@ -587,8 +587,12 @@ local function DropItem(participant: Types.Participant, item: Types.Item, throwD
     end
 
     participant:RemoveItem(item)
-    item.Model:PivotTo(char:GetPivot());
-    (item.Model :: Instance).Parent = parent
+    item.Model:PivotTo(char:GetPivot())
+
+    -- No way to tell if an Instance is destroyed; if it is, setting parent will cause an error.
+    pcall(function()
+        (item.Model :: Instance).Parent = parent
+    end)
 end
 
 local function isObscured(participant: Types.Participant, origin: Vector3, target: Vector3): number?
