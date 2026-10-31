@@ -194,7 +194,7 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
     if participant:IsAlive() then
         if round:IsInProgress() then
             if round.Gamemode.OnDeath then
-                round.Gamemode.OnDeath(round, participant, false)
+                round.Gamemode.OnDeath(round, participant)
             end
         end
     end

@@ -139,7 +139,7 @@ export type GamemodeDefinition = {
     -- but there's currently no good way for gamemodes / items / whatever to do UI stuff, so this
     -- is what we have to do, unless we want a lot more work.
 
-    OnDeath: (round: Round, Participant, deferVictoryCheck: boolean) -> ()?,
+    OnDeath: (round: Round, Participant) -> ()?,
     OnCharacterAdded: (round: Round, Participant, character: Model) -> ()?,
     OnIdentifyCorpse: (round: Round, corpse: Corpse, searcher: Participant) -> ()?,
     AddFinishHighlights: (round: Round) -> ()?,
@@ -695,7 +695,7 @@ export type Participant = {
 
     _wasDeathProcessed: boolean?,
     IsAlive: (Participant) -> boolean,
-    TryTakeDamage: (Participant, params: DamageParams, deferDeath: boolean?) -> boolean,
+    TryTakeDamage: (Participant, params: DamageParams) -> boolean,
     GetHealth: (Participant) -> number,
     SetHealth: (Participant, health: number) -> (),
 
@@ -720,13 +720,13 @@ export type Prop = {
     GetHealth: (Prop) -> number?,
     SetHealth: (Prop, health: number) -> (),
 
-    TryTakeDamage: (Prop, params: DamageParams, deferDeath: boolean?) -> boolean,
+    TryTakeDamage: (Prop, params: DamageParams) -> boolean,
     OnBreak: OnPropBreak,
 }
 
 export type GameConfig = {
     DeathSounds: {Sound},
-    OnDeath: (Round, Participant, boolean) -> ()?,
+    OnDeath: (Round, Participant) -> ()?,
     OnCharacterAdded: (Round, Participant, Model) -> ()?,
     BeforeDamageProp: ((Round, Prop, DamageParams) -> boolean)?,
     BeforeDamageParticipant: ((Round, Participant, DamageParams) -> boolean)?,
