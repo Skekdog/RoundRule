@@ -342,7 +342,9 @@ local function _start(round: Types.Round): ()
         table.insert(participantList, v)
     end
 
-    assert(#participantList >= round.MinimumRequiredPlayers, "Not enough players to start round")
+    if #participantList < round.MinimumRequiredPlayers then
+        return
+    end
 
     for _, v in participantList do
         while not v:GetCharacter() and v.Player:IsDescendantOf(Players) do
