@@ -189,14 +189,12 @@ local function RemoveParticipant(round: Types.Round, participant: Types.Particip
         count += 1
     end
 
+    local wasAlive = participant:IsAlive()
+
     participant:DespawnCharacter()
 
-    if participant:IsAlive() then
-        if round:IsInProgress() then
-            if round.Gamemode.OnDeath then
-                round.Gamemode.OnDeath(round, participant)
-            end
-        end
+    if wasAlive and round.Gamemode.OnDeath and round:IsInProgress() then
+        round.Gamemode.OnDeath(round, participant)
     end
 
     for _, v in participant:GetItems() do
